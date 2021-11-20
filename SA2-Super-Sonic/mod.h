@@ -15,6 +15,15 @@ union ModelPointers
 #pragma pack(pop)
 
 
+struct auraStruct {
+	char idk;
+	char charID;
+	NJS_VECTOR pos;
+	NJS_OBJECT* Model;
+	NJS_TEXNAME* Tex;
+	int idk3[40];
+};
+
 void init_SuperSonic();
 
 extern bool isSuper;

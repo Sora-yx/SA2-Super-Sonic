@@ -25,7 +25,7 @@ static inline void PlayAnimationThing(CharAnimInfo* a1)
 }
 
 static const void* const UnloadAnimPtr = (void*)0x459890;
-static inline void UnloadAnimationmaybe(AnimationIndex* a1)
+static inline void UnloadAnimation(AnimationIndex* a1)
 {
 	__asm
 	{
