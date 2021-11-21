@@ -51,5 +51,5 @@ enum SuperSonicAnim {
 
 
 void init_SuperSonic();
-
+void initAura_Hack();
 extern bool isSuper;

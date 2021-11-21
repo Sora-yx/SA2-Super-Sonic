@@ -108,8 +108,10 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 	if (ControllerPointers[playerID]->press & TransformButton)
 	{
-		unSuper(playerID);
-		return true;
+		if (player->Action == Action_Jump) {
+			unSuper(playerID);
+			return true;
+		}
 	}
 
 	return false;
@@ -120,7 +122,9 @@ bool CheckPlayer_Input(char playerID, EntityData1* player)
 
 	if (Controllers[playerID].press & TransformButton)
 	{
-		return true;
+		if (player->Action == Action_Jump) {
+			return true;
+		}
 	}
 
 	return false;
@@ -236,12 +240,17 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	int curAnim2;
 	int curAnim3;
 
+	if (!co2SS)
+		return;
+
+	if (!co2SS->TextureList)
+		return;
+
 	if (!isSuper)
 	{
 		ObjectFunc(origin, Sonic_Display_t->Target());
 		return origin(obj);
 	}
-
 
 	sub_486E50(pID);
 	memcpy(flt_1A51A00, _nj_current_matrix_ptr_, sizeof(flt_1A51A00));
@@ -743,79 +752,8 @@ void Sonic_Display_R2(ObjectMaster* obj)
 
 
 
-ObjectFunc(SpinDashAura_Display, 0x756040);
-DataPointer(float, flt_B18F54, 0xB18F54);
-
-
-Trampoline* SpinDashAura_Display_t;
-
-void __cdecl SpinDashAura_Display_r(ObjectMaster* a1)
-{
-	if (isSuper)
-		return;
-
-	ObjectFunc(origin, SpinDashAura_Display_t->Target());
-	return origin(a1);
-}
-
-
-Trampoline* DoSpinDashAura_t;
-
-
-void DoSpinDashAura_Origin(ObjectMaster* a1)
-{
-	auto target = DoSpinDashAura_t->Target();
-
-	__asm
-	{
-		mov edi, [a1]
-		call target
-	}
-}
-
-void DoSpinDashAura_r(ObjectMaster* obj)
-{
-	auraStruct* aura; // esi
-	CharObj2Base* co2; // eax
-	char charID; // ecx
-	char charID2; // cl
-
-	aura = (auraStruct*)obj->Data2.Undefined;
-
-	if (!MainCharObj1[aura->charID] || !aura)
-		return;
-
-	charID = aura->charID;
-	co2 = MainCharObj2[charID];
-	charID2 = co2->CharID2;
-
-	if (charID2 == Characters_Amy || charID2 == Characters_MetalSonic || co2->CharID == Characters_Shadow || !isSuper)
-	{
-		return DoSpinDashAura_Origin(obj);
-	}
-
-	//the aura could work for Super Sonic if he had a ball form but he doesn't.
-	return;
-}
-
-
-
-static void __declspec(naked) DoSpinDashAuraASM()
-{
-	__asm
-	{
-		push edi // obj
-
-		// Call your __cdecl function here:
-		call DoSpinDashAura_r
-
-		pop edi // obj
-		retn
-	}
-}
-
-
 void init_SuperSonic() {
+
 
 	//WriteData((NJS_TEXNAME**)0x7564b3, SSEff_Texlist.textures);	
 	//gWriteData((NJS_TEXNAME**)0x75649e, SSEff_Texlist.textures);
@@ -827,6 +765,6 @@ void init_SuperSonic() {
 	LoadCharacters_t = new Trampoline((int)LoadCharacters, (int)LoadCharacters + 0x6, LoadCharacters_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
-	SpinDashAura_Display_t = new Trampoline((int)0x756040, (int)0x75604A, SpinDashAura_Display_r);
-	DoSpinDashAura_t = new Trampoline((int)0x7562A0, (int)0x7562A7, DoSpinDashAuraASM);
+
+	initAura_Hack();
 }
