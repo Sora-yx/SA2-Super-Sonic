@@ -13,6 +13,8 @@
 #include "SA2-Functions.h"
 #include "Trampoline.h"
 #include "IniFile.hpp"
+#include "ModelInfo.h"
+#include "UsercallFunctionHandler.h"
 #include "mod.h"
 #include "util.h"
 #endif //PCH_H

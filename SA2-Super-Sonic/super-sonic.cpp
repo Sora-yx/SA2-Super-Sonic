@@ -4,6 +4,8 @@ Trampoline* LoadCharacters_t;
 Trampoline* Sonic_Main_t;
 Trampoline* Sonic_Display_t;
 
+ObjectMaster* superSonicManagerPtr = nullptr;
+
 bool isSuper = false;
 
 static NJS_TEXNAME SSONICTEX[7];
@@ -16,14 +18,19 @@ static NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEFFTex, Uint32) };
 void __cdecl LoadSuperSonicTextures(SonicCharObj2* sco2) {
 	njReleaseTexture(sco2->TextureList);
 	sco2->TextureList = 0;
-	sco2->TextureList = LoadCharTextures("SSONICTEX");
+
+	if (!isSuper)
+		sco2->TextureList = LoadCharTextures("SSONICTEX");
+	else
+		sco2->TextureList = LoadCharTextures("SONICTEX");
 	return;
 }
 
-void __cdecl LoadSuperSonic_r(EntityData1* data, SonicCharObj2* sco2) {
 
-	data->Action = 0;
-	data->NextAction = 0;
+void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
+
+	ControllerEnabled[playerID] = 0;
+	sco2->base.Powerups |= Powerups_Invincibility;
 	ReleaseMDLFile(sco2->ModelList);
 	AnimationIndex* v4 = sco2->MotionList;
 	sco2->ModelList = 0;
@@ -33,34 +40,159 @@ void __cdecl LoadSuperSonic_r(EntityData1* data, SonicCharObj2* sco2) {
 	sco2->base.AnimInfo.Next = 0;
 	sco2->base.AnimInfo.Animations = SuperSonicAnimationList_r;
 	LoadSuperSonicTextures(sco2);
-	sco2->MotionList = LoadMTNFile((char*)"SONICMTN.PRS");
-
+	sco2->MotionList = LoadMTNFile((char*)"ssmotion.prs");
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
-	sco2->base.Powerups |= Powerups_Invincibility;
+
 	PlayMusic("BOSS_07.adx");
 	ResetMusic();
+	DoNextAction_r(playerID, 9, 0);
+
+	isSuper = true;
 }
 
+void SubRings(unsigned char player, EntityData1* data) {
 
-void __cdecl TransfoSuperSonic(ObjectMaster* obj, EntityData1* data, int playerID, SonicCharObj2* sco2) {
-
-	if (isSuper || !MainCharObj1[playerID])
+	if (RemoveLimitations || AlwaysSuperSonic || MainCharObj2[player]->CharID != Characters_Sonic || !isSuper || TimeStopped != 0)
 		return;
 
+	if (FrameCountIngame % 60 == 0 && RingCount[player] > 0) {
+		AddRings(player, -1);
+	}
 
-	LoadSuperSonic_r(data, sco2);
-	isSuper = true;
+	if (RingCount[player] <= 0) {
+		data->Action = superSonicUntransfo;
+	}
 
+	return;
 }
+
+void unSuper(unsigned char player) {
+
+	if (AlwaysSuperSonic)
+		return;
+
+	EntityData1* data = MainCharObj1[player];
+	CharObj2Base* co2 = MainCharObj2[player];
+	SonicCharObj2* co2S = (SonicCharObj2*)MainCharacter[player]->Data2.Character;
+
+	if (!data)
+		return;
+
+	if (co2->CharID == Characters_Sonic) //fix an issue with charsel
+		co2->PhysData = PhysicsArray[Characters_Sonic];
+
+	data->Status = 0;
+	co2->Upgrades &= ~Upgrades_SuperSonic;
+	co2->Powerups &= ~Powerups_Invincibility;
+	ReleaseMDLFile(co2S->ModelList);
+	AnimationIndex* v4 = co2S->MotionList;
+	co2S->ModelList = 0;
+	UnloadAnimation(v4);
+	co2S->MotionList = 0;
+	co2S->ModelList = LoadMDLFile((char*)"SONICMDL.PRS");
+	co2S->base.AnimInfo.Next = 0;
+	co2S->base.AnimInfo.Animations = SonicAnimList;
+	njReleaseTexture(co2S->TextureList);
+	co2S->TextureList = 0;
+	co2S->TextureList = LoadCharTextures("SONICTEX");
+	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
+	PlayAnimationThing(&co2S->base.AnimInfo);
+	isSuper = false;
+	return;
+}
+
+bool CheckUntransform_Input(unsigned char playerID) {
+
+	EntityData1* player = MainCharObj1[playerID];
+
+	if (ControllerPointers[playerID]->press & TransformButton)
+	{
+		unSuper(playerID);
+		return true;
+	}
+
+	return false;
+}
+
+bool CheckPlayer_Input(char playerID, EntityData1* player)
+{
+
+	if (Controllers[playerID].press & TransformButton)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void SuperSonic_Manager_Delete(ObjectMaster* obj)
+{
+	DeleteObject_(superSonicManagerPtr);
+	superSonicManagerPtr = nullptr;
+}
+
+void SuperSonic_Manager(ObjectMaster* obj)
+{
+
+	EntityData1* data = obj->Data1.Entity;
+	EntityData1* player = MainCharObj1[data->Index];
+	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
+
+	if (!player || GameState != GameStates_Ingame)
+		return;
+
+	unsigned char playerID = data->Index;
+
+	switch (data->Action)
+	{
+	case superSonicSetTask:
+		obj->DeleteSub = SuperSonic_Manager_Delete;
+		data->Action++;
+		break;
+	case playerInputCheck:
+
+		if (CheckPlayer_Input(playerID, player))
+			data->Action++;
+		break;
+	case superSonicTransfo:
+		TransfoSuperSonic(player, playerID, sonicCO2);
+		data->Action++;
+		break;
+	case superSonicTransition:
+		sonicCO2->base.AnimInfo.Next = superSonicIntro;
+		data->Action++;
+		break;
+	case superSonicWait:
+
+		if (++data->field_6 == 100)
+		{
+			ControllerEnabled[playerID] = 1;
+			DoNextAction_r(playerID, 15, 0);
+			data->Action++;
+			data->field_6 = 0;
+		}
+		break;
+	case superSonicOnFrames:
+		if (CheckUntransform_Input(playerID)) {
+
+			data->Action = playerInputCheck;
+		}
+
+		break;
+	case superSonicUntransfo:
+		unSuper(playerID);
+		data->Action = playerInputCheck;
+		break;
+	}
+}
+
 
 void Sonic_Main_r(ObjectMaster* obj)
 {
 	CharObj2Base* co2 = MainCharObj2[obj->Data2.Character->PlayerNum];
 	EntityData1* data1 = MainCharObj1[obj->Data2.Character->PlayerNum];
-
 	SonicCharObj2* co2S = (SonicCharObj2*)obj->Data2.Character;
-
 
 	if (isSuper)
 	{
@@ -73,15 +205,6 @@ void Sonic_Main_r(ObjectMaster* obj)
 
 	ObjectFunc(origin, Sonic_Main_t->Target());
 	origin(obj);
-
-
-
-
-	if (Controllers[0].press & Buttons_Y && GameState == GameStates_Ingame)
-	{
-		TransfoSuperSonic(obj, data1, co2->PlayerNum, co2S);
-	}
-
 }
 
 DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
@@ -98,7 +221,6 @@ DataPointer(int, dword_1D19C0C, 0x1D19C0C);
 
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {
-
 
 	SonicCharObj2* co2SS; // ebx
 	EntityData1* data1; // [esp+1Ch] [ebp-30h]
@@ -265,6 +387,30 @@ LABEL_22:
 	//sub_487060(byte_1DE4400);
 }
 
+void LoadSuperSonicManager() {
+
+	for (int i = 0; i < 2; i++) {
+
+		if (MainCharObj1[i]) {
+
+			int id = MainCharObj2[i]->CharID;
+			int id2 = MainCharObj2[i]->CharID2;
+
+			if (id == Characters_Sonic && id2 == Characters_Sonic) {
+				superSonicManagerPtr = LoadObject(1, "SuperSonic_Manager", SuperSonic_Manager, LoadObj_Data1);
+
+				if (superSonicManagerPtr)
+				{
+					LoadTextureList("SSONEFFTEX", &SSONEFFTEX_TEXLIST);
+					LoadTextureList("ss_efftex", &SSEff_Texlist);
+					superSonicManagerPtr->Data1.Entity->Index = i;
+				}
+			}
+		}
+	}
+
+
+}
 
 void LoadCharacters_r() {
 
@@ -272,8 +418,7 @@ void LoadCharacters_r() {
 	original();
 
 
-	LoadTextureList("SSONEFFTEX", &SSONEFFTEX_TEXLIST);
-	LoadTextureList("ss_efftex", &SSEff_Texlist);
+	LoadSuperSonicManager();
 	return;
 }
 
@@ -594,9 +739,7 @@ void Sonic_Display_R2(ObjectMaster* obj)
 		sonicCO2 = sonicCO2Copy;
 		goto LABEL_52;
 	}
-
 }
-
 
 
 
@@ -604,27 +747,24 @@ ObjectFunc(SpinDashAura_Display, 0x756040);
 DataPointer(float, flt_B18F54, 0xB18F54);
 
 
-
-Trampoline* Spin_t;
+Trampoline* SpinDashAura_Display_t;
 
 void __cdecl SpinDashAura_Display_r(ObjectMaster* a1)
 {
 	if (isSuper)
-		njSetTexture(&SSEff_Texlist);
+		return;
 
-
-	ObjectFunc(origin, Spin_t->Target());
+	ObjectFunc(origin, SpinDashAura_Display_t->Target());
 	return origin(a1);
-
 }
 
 
-Trampoline* DoAura_t;
+Trampoline* DoSpinDashAura_t;
 
 
-void DoAura_Origin(ObjectMaster* a1)
+void DoSpinDashAura_Origin(ObjectMaster* a1)
 {
-	auto target = DoAura_t->Target();
+	auto target = DoSpinDashAura_t->Target();
 
 	__asm
 	{
@@ -633,7 +773,7 @@ void DoAura_Origin(ObjectMaster* a1)
 	}
 }
 
-void DoAura_r(ObjectMaster* obj)
+void DoSpinDashAura_r(ObjectMaster* obj)
 {
 	auraStruct* aura; // esi
 	CharObj2Base* co2; // eax
@@ -651,7 +791,7 @@ void DoAura_r(ObjectMaster* obj)
 
 	if (charID2 == Characters_Amy || charID2 == Characters_MetalSonic || co2->CharID == Characters_Shadow || !isSuper)
 	{
-		return DoAura_Origin(obj);
+		return DoSpinDashAura_Origin(obj);
 	}
 
 	//the aura could work for Super Sonic if he had a ball form but he doesn't.
@@ -660,14 +800,14 @@ void DoAura_r(ObjectMaster* obj)
 
 
 
-static void __declspec(naked) DoAuraSpinDashASM()
+static void __declspec(naked) DoSpinDashAuraASM()
 {
 	__asm
 	{
 		push edi // obj
 
 		// Call your __cdecl function here:
-		call DoAura_r
+		call DoSpinDashAura_r
 
 		pop edi // obj
 		retn
@@ -687,6 +827,6 @@ void init_SuperSonic() {
 	LoadCharacters_t = new Trampoline((int)LoadCharacters, (int)LoadCharacters + 0x6, LoadCharacters_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
-	Spin_t = new Trampoline((int)0x756040, (int)0x75604A, SpinDashAura_Display_r);
-	DoAura_t = new Trampoline((int)0x7562A0, (int)0x7562A7, DoAuraSpinDashASM);
+	SpinDashAura_Display_t = new Trampoline((int)0x756040, (int)0x75604A, SpinDashAura_Display_r);
+	DoSpinDashAura_t = new Trampoline((int)0x7562A0, (int)0x7562A7, DoSpinDashAuraASM);
 }
