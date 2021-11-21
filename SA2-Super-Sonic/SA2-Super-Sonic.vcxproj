@@ -162,7 +162,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="SA2-Functions.h" />
+    <ClInclude Include="SA2-util.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>

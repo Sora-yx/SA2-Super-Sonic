@@ -1,8 +1,10 @@
 #pragma once
 
 FunctionPointer(void, DrawMotionAndObject, (NJS_OBJECT* a1, float a2), 0x780870);
-
 FunctionPointer(void, DrawObject, (NJS_OBJECT* a1), 0x42E730);
+
+ObjectFunc(SpinDashAura_Display, 0x756040);
+DataPointer(float, flt_B18F54, 0xB18F54);
 
 static const void* const DrawChunkModelPtr = (void*)0x42E6C0;
 static inline void DrawChunkModel(NJS_CNK_MODEL* a1)

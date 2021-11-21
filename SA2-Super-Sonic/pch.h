@@ -10,7 +10,7 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 #include "SA2ModLoader.h"
-#include "SA2-Functions.h"
+#include "SA2-util.h"
 #include "Trampoline.h"
 #include "IniFile.hpp"
 #include "ModelInfo.h"

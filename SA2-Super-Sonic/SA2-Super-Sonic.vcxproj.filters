@@ -30,7 +30,7 @@
     <ClInclude Include="util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SA2-Functions.h">
+    <ClInclude Include="SA2-util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
