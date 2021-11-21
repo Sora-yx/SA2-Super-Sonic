@@ -1,6 +1,5 @@
 #include "pch.h"
 
-Trampoline* LoadCharacters_t;
 Trampoline* Sonic_Main_t;
 Trampoline* Sonic_Display_t;
 
@@ -29,6 +28,9 @@ void __cdecl LoadSuperSonicTextures(SonicCharObj2* sco2) {
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
 
+	StopMusic();
+	Play_SuperSonicMusic();
+	ResetMusic();
 	ControllerEnabled[playerID] = 0;
 	sco2->base.Powerups |= Powerups_Invincibility;
 	ReleaseMDLFile(sco2->ModelList);
@@ -44,8 +46,6 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
 
-	PlayMusic("BOSS_07.adx");
-	ResetMusic();
 	DoNextAction_r(playerID, 9, 0);
 
 	isSuper = true;
@@ -99,6 +99,11 @@ void unSuper(unsigned char player) {
 	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
 	PlayAnimationThing(&co2S->base.AnimInfo);
 	isSuper = false;
+
+	if (IsIngame())
+	{
+		RestoreMusic();
+	}
 	return;
 }
 
@@ -132,7 +137,6 @@ bool CheckPlayer_Input(char playerID, EntityData1* player)
 
 void SuperSonic_Manager_Delete(ObjectMaster* obj)
 {
-	DeleteObject_(superSonicManagerPtr);
 	superSonicManagerPtr = nullptr;
 }
 
@@ -143,8 +147,11 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	EntityData1* player = MainCharObj1[data->Index];
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
 
-	if (!player || GameState != GameStates_Ingame)
-		return;
+	if (GameState != 2) {
+		if (!player || !IsIngame() || GameMode == GameMode_Event) {
+			DeleteObject_(obj);
+		}
+	}
 
 	unsigned char playerID = data->Index;
 
@@ -191,6 +198,28 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	}
 }
 
+void LoadSuperSonicManager(char playNum) {
+
+	if (superSonicManagerPtr)
+		return;
+
+	if (MainCharObj1[playNum]) {
+
+		int id = MainCharObj2[playNum]->CharID;
+		int id2 = MainCharObj2[playNum]->CharID2;
+
+		if (id == Characters_Sonic && id2 == Characters_Sonic) {
+			superSonicManagerPtr = LoadObject(1, "SuperSonic_Manager", SuperSonic_Manager, LoadObj_Data1);
+
+			if (superSonicManagerPtr)
+			{
+				LoadTextureList("SSONEFFTEX", &SSONEFFTEX_TEXLIST);
+				LoadTextureList("ss_efftex", &SSEff_Texlist);
+				superSonicManagerPtr->Data1.Entity->Index = playNum;
+			}
+		}
+	}
+}
 
 void Sonic_Main_r(ObjectMaster* obj)
 {
@@ -207,8 +236,13 @@ void Sonic_Main_r(ObjectMaster* obj)
 		}
 	}
 
+
 	ObjectFunc(origin, Sonic_Main_t->Target());
 	origin(obj);
+
+	
+	if (data1->Action == 0)
+		LoadSuperSonicManager(co2->PlayerNum);
 }
 
 DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
@@ -396,40 +430,7 @@ LABEL_22:
 	//sub_487060(byte_1DE4400);
 }
 
-void LoadSuperSonicManager() {
 
-	for (int i = 0; i < 2; i++) {
-
-		if (MainCharObj1[i]) {
-
-			int id = MainCharObj2[i]->CharID;
-			int id2 = MainCharObj2[i]->CharID2;
-
-			if (id == Characters_Sonic && id2 == Characters_Sonic) {
-				superSonicManagerPtr = LoadObject(1, "SuperSonic_Manager", SuperSonic_Manager, LoadObj_Data1);
-
-				if (superSonicManagerPtr)
-				{
-					LoadTextureList("SSONEFFTEX", &SSONEFFTEX_TEXLIST);
-					LoadTextureList("ss_efftex", &SSEff_Texlist);
-					superSonicManagerPtr->Data1.Entity->Index = i;
-				}
-			}
-		}
-	}
-
-
-}
-
-void LoadCharacters_r() {
-
-	auto original = reinterpret_cast<decltype(LoadCharacters_r)*>(LoadCharacters_t->Target());
-	original();
-
-
-	LoadSuperSonicManager();
-	return;
-}
 
 
 DataPointer(int, playID, 0x1DD92A0);
@@ -761,8 +762,7 @@ void init_SuperSonic() {
 	//WriteData((NJS_OBJECT**)0x756478, CharacterModels[328].Model);
 
 	//WriteJump((void*)0x7562A0, DoAuraSpinDashASM);
-	//WriteData<1>((int*)0x755ea0, 0xC3);
-	LoadCharacters_t = new Trampoline((int)LoadCharacters, (int)LoadCharacters + 0x6, LoadCharacters_r);
+
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
 

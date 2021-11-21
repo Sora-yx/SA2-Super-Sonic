@@ -59,5 +59,8 @@
     <ClCompile Include="aura.cpp">
       <Filter>Source Files\Super Sonic</Filter>
     </ClCompile>
+    <ClCompile Include="audio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

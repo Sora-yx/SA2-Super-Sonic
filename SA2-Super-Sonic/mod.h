@@ -5,7 +5,7 @@ void ReadConfig(const char* path);
 extern Buttons TransformButton;
 extern bool RemoveLimitations;
 extern bool AlwaysSuperSonic;
-
+extern int SuperMusicVersion;
 
 extern AnimationInfo SuperSonicAnimationList_r[];
 
@@ -49,7 +49,22 @@ enum SuperSonicAnim {
 	superSonicIntro = 203
 };
 
+enum SuperSonicsMusic {
+
+	None,
+	Sonic2,
+	Sonic3,
+	SonicAndKnuckles,
+	SADX,
+	SA2Event,
+	SA2LiveAndLearn,
+	Mania,
+	Random
+};
+
+extern bool isSuper;
 
 void init_SuperSonic();
 void initAura_Hack();
-extern bool isSuper;
+void Play_SuperSonicMusic();
+void RestoreMusic();

@@ -63,3 +63,11 @@ void DoNextAction_r(int playerNum, char action, int unknown)
 		MainCharObj2[playerNum]->field_28 = unknown;
 	}
 }
+
+bool __cdecl IsIngame()
+{
+	if (GameState != GameStates_Ingame && GameState != GameStates_LoadFinished)
+		return false;
+
+	return true;
+}

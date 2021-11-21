@@ -1,5 +1,7 @@
 #include "pch.h"
 
+//serie of hacks to disable ball form model and aura when Super to fix crashes.
+
 Trampoline* SpinDashAura_Display_t;
 Trampoline* DoSpinDashAura_t;
 Trampoline* DoJumpAura_t;
@@ -104,7 +106,6 @@ void DoJumpAura_r(ObjectMaster* obj)
 	return;
 }
 
-
 static void __declspec(naked) DoJumpAuraASM()
 {
 	__asm
@@ -118,7 +119,6 @@ static void __declspec(naked) DoJumpAuraASM()
 		retn
 	}
 }
-
 
 void DoHomingAura_Origin(ObjectMaster* a1)
 {
@@ -155,7 +155,6 @@ void DoHomingAura_r(ObjectMaster* obj)
 	//the aura could work for Super Sonic if he had a ball form but he doesn't.
 	return;
 }
-
 
 static void __declspec(naked) DoHomingAuraASM()
 {

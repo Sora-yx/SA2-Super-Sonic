@@ -1,8 +1,9 @@
 #include "pch.h"
+#include <fstream>
 
 HelperFunctions HelperFunctionsGlobal;
 const char* error = "[SA2 Super Sonic]: WARNING: Your version of the Mod Loader is old, the mod won't work properly.\nPlease update your Mod Loader for the best experience.";
-
+time_t t;
 
 extern "C" {
 
@@ -10,6 +11,7 @@ extern "C" {
 	{
 		Sleep(10);
 
+		srand((unsigned)time(&t));
 		HelperFunctionsGlobal = helperFunctions;
 
 		if (HelperFunctionsGlobal.Version < 8) {
@@ -24,6 +26,7 @@ extern "C" {
 
 	__declspec(dllexport) void __cdecl OnFrame() {
 
+		CurrentSongName;
 
 
 	}
