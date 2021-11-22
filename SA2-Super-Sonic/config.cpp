@@ -26,4 +26,7 @@ void ReadConfig(const char* path) {
 	SuperMusicVersion = config->getInt("Audio", "SuperMusicVersion", SA2LiveAndLearn);
 	delete config;
 
+	if (AlwaysSuperSonic)
+		RemoveLimitations = true;
+
 }
