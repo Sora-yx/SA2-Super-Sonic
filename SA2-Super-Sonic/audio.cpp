@@ -69,7 +69,6 @@ void RestoreMusic() {
 	return;
 }
 
-FunctionPointer(int, sub_458970, (), 0x458970);
 
 void PlaySong_Queue_r(const char* song)
 {
@@ -105,7 +104,7 @@ static void __declspec(naked) PlaySong_QueueASM()
 	}
 }
 
-DataPointer(void**, ebx0, 0x1A55998);
+
 
 void PlayMusic_r(const char* song)
 {
@@ -153,7 +152,6 @@ static void __declspec(naked) PlayMusicASM()
 		retn
 	}
 }
-
 
 
 void init_MusicHack() {

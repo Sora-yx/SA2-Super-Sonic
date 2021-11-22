@@ -125,3 +125,5 @@ FunctionPointer(void, njReleaseTexture, (NJS_TEXLIST* a1), 0x77F9F0);
 
 
 DataPointer(RenderInfo, Has_texlist_batadvPlayerChara_in_it, 0x2670544);
+DataPointer(void**, ebx0, 0x1A55998);
+FunctionPointer(int, sub_458970, (), 0x458970);

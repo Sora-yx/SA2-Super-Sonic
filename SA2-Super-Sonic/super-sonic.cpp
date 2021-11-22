@@ -50,7 +50,7 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	sco2->MotionList = LoadMTNFile((char*)"ssmotion.prs");
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
-
+	Load_SuperPhysics(data);
 	DoNextAction_r(playerID, 9, 0);
 	isSuper = true;
 }
@@ -80,10 +80,10 @@ void unSuper(unsigned char player) {
 	CharObj2Base* co2 = MainCharObj2[player];
 	SonicCharObj2* co2S = (SonicCharObj2*)MainCharacter[player]->Data2.Character;
 
-	if (!data)
+	if (!data || !isSuper)
 		return;
 
-	if (co2->CharID == Characters_Sonic) //fix an issue with charsel
+	if (co2->CharID == Characters_Sonic)
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
 	data->Status = 0;
@@ -98,18 +98,21 @@ void unSuper(unsigned char player) {
 	co2S->TextureList = 0;
 	co2S->TextureList = LoadCharTextures("SONICTEX");
 	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
-	PlayAnimationThing(&co2S->base.AnimInfo);
-	isSuper = false;
+
 
 	if (IsIngame())
 	{
+		PlayAnimationThing(&co2S->base.AnimInfo);
 		RestoreMusic();
 	}
-
+	isSuper = false;
 	return;
 }
 
 bool CheckUntransform_Input(unsigned char playerID) {
+
+	if (AlwaysSuperSonic)
+		return false;
 
 	EntityData1* player = MainCharObj1[playerID];
 
@@ -155,6 +158,12 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
 
 
+	//if player dies, remove transformation.
+	if (GameState == GameStates_LoadFinished && !AlwaysSuperSonic) {
+		unSuper(sonicCO2->base.PlayerNum);
+		return;
+	}
+
 	if (!player || !IsIngame() || GameMode == GameMode_Event) {
 		return;
 	}
@@ -169,8 +178,9 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		break;
 	case playerInputCheck:
 
-		if (CheckTransform_Input(playerID, player))
+		if (CheckTransform_Input(playerID, player) || AlwaysSuperSonic)
 			data->Action++;
+
 		break;
 	case superSonicTransfo:
 		TransfoSuperSonic(player, playerID, sonicCO2);
@@ -182,7 +192,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		break;
 	case superSonicWait:
 
-		if (++data->field_6 == 100)
+		if (++data->field_6 == 100 || AlwaysSuperSonic)
 		{
 			ControllerEnabled[playerID] = 1;
 			DoNextAction_r(playerID, 15, 0);
