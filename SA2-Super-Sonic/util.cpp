@@ -42,13 +42,19 @@ ModelInfo* LoadMDL(const char* name, ModelFormat format) {
 	ModelInfo* temp = new ModelInfo(HelperFunctionsGlobal.GetReplaceablePath(foo));
 
 	if (temp->getformat() == format) {
-		PrintDebug("[Knux New Tricks Mod] Loaded %s model: %s.", ModelFormatStrings[(int)format - 1], name);
+		PrintDebug("[SA2 Super Sonic] Loaded %s model: %s.", ModelFormatStrings[(int)format - 1], name);
 	}
 	else {
-		PrintDebug("[Knux New Tricks Mod] Failed loading %s model: %s.", ModelFormatStrings[(int)format - 1], name);
+		PrintDebug("[SA2 Super Sonic] Failed loading %s model: %s.", ModelFormatStrings[(int)format - 1], name);
 	}
 
 	return temp;
+}
+
+void FreeMDL(ModelInfo* pointer)
+{
+	if (pointer)
+		delete(pointer);
 }
 
 void DoNextAction_r(int playerNum, char action, int unknown)

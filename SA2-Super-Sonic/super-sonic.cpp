@@ -7,24 +7,20 @@ ObjectMaster* superSonicManagerPtr = nullptr;
 
 bool isSuper = false;
 
-static NJS_TEXNAME SSONICTEX[7];
-static NJS_TEXLIST SSONIC_TEXLIST = { arrayptrandlength(SSONICTEX, Uint32) };
-
-
-static NJS_TEXNAME SSEFFTex[25];
-static NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEFFTex, Uint32) };
-
 void __cdecl LoadSuperSonicTextures(SonicCharObj2* sco2) {
 	njReleaseTexture(sco2->TextureList);
 	sco2->TextureList = 0;
+	sco2->TextureList = LoadCharTextures("SSONICTEX");
 
-	if (!isSuper)
-		sco2->TextureList = LoadCharTextures("SSONICTEX");
-	else
-		sco2->TextureList = LoadCharTextures("SONICTEX");
 	return;
 }
 
+ModelIndex* SuperSonicMdl;
+
+void __cdecl LoadSuperSonicModels(SonicCharObj2* sco2) {
+	sco2->ModelList[328].Index = SuperSonicMdl[328].Index;
+	sco2->ModelList[328].Model = SuperSonicMdl[328].Model;
+}
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
 
@@ -33,12 +29,11 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	ResetMusic();
 	ControllerEnabled[playerID] = 0;
 	sco2->base.Powerups |= Powerups_Invincibility;
-	ReleaseMDLFile(sco2->ModelList);
 	AnimationIndex* v4 = sco2->MotionList;
-	sco2->ModelList = 0;
 	UnloadAnimation(v4);
 	sco2->MotionList = 0;
-	sco2->ModelList = LoadMDLFile((char*)"SSONICMDL.PRS");
+	LoadSuperSonicModels(sco2);
+
 	sco2->base.AnimInfo.Next = 0;
 	sco2->base.AnimInfo.Animations = SuperSonicAnimationList_r;
 	LoadSuperSonicTextures(sco2);
@@ -85,12 +80,9 @@ void unSuper(unsigned char player) {
 	data->Status = 0;
 	co2->Upgrades &= ~Upgrades_SuperSonic;
 	co2->Powerups &= ~Powerups_Invincibility;
-	ReleaseMDLFile(co2S->ModelList);
 	AnimationIndex* v4 = co2S->MotionList;
-	co2S->ModelList = 0;
 	UnloadAnimation(v4);
 	co2S->MotionList = 0;
-	co2S->ModelList = LoadMDLFile((char*)"SONICMDL.PRS");
 	co2S->base.AnimInfo.Next = 0;
 	co2S->base.AnimInfo.Animations = SonicAnimList;
 	njReleaseTexture(co2S->TextureList);
@@ -213,36 +205,47 @@ void LoadSuperSonicManager(char playNum) {
 
 			if (superSonicManagerPtr)
 			{
+				SuperSonicMdl = LoadMDLFile((char*)"SSONICMDL.PRS");
 				LoadTextureList("SSONEFFTEX", &SSONEFFTEX_TEXLIST);
-				LoadTextureList("ss_efftex", &SSEff_Texlist);
+				LoadTextureList("sh_efftex", &Texlist_ShadEff);
 				superSonicManagerPtr->Data1.Entity->Index = playNum;
 			}
 		}
 	}
 }
 
+bool isDone = false;
+
+void Stuff() {
+
+	SonicCharObj2* sco2 = (SonicCharObj2*)MainCharacter[0]->Data2.Character;
+
+	for (int i = 0; i < 64; i++)
+	{
+		if ( sco2->ModelList[i].Model != nullptr)
+		{
+			PrintDebug("model id: %d \n", sco2->ModelList[i].Index);
+		}
+	}
+
+}
 void Sonic_Main_r(ObjectMaster* obj)
 {
 	CharObj2Base* co2 = MainCharObj2[obj->Data2.Character->PlayerNum];
 	EntityData1* data1 = MainCharObj1[obj->Data2.Character->PlayerNum];
-	SonicCharObj2* co2S = (SonicCharObj2*)obj->Data2.Character;
-
-	if (isSuper)
-	{
-		if (data1)
-		{
-			if (data1->Status & Status_Ball)
-				data1->Status = data1->Status & ~(Status_Ball);
-		}
-	}
-
+	SonicCharObj2* sco2 = (SonicCharObj2*)obj->Data2.Character;
 
 	ObjectFunc(origin, Sonic_Main_t->Target());
 	origin(obj);
 
-	
-	if (data1->Action == 0)
+
+	if (data1->Action == 0) {
 		LoadSuperSonicManager(co2->PlayerNum);
+		if (!isDone) {
+			Stuff();
+			isDone = true;
+		}
+	}
 }
 
 DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
@@ -311,7 +314,9 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	SonicModel = CharacterModels[co2SS->base.AnimInfo.Animations[animID].ModelNum].Model;
 	NJS_MOTION* motion = CharacterAnimations[co2SS->base.AnimInfo.Animations[co2SS->base.AnimInfo.Current].AnimNum].Animation;
 
+
 	njCnkMotion(SonicModel, motion, co2SS->base.AnimInfo.field_10);
+
 
 	njPopMatrixEx();
 }
