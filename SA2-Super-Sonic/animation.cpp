@@ -205,7 +205,8 @@ AnimationInfo SuperSonicAnimationList_r[] = {
 	{ 200, 328, 3, 200, 0.25f, 0.2f },
 	{ 201, 328, 6, 201, 0.125f, 0.8f },
 	{ 202, 328, 3, 202, 0.125f, 0.5f },
-	{ 205, 328, 6, 54, 1, 0.8f },
+	{ 205, 328, 6, 0, 1, 0.8f },
+	{ 205, 328, 4, 54, 1, 0.5f },
 };
 
 AnimationInfo SuperSonicAnimationList[] = {

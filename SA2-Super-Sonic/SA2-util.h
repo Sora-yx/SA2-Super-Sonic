@@ -127,3 +127,13 @@ FunctionPointer(void, njReleaseTexture, (NJS_TEXLIST* a1), 0x77F9F0);
 DataPointer(RenderInfo, Has_texlist_batadvPlayerChara_in_it, 0x2670544);
 DataPointer(void**, ebx0, 0x1A55998);
 FunctionPointer(int, sub_458970, (), 0x458970);
+DataPointer(char, byte_1DE4400, 0x1DE4400);
+
+//stuff
+DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
+DataArray(float, flt_1A51A00, 0x1A51A00, 12);
+FunctionPointer(void, sub_427040, (float* a1), 0x427040);
+DataPointer(char, isLoading, 0x174AFC0);
+DataPointer(NJS_VECTOR*, cameraPosMaybe, 0x01DD92B0);
+
+DataPointer(char, TimerStopped, 0x174afda);

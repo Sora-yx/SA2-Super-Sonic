@@ -22,6 +22,7 @@ extern "C" {
 		ReadConfig(path); //get mod settings by the user
 
 		init_SuperSonic();
+		init_MusicHack();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame() {

@@ -46,7 +46,8 @@ enum SuperSonicAnim {
 	superSonicStanding,
 	superSonicFlying1,
 	superSonicFlying2,
-	superSonicIntro = 203
+	superSonicIntro = 203,
+	superSonicVictory = 204
 };
 
 enum SuperSonicsMusic {
@@ -69,3 +70,4 @@ void initAura_Hack();
 void Play_SuperSonicMusic();
 void RestoreMusic();
 void Load_SuperPhysics(EntityData1* data);
+void init_MusicHack();

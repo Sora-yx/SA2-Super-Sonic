@@ -11,6 +11,16 @@ bool isSuper = false;
 NJS_TEXNAME SSEffTex[16];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
 
+
+ModelIndex* SuperSonicMdl;
+
+//add super sonic model to sonic model pointer
+void __cdecl SetSuperSonicModels(SonicCharObj2* sco2) {
+	sco2->ModelList[328].Index = SuperSonicMdl[328].Index;
+	sco2->ModelList[328].Model = SuperSonicMdl[328].Model;
+	return;
+}
+
 void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 	njReleaseTexture(sco2->TextureList);
 	sco2->TextureList = 0;
@@ -25,12 +35,6 @@ void __cdecl LoadSSEff_Textures() {
 	return;
 }
 
-ModelIndex* SuperSonicMdl;
-
-void __cdecl LoadSuperSonicModels(SonicCharObj2* sco2) {
-	sco2->ModelList[328].Index = SuperSonicMdl[328].Index;
-	sco2->ModelList[328].Model = SuperSonicMdl[328].Model;
-}
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
 
@@ -42,7 +46,7 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	AnimationIndex* v4 = sco2->MotionList;
 	UnloadAnimation(v4);
 	sco2->MotionList = 0;
-	LoadSuperSonicModels(sco2);
+	SetSuperSonicModels(sco2);
 
 	sco2->base.AnimInfo.Next = 0;
 	sco2->base.AnimInfo.Animations = SuperSonicAnimationList_r;
@@ -99,13 +103,14 @@ void unSuper(unsigned char player) {
 	co2S->TextureList = LoadCharTextures("SONICTEX");
 	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
 
+	isSuper = false;
 
 	if (IsIngame())
 	{
 		PlayAnimationThing(&co2S->base.AnimInfo);
 		RestoreMusic();
 	}
-	isSuper = false;
+
 	return;
 }
 
@@ -233,7 +238,20 @@ void LoadSuperSonicManager(char playNum) {
 			superSonicManagerPtr->Data1.Entity->Index = playNum;
 		}
 	}
+}
 
+void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
+
+	if (data1->Action == Action_ObjectControl)
+	{
+		if (TimerStopped != 0 && (co2->AnimInfo.Next == 54 || co2->AnimInfo.Current == 54)) { //Check if the level is finished
+			if (isSuper) {
+
+				co2->AnimInfo.Next = superSonicVictory;
+				data1->Action = 120;
+			}
+		}
+	}
 }
 
 void Sonic_Main_r(ObjectMaster* obj)
@@ -242,21 +260,44 @@ void Sonic_Main_r(ObjectMaster* obj)
 	EntityData1* data1 = MainCharObj1[obj->Data2.Character->PlayerNum];
 	SonicCharObj2* sco2 = (SonicCharObj2*)obj->Data2.Character;
 
+	SuperSonic_PlayVictoryAnimation(data1, co2);
+
 	ObjectFunc(origin, Sonic_Main_t->Target());
 	origin(obj);
 }
 
-DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
-DataArray(float, flt_1A51A00, 0x1A51A00, 12);
-FunctionPointer(void, sub_427040, (float* a1), 0x427040);
-DataPointer(char, isLoading, 0x174AFC0);
-DataPointer(NJS_VECTOR*, cameraPosMaybe, 0x01DD92B0);
-ThiscallFunctionPointer(void, njMotion, (NJS_MOTION* motion, float duration), 0x7819A0);
+void __cdecl Sonic_HealdObjectStuff(EntityData1* data1, CharObj2Base* co2) {
 
-FunctionPointer(int, sub_42E660, (NJS_CNK_MODEL* a1), 0x42E660);
+	*(int*)0x25F02D8 &= 0xFFFFDBFF;
+	*(int*)0x25F02D4 = *(int*)0x1DEB6A0;
+	*(int*)0x1A55834 = 0;
+	*(int*)0x25F0268 = *(int*)0x1DEB6A8;
+	sub_487060(byte_1DE4400);
+	SonicHeldObjectThing(data1, co2);
+	return;
+}
 
-DataPointer(int, dword_1D19C0C, 0x1D19C0C);
+void __cdecl DoSpinDashRotationModel(EntityData1* data1, NJS_OBJECT* SonicModel, int curAnim, SonicCharObj2* co2SS) {
 
+	NJS_VECTOR spinDashThing;
+
+	spinDashThing.x = 0.0;
+	spinDashThing.y = -1.0;
+	spinDashThing.z = 0.0;
+	njTranslateEx(&spinDashThing);
+
+	njTranslate(_nj_current_matrix_ptr_, 0.0, 5.0, 0.0);
+	njRotateZ(_nj_current_matrix_ptr_, 0x2000);
+	njTranslate(_nj_current_matrix_ptr_, 0.0, -5.0, 0.0);
+	spinDashThing.x = 0.69999999;
+	spinDashThing.y = 1.1;
+	spinDashThing.z = 0.80000001;
+	njScaleEx(&spinDashThing);
+	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
+	NJS_MOTION* motion2 = CharacterAnimations[co2SS->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
+	njCnkMotion(SonicModel, motion2, co2SS->base.AnimInfo.field_10);
+
+}
 
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {
@@ -264,16 +305,10 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	SonicCharObj2* co2SS; // ebx
 	EntityData1* data1; // [esp+1Ch] [ebp-30h]
 	NJS_OBJECT* SonicModel;
-	NJS_OBJECT* LowPolyModel;
-	NJS_OBJECT* v22;
 
-	co2SS = (SonicCharObj2*)obj->Data2.Character;
+	co2SS = (SonicCharObj2*)obj->Data2.Undefined;
 	data1 = obj->Data1.Entity;
-	int animID = co2SS->base.AnimInfo.Current;
 	char pID = co2SS->base.PlayerNum;
-	double v20 = 0.0f;
-	int curAnim2;
-	int curAnim3;
 
 	if (!co2SS)
 		return;
@@ -292,9 +327,17 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	SonicCO2PtrExtern = co2SS;
 	sub_427040(flt_1A51A00);
 
+	if ((data1->field_6 & 2) != 0 && !Pose2PStart_PlayerNum)
+	{
+		Sonic_HealdObjectStuff(data1, &co2SS->base);
+		return;
+	}
+
 	njSetTexture(co2SS->TextureList);
+
 	njPushMatrixEx();
 	njTranslateEx(&data1->Position);
+
 	if (data1->Rotation.z)
 	{
 		njRotateZ(CURRENT_MATRIX, data1->Rotation.z);
@@ -307,20 +350,29 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	{
 		njRotateY(CURRENT_MATRIX, 0x8000 - data1->Rotation.y);
 	}
-	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
 
-	SonicModel = CharacterModels[co2SS->base.AnimInfo.Animations[animID].ModelNum].Model;
-	NJS_MOTION* motion = CharacterAnimations[co2SS->base.AnimInfo.Animations[co2SS->base.AnimInfo.Current].AnimNum].Animation;
+	int curAnim = co2SS->base.AnimInfo.Current;
+	SonicModel = CharacterModels[co2SS->base.AnimInfo.Animations[curAnim].ModelNum].Model;
+	NJS_MOTION* motion = CharacterAnimations[co2SS->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
 
 	if ((data1->Status & Status_Ball) != 0
 		&& (co2SS->gap35E[2] & 0x11) != 0)
 	{
-
 		njSetTexture(&SSEff_Texlist);
 		SonicModel = CharacterModels[co2SS->base.AnimInfo.Animations[30].ModelNum].Model; //Spin Dash Ball Form
 	}
 
-	njCnkMotion(SonicModel, motion, co2SS->base.AnimInfo.field_10);
+	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
+	{
+		njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
+		njCnkMotion(SonicModel, motion, co2SS->base.AnimInfo.field_10);
+		Sonic_HealdObjectStuff(data1, &co2SS->base);
+	}
+	else {
+
+		DoSpinDashRotationModel(data1, SonicModel, curAnim, co2SS);
+	}
+
 	njPopMatrixEx();
 }
 
@@ -328,7 +380,6 @@ DataArray(char, byte_1DE4664, 0x1DE4664, 2);
 DataArray(float, flt_19EE0C0, 0x19EE0C0, 12);
 DataPointer(SuperSonicCharObj2*, SuperSonicCO2Ptr, 0x19EE150);
 DataPointer(ObjectFuncPtr, MotionDrawCallback2, 0x1A55834);
-DataPointer(char, byte_1DE4400, 0x1DE4400);
 
 void __cdecl Super_Display_r(ObjectMaster* obj)
 {
@@ -349,7 +400,7 @@ void __cdecl Super_Display_r(ObjectMaster* obj)
 	int animID; // [esp+1Ch] [ebp-4h]
 
 	data = obj->Data1.Entity;
-	co2 = (SuperSonicCharObj2*)obj->Data2.Character;
+	co2 = (SuperSonicCharObj2*)obj->Data2.Undefined;
 	pNum = co2->base.PlayerNum;
 
 	(*(int*)0x1DEB6A0 = *(int*)0x25F02D4);
@@ -511,7 +562,7 @@ void Sonic_Display_R2(ObjectMaster* obj)
 	NJS_VECTOR v55; // [esp+34h] [ebp-18h] BYREF
 	NJS_VECTOR a1; // [esp+40h] [ebp-Ch] BYREF
 
-	sonicCO2 = (SonicCharObj2*)obj->Data2.Character;
+	sonicCO2 = (SonicCharObj2*)obj->Data2.Undefined;
 	data1 = obj->Data1.Entity;
 	data = data1;
 	sonicCO2Copy = sonicCO2;
@@ -521,9 +572,7 @@ void Sonic_Display_R2(ObjectMaster* obj)
 		|| !sub_7983F0(&data1->Position, 50.0))
 		&& (!Pose2PStart_PlayerNum || Pose2PStart_PlayerNum == sonicCO2->base.PlayerNum + 1))
 	{
-		*(int*)0x1DEB6A8 = *(int*)0x25F0268;
-		*(int*)0x1DEB6A0 = *(int*)0x25F02D4;
-		*(int*)0x25F02D4 &= 0xFFFFFDFF;
+
 		pNumCopy = sonicCO2->base.PlayerNum;
 		v3 = byte_1DE4664[pNumCopy];
 		if (v3 != 1 && v3 != 5)
@@ -638,7 +687,8 @@ void Sonic_Display_R2(ObjectMaster* obj)
 				if (data1->Action == 54 && sonicCO2->base.Animation)
 				{
 					SetCharaModelFlag(playID);
-					njCnkMotion(CharacterModels[sonicCO2->base.AnimInfo.Animations->ModelNum].Model, sonicCO2->base.AnimInfo.Motion, sonicCO2->base.AnimInfo.field_10);
+					SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[sonicCO2->base.AnimInfo.Current].ModelNum].Model;
+					njCnkMotion(SonicModel, CharacterAnimations[sonicCO2->base.AnimInfo.Animations[sonicCO2->base.AnimInfo.Current].AnimNum].Animation, sonicCO2->base.AnimInfo.field_10);
 					sub_46F1E0(sonicCO2->base.PlayerNum);
 					curAnim3 = curAnim4;
 				}
@@ -680,6 +730,7 @@ void Sonic_Display_R2(ObjectMaster* obj)
 						&& sonicCO2->base.CharID2 != Characters_MetalSonic
 						&& (sonicCO2->gap35E[2] & 0x11) != 0)
 					{
+						njSetTexture(&SSEff_Texlist);
 						SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[30].ModelNum].Model;// ball form
 						curAnim3 = 30;
 					}
@@ -767,6 +818,10 @@ void LoadSonic_r(int playerNum) {
 }
 
 void init_SuperSonic() {
+
+	//WriteCall((void*)0x71EA0F, DrawMotionAndObjectHook);
+
+	//WriteData<1>((int*)0x71E520, 0xC3);
 
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);

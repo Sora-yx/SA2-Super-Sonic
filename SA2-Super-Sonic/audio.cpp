@@ -70,24 +70,32 @@ void RestoreMusic() {
 }
 
 
+void PlaySongQueue_Origin(const char* song)
+{
+	auto target2 = PlaySong_Queue_t->Target();
+
+	__asm
+	{
+		mov eax, [song]
+		call target2
+	}
+}
+
+
 void PlaySong_Queue_r(const char* song)
 {
-
-	lastMusic = song;
 
 	if (isSuper && lastMusic != "rndclear" && IsIngame()) {
 		return;
 	}
 
-	if (sub_458970())
-	{
-		strcpy_s(CurrentSongName, sizeof(song), song);
+	PlaySongQueue_Origin(song);
+
+	if (!isSuperMusicPlaying()) {
+		lastMusic = song;
 	}
-	else
-	{
-		PlayMusic(song);
-		ResetMusic();
-	}
+
+	return;
 }
 
 static void __declspec(naked) PlaySong_QueueASM()
@@ -105,38 +113,32 @@ static void __declspec(naked) PlaySong_QueueASM()
 }
 
 
+void PlayMusic_Origin(const char* song)
+{
+	auto target = PlayMusic_t->Target();
+
+	__asm
+	{
+		mov edi, [song]
+		call target
+	}
+}
+
 
 void PlayMusic_r(const char* song)
 {
-	char* v1; // eax
-	AllocatedMem* v2; // eax
-	char* v3; // esi
-	AllocatedMem* v4; // eax
 
-	lastMusic = song;
-
-	if (ebx0)
-	{
-		v1 = (char*)ebx0[5];
-		if (v1)
-		{
-			v2 = (AllocatedMem*)(v1 - 4);
-			v2->Cookie = 0x89ABCDEF;
-			MemoryManager->Deallocate(v2, (char*)"..\\..\\src\\adx.c", 858);
-			ebx0[5] = 0;
-		}
-		if (song)
-		{
-			v4 = (AllocatedMem*)MemoryManager->Allocate(strlen(song) + 5, (char*)"..\\..\\src\\adx.c", 862);
-			v3 = (char*)&v4->Data;
-			v4->Cookie = 0x12345678;
-			if (v4 != (AllocatedMem*)-4)
-			{
-				strcpy_s(v3, sizeof(song), song);
-				ebx0[5] = v3;
-			}
-		}
+	if (isSuper && lastMusic != "rndclear" && IsIngame()) {
+		return;
 	}
+
+	PlayMusic_Origin(song);
+
+	if (!isSuperMusicPlaying()) {
+		lastMusic = song;
+	}
+
+	return;
 }
 
 static void __declspec(naked) PlayMusicASM()
