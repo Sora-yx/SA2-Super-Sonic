@@ -30,16 +30,6 @@ void Play_SuperSonicMusic() {
 	return;
 }
 
-void CheckSuperMusic_Restart(int playerID) {
-
-	if (SuperMusicVersion == None || !IsIngame() || !MainCharObj2[playerID])
-		return;
-
-	if (MainCharObj2[playerID]->Upgrades & Upgrades_SuperSonic) {
-		Play_SuperSonicMusic();
-	}
-}
-
 bool isSuperMusicPlaying() {
 
 	for (uint8_t i = 0; i < LengthOfArray(SuperSonicMusic_Array); i++)
@@ -157,6 +147,10 @@ static void __declspec(naked) PlayMusicASM()
 
 
 void init_MusicHack() {
+
+	if (SuperMusicVersion == None)
+		return;
+
 	PlayMusic_t = new Trampoline((int)0x442CF0, (int)0x442CF5, PlayMusicASM);
 	PlaySong_Queue_t = new Trampoline((int)0x443530, (int)0x443538, PlaySong_QueueASM);
 }

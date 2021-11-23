@@ -23,6 +23,7 @@ extern "C" {
 
 		init_SuperSonic();
 		init_MusicHack();
+		initPhysicsHack();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame() {

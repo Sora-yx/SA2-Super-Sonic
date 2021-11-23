@@ -11,7 +11,6 @@ bool isSuper = false;
 NJS_TEXNAME SSEffTex[16];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
 
-
 ModelIndex* SuperSonicMdl;
 
 //add super sonic model to sonic model pointer
@@ -34,7 +33,6 @@ void __cdecl LoadSSEff_Textures() {
 	LoadTextureList("sh_efftex", &Texlist_ShadEff);
 	return;
 }
-
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
 
@@ -161,7 +159,6 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	EntityData1* data = obj->Data1.Entity;
 	EntityData1* player = MainCharObj1[data->Index];
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
-
 
 	//if player dies, remove transformation.
 	if (GameState == GameStates_LoadFinished && !AlwaysSuperSonic) {
@@ -333,7 +330,13 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 		return;
 	}
 
-	njSetTexture(co2SS->TextureList);
+	int curAnim = co2SS->base.AnimInfo.Current;
+
+	if (data1->Status & Status_Ball)
+		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSEff_Texlist;
+	else
+		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)co2SS->TextureList;
+
 
 	njPushMatrixEx();
 	njTranslateEx(&data1->Position);
@@ -351,14 +354,12 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 		njRotateY(CURRENT_MATRIX, 0x8000 - data1->Rotation.y);
 	}
 
-	int curAnim = co2SS->base.AnimInfo.Current;
 	SonicModel = CharacterModels[co2SS->base.AnimInfo.Animations[curAnim].ModelNum].Model;
 	NJS_MOTION* motion = CharacterAnimations[co2SS->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
 
 	if ((data1->Status & Status_Ball) != 0
 		&& (co2SS->gap35E[2] & 0x11) != 0)
 	{
-		njSetTexture(&SSEff_Texlist);
 		SonicModel = CharacterModels[co2SS->base.AnimInfo.Animations[30].ModelNum].Model; //Spin Dash Ball Form
 	}
 
@@ -819,9 +820,6 @@ void LoadSonic_r(int playerNum) {
 
 void init_SuperSonic() {
 
-	//WriteCall((void*)0x71EA0F, DrawMotionAndObjectHook);
-
-	//WriteData<1>((int*)0x71E520, 0xC3);
 
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);

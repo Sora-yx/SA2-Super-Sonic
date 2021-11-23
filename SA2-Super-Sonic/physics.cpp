@@ -1,5 +1,7 @@
 #include "pch.h"
 
+Trampoline* PResetAngle_t;
+
 PhysicsData sonicPhysicsCopy;
 
 void __cdecl SuperPhysics_Delete(ObjectMaster* obj) {
@@ -54,4 +56,50 @@ void Load_SuperPhysics(EntityData1* data) {
 	}
 
 	return;
+}
+
+static void PResetAngle_Origin(EntityData1* data1, CharObj2Base* data2)
+{
+	auto target = PResetAngle_t->Target();
+
+	__asm
+	{
+		mov ebx, [data2]
+		mov eax, [data1]
+		call target
+	}
+}
+
+void PResetAngle_r(EntityData1* data1, CharObj2Base* co2)
+{
+
+	if (co2->Upgrades & Upgrades_SuperSonic && CurrentLevel != LevelIDs_FinalHazard)
+	{
+		co2->Upgrades &= ~Upgrades_SuperSonic;
+		PResetAngle_Origin(data1, co2);
+		co2->Upgrades |= Upgrades_SuperSonic;
+	}
+	else {
+		PResetAngle_Origin(data1, co2);
+	}
+}
+
+static void __declspec(naked) PResetAngleASM()
+{
+	__asm
+	{
+		push ebx // data2
+		push eax // data1
+
+		// Call your __cdecl function here:
+		call PResetAngle_r
+
+		pop eax // data1
+		pop ebx // data2
+		retn
+	}
+}
+
+void initPhysicsHack() {
+	PResetAngle_t = new Trampoline((int)0x460260, (int)0x460266, PResetAngleASM);
 }
