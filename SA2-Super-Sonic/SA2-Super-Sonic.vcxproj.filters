@@ -33,6 +33,9 @@
     <ClInclude Include="SA2-util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -63,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="physics.cpp">
+      <Filter>Source Files\Super Sonic</Filter>
+    </ClCompile>
+    <ClCompile Include="upgrades.cpp">
       <Filter>Source Files\Super Sonic</Filter>
     </ClCompile>
   </ItemGroup>

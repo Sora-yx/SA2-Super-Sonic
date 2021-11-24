@@ -123,7 +123,7 @@ static inline void sub_46F1E0(int pID)
 
 //void __usercall drawUV(NJS_TEXLIST* a1@<esi>, NJS_OBJECT* obj, float FrameCounter)
 static const void* const drawUV_ptr = (void*)0x795790;
-static inline void DrawUV(NJS_TEXLIST* a1, NJS_OBJECT* obj, float FrameCounter)
+static inline void DrawUV(int* a1, NJS_OBJECT* obj, float FrameCounter)
 {
 	__asm
 	{
@@ -154,3 +154,21 @@ DataPointer(NJS_VECTOR*, cameraPosMaybe, 0x01DD92B0);
 DataPointer(char, TimerStopped, 0x174afda);
 
 ObjectFunc(SuperAura, 0x49CD50);
+
+using ModelFuncPtr = void(__cdecl*)(NJS_OBJECT*);
+DataPointer(ModelFuncPtr, UpgradeDrawCallback, 0x1A55834);
+FunctionPointer(void, DrawObjWithCallBack, (NJS_OBJECT* obj), 0x42E730);
+
+
+//void __usercall sub_426420(int a1@<eax>, int a2)
+static const void* const sub426420_ptr = (void*)0x426420;
+static inline void sub_426420(int a1, int a2)
+{
+	__asm
+	{
+		push[a2]
+		mov eax, a1
+		call sub426420_ptr
+		add esp, 4
+	}
+}

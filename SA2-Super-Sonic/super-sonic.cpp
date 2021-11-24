@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ss.h"
 
 Trampoline* Sonic_Main_t;
 Trampoline* Sonic_Display_t;
@@ -10,6 +11,9 @@ bool isSuper = false;
 
 NJS_TEXNAME SSEffTex[16];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
+
+NJS_TEXNAME SonicTex[16];
+NJS_TEXLIST Sonic_Texlist = { arrayptrandlength(SonicTex) };
 
 ModelIndex* SuperSonicMdl;
 
@@ -24,6 +28,7 @@ void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 	njReleaseTexture(sco2->TextureList);
 	sco2->TextureList = 0;
 	sco2->TextureList = LoadCharTextures("SSONICTEX");
+	LoadTextureList("sonictex", &Sonic_Texlist); //used for upgrade textures.
 	return;
 }
 
@@ -51,10 +56,10 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	LoadSuperSonicCharTextures(sco2);
 	sco2->MotionList = LoadMTNFile((char*)"ssmotion.prs");
 	PlayAnimationThing(&sco2->base.AnimInfo);
-	sco2->base.Upgrades |= Upgrades_SuperSonic;
 	Load_SuperPhysics(data);
-	DoNextAction_r(playerID, 9, 0);
 	LoadSuperAura(playerID);
+	sco2->base.Upgrades |= Upgrades_SuperSonic;
+	DoNextAction_r(playerID, 9, 0);
 	isSuper = true;
 }
 
@@ -98,6 +103,7 @@ void unSuper(unsigned char player) {
 	co2S->base.AnimInfo.Next = 0;
 	co2S->base.AnimInfo.Animations = SonicAnimList;
 	njReleaseTexture(co2S->TextureList);
+	njReleaseTexture(&Sonic_Texlist);
 	co2S->TextureList = 0;
 	co2S->TextureList = LoadCharTextures("SONICTEX");
 	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
@@ -119,6 +125,9 @@ bool CheckUntransform_Input(unsigned char playerID) {
 		return false;
 
 	EntityData1* player = MainCharObj1[playerID];
+
+	if (!player)
+		return false;
 
 	if (ControllerPointers[playerID]->press & TransformButton)
 	{
@@ -279,6 +288,8 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
 	NJS_MOTION* Motion;
 
+	NJS_TEXLIST* texlist = sonicCO2->TextureList;
+
 	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
 
 	int curAnim = sonicCO2->base.AnimInfo.Current;
@@ -298,8 +309,14 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 		}
 		Motion = CharacterAnimations[sonicCO2->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
 	}
-	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10);// Draw Sonic animated
 
+	if (curAnim == 30)
+	{
+		texlist = &SSEff_Texlist;
+	}
+
+	njSetTexture(texlist);
+	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10);// Draw Sonic animated
 }
 
 
@@ -331,10 +348,6 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	if (!sonicCO2->TextureList)
 		return;
 
-	if (data1->Status & Status_Ball)
-		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSEff_Texlist;
-	else
-		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)sonicCO2->TextureList;
 
 	if (!isSuper || sonicCO2->base.CharID2 != Characters_Sonic) {
 		ObjectFunc(origin, Sonic_Display_t->Target());
@@ -345,6 +358,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	memcpy(flt_1A51A00, _nj_current_matrix_ptr_, sizeof(flt_1A51A00));
 	SonicCO2PtrExtern = sonicCO2;
 	sub_427040(flt_1A51A00);
+	UpgradeDrawCallback = SuperSonic_Callback_r;
 
 	if ((data1->field_6 & 2) != 0 && !Pose2PStart_PlayerNum)
 	{
@@ -354,15 +368,10 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 
 	int curAnim = sonicCO2->base.AnimInfo.Current;
 
-	if (data1->Status & Status_Ball)
-		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSEff_Texlist;
-	else
-		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)sonicCO2->TextureList;
 
 	njPushMatrixEx();
 	njTranslateEx(&data1->Position);
 	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
-	Sonic_HealdObjectStuff(data1, &sonicCO2->base);
 
 	if (data1->Rotation.z)
 	{
@@ -380,6 +389,8 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
 	{
 		DrawSonicMotion(data1, sonicCO2);
+		DisplaySuperSonic_Upgrade(sonicCO2);
+		Sonic_HealdObjectStuff(data1, &sonicCO2->base);
 		njPopMatrixEx();
 		return;
 	}

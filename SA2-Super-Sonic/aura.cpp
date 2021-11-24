@@ -390,7 +390,68 @@ void SuperAura_r(ObjectMaster* obj) {
 	njTranslate(CURRENT_MATRIX, 0.0, -3.0, 0.0);
 	sub_42D340();
 	ProcessChunkModelsWithCallback((NJS_OBJECT*)0x170B47C, ProcessChunkModel);// Draw Aura
-	njPopMatrix(2u);
+	njPopMatrix(1u);
+
+	int v12 = 255 * (FrameCountIngame - 14400);
+	int v13;
+	int v14;
+	int v15;
+	int v16;
+
+
+		v13 = v12 / 18000 + 128;
+		if (v13 <= 255)
+		{
+			v14 = ((v13 | ((v13 | (v13 << 8)) << 8)) << 8) | v13;
+			if (!v14)
+			{
+				njPopMatrix(1u);
+			}
+		}
+		else
+		{
+			v14 = -1;
+		}
+		v15 = 49;
+		v16 = 0;
+		do
+		{
+			if ((*(unsigned int*)((char*)(void*)0x170CF1C + v16) & 0xFF000000) == -16777216)
+			{
+				*(void**)((char*)(void*)0x170B7AC + v16) = (void*)v14;
+			}
+			--v15;
+			v16 += 16;
+		} while (v15 > 0);
+		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSONEFFTEX_TEXLIST;
+		//DrawUV((int*)0x16F7C5C, (NJS_OBJECT*)0x70BAB4, *(float*)&FrameCountIngame);
+		njPopMatrix(1u);
+
+		njPushMatrixEx();
+
+		float v23[12];
+
+		njTranslate(CURRENT_MATRIX, 0, 0, 0);
+		njRotateZ(CURRENT_MATRIX, 55296);
+		njTranslate(CURRENT_MATRIX, 0.0, -14.0f, 0.0);
+		v23[0] = 1.2;
+		v23[1] = 0.0;
+		v23[2] = 0.0;
+		v23[3] = 0.0;
+		v23[4] = 0.0;
+		v23[5] = 1.3;
+		v23[6] = 0.0;
+		v23[7] = 0.0;
+		v23[8] = 0.0;
+		v23[9] = 0.0;
+		v23[11] = 0.0;
+		v23[10] = 1.2;
+		//sub_426E40(v18, v17, v23);
+		njTranslate(CURRENT_MATRIX, 0.0, 5.0, 0.0);
+		sub_42D340();
+		ProcessChunkModelsWithCallback((NJS_OBJECT*)0x170BACC, ProcessChunkModel);
+		njPopMatrixEx();
+	
 }
 
 void LoadSuperAura(char pID)

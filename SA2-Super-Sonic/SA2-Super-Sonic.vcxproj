@@ -163,6 +163,7 @@
     <ClInclude Include="mod.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SA2-util.h" />
+    <ClInclude Include="ss.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +181,7 @@
     </ClCompile>
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="super-sonic.cpp" />
+    <ClCompile Include="upgrades.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
