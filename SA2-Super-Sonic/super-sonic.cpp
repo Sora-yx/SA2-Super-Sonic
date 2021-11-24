@@ -274,72 +274,94 @@ void __cdecl Sonic_HealdObjectStuff(EntityData1* data1, CharObj2Base* co2) {
 	return;
 }
 
-void __cdecl DoSpinDashRotationModel(EntityData1* data1, NJS_OBJECT* SonicModel, int curAnim, SonicCharObj2* co2SS) {
+void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
-	NJS_VECTOR spinDashThing;
+	NJS_MOTION* Motion;
 
-	spinDashThing.x = 0.0;
-	spinDashThing.y = -1.0;
-	spinDashThing.z = 0.0;
+	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
+
+	int curAnim = sonicCO2->base.AnimInfo.Current;
+	NJS_OBJECT* SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[curAnim].ModelNum].Model;
+
+	if (sonicCO2->base.AnimInfo.AnimationFrame == 2)
+	{
+		Motion = sonicCO2->base.AnimInfo.Motion;
+	}
+	else
+	{
+		if ((data1->Status & Status_Ball) != 0
+			&& (sonicCO2->gap35E[2] & 0x11) != 0)
+		{
+			SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[30].ModelNum].Model;// ball form
+			curAnim = 30;
+		}
+		Motion = CharacterAnimations[sonicCO2->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
+	}
+	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10);// Draw Sonic animated
+
+}
+
+
+void __cdecl DoSpinDashRotationModel() {
+
+	NJS_VECTOR spinDashThing = { 0.0f, -1.0f, 0.0f };
+
 	njTranslateEx(&spinDashThing);
-
+	NJS_MATRIX_PTR v14 = _nj_current_matrix_ptr_;
 	njTranslate(_nj_current_matrix_ptr_, 0.0, 5.0, 0.0);
-	njRotateZ(_nj_current_matrix_ptr_, 0x2000);
-	njTranslate(_nj_current_matrix_ptr_, 0.0, -5.0, 0.0);
+	njRotateZ(v14, 0x2000);
+	njTranslate(v14, 0.0, -5.0, 0.0);
 	spinDashThing.x = 0.69999999;
 	spinDashThing.y = 1.1;
 	spinDashThing.z = 0.80000001;
 	njScaleEx(&spinDashThing);
-	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
-	NJS_MOTION* motion2 = CharacterAnimations[co2SS->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
-	njCnkMotion(SonicModel, motion2, co2SS->base.AnimInfo.field_10);
-
 }
 
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {
 
-	SonicCharObj2* co2SS; // ebx
-	EntityData1* data1; // [esp+1Ch] [ebp-30h]
-	NJS_OBJECT* SonicModel;
+	SonicCharObj2* sonicCO2 = (SonicCharObj2*)obj->Data2.Undefined;
+	EntityData1* data1 = obj->Data1.Entity;
+	char pID = sonicCO2->base.PlayerNum;
 
-	co2SS = (SonicCharObj2*)obj->Data2.Undefined;
-	data1 = obj->Data1.Entity;
-	char pID = co2SS->base.PlayerNum;
-
-	if (!co2SS)
+	if (!sonicCO2)
 		return;
 
-	if (!co2SS->TextureList)
+	if (!sonicCO2->TextureList)
 		return;
 
-	if (!isSuper)
-	{
+	if (data1->Status & Status_Ball)
+		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSEff_Texlist;
+	else
+		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)sonicCO2->TextureList;
+
+	if (!isSuper || sonicCO2->base.CharID2 != Characters_Sonic) {
 		ObjectFunc(origin, Sonic_Display_t->Target());
 		return origin(obj);
 	}
 
 	sub_486E50(pID);
 	memcpy(flt_1A51A00, _nj_current_matrix_ptr_, sizeof(flt_1A51A00));
-	SonicCO2PtrExtern = co2SS;
+	SonicCO2PtrExtern = sonicCO2;
 	sub_427040(flt_1A51A00);
 
 	if ((data1->field_6 & 2) != 0 && !Pose2PStart_PlayerNum)
 	{
-		Sonic_HealdObjectStuff(data1, &co2SS->base);
+		Sonic_HealdObjectStuff(data1, &sonicCO2->base);
 		return;
 	}
 
-	int curAnim = co2SS->base.AnimInfo.Current;
+	int curAnim = sonicCO2->base.AnimInfo.Current;
 
 	if (data1->Status & Status_Ball)
 		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSEff_Texlist;
 	else
-		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)co2SS->TextureList;
-
+		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)sonicCO2->TextureList;
 
 	njPushMatrixEx();
 	njTranslateEx(&data1->Position);
+	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
+	Sonic_HealdObjectStuff(data1, &sonicCO2->base);
 
 	if (data1->Rotation.z)
 	{
@@ -354,28 +376,19 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 		njRotateY(CURRENT_MATRIX, 0x8000 - data1->Rotation.y);
 	}
 
-	SonicModel = CharacterModels[co2SS->base.AnimInfo.Animations[curAnim].ModelNum].Model;
-	NJS_MOTION* motion = CharacterAnimations[co2SS->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
-
-	if ((data1->Status & Status_Ball) != 0
-		&& (co2SS->gap35E[2] & 0x11) != 0)
-	{
-		SonicModel = CharacterModels[co2SS->base.AnimInfo.Animations[30].ModelNum].Model; //Spin Dash Ball Form
-	}
-
 	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
 	{
-		njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
-		njCnkMotion(SonicModel, motion, co2SS->base.AnimInfo.field_10);
-		Sonic_HealdObjectStuff(data1, &co2SS->base);
-	}
-	else {
-
-		DoSpinDashRotationModel(data1, SonicModel, curAnim, co2SS);
+		DrawSonicMotion(data1, sonicCO2);
+		njPopMatrixEx();
+		return;
 	}
 
+	DoSpinDashRotationModel();
+	DrawSonicMotion(data1, sonicCO2);
 	njPopMatrixEx();
 }
+
+
 
 DataArray(char, byte_1DE4664, 0x1DE4664, 2);
 DataArray(float, flt_19EE0C0, 0x19EE0C0, 12);
@@ -503,9 +516,21 @@ DataArray(float, flt_25F02A0, 0x25F02A0, 5);
 
 DataPointer(ObjectFuncPtr, MotionDrawCallbackMaybe, 0x1A55834);
 
-void Sonic_Display_R2(ObjectMaster* obj)
-{
+DataPointer(char, byte_174AFE2, 0x174AFE2);
 
+DataPointer(char, byte_174AFE0, 0x174AFE0);
+
+DataPointer(int, dword_25F02D4, 0x25F02D4);
+DataPointer(int, dword_1DEB6A0, 0x1DEB6A0);
+
+
+DataPointer(float, dword_1DEB6A8, 0x1DEB6A8);
+
+DataPointer(float, dword_25F0268, 0x25F0268);
+
+
+void __cdecl Sonic_Display_R2(ObjectMaster* obj)
+{
 	SonicCharObj2* sonicCO2; // ebx
 	int pNumCopy; // eax
 	char v3; // cl
@@ -513,7 +538,7 @@ void Sonic_Display_R2(ObjectMaster* obj)
 	char curChar; // al
 	NJS_MATRIX_PTR* v6; // eax
 	NJS_MATRIX_PTR* currentMatrice; // esi
-	EntityData1* data; // edx
+	EntityData1* data = obj->Data1.Entity;
 	EntityData1* v9; // edi
 	float* v10; // esi
 	CollisionInfo* v11; // edx
@@ -528,285 +553,95 @@ void Sonic_Display_R2(ObjectMaster* obj)
 	double v20; // st7
 	NJS_OBJECT* LowPolyModel; // edx
 	NJS_OBJECT* LowPolyModel2; // ecx
+	NJS_MOTION* v23; // ecx
 	int curAnim; // edx
-	double v24; // st6
-	double v25; // st7
-	double v26; // st6
+	double v25; // st6
+	double v26; // st7
+	double v27; // st6
 	int upgrade2; // eax
-	NJS_OBJECT* v28; // eax
-	int v29; // esi
-	signed int v30; // ecx
-	NJS_OBJECT* v31; // ecx
-	NJS_OBJECT* v32; // eax
-	NJS_MATRIX_PTR* v33; // edi
-	NJS_OBJECT* v34; // esi
-	signed int v35; // ecx
-	NJS_OBJECT* v36; // edx
-	NJS_OBJECT* a4; // [esp+8h] [ebp-44h]
-	NJS_OBJECT* a4a; // [esp+8h] [ebp-44h]
-	NJS_OBJECT* a4b; // [esp+8h] [ebp-44h]
-	int v40; // [esp+Ch] [ebp-40h]
+	NJS_OBJECT* v29; // eax
+	int v30; // esi
+	signed int v31; // ecx
+
+	signed int v36; // ecx
+
+	int v41; // [esp+Ch] [ebp-40h]
 	EntityData1* data1; // [esp+1Ch] [ebp-30h]
 	SonicCharObj2* sonicCO2Copy; // [esp+20h] [ebp-2Ch]
-	NJS_OBJECT* v43; // [esp+24h] [ebp-28h]
-	NJS_OBJECT* v44; // [esp+24h] [ebp-28h]
-	NJS_OBJECT* v45; // [esp+24h] [ebp-28h]
+
 	int curAnim4; // [esp+28h] [ebp-24h]
-	float curAnim2; // [esp+28h] [ebp-24h]
-	float curAnim2a; // [esp+28h] [ebp-24h]
-	float curAnim2b; // [esp+28h] [ebp-24h]
-	float curAnim2c; // [esp+28h] [ebp-24h]
-	ModelPointers v51; // [esp+2Ch] [ebp-20h]
-	float* v52; // [esp+30h] [ebp-1Ch]
+	ModelPointers v52; // [esp+2Ch] [ebp-20h]
+	float* v53; // [esp+30h] [ebp-1Ch]
 	float curFrame; // [esp+30h] [ebp-1Ch]
-	float v54; // [esp+30h] [ebp-1Ch]
-	NJS_VECTOR v55; // [esp+34h] [ebp-18h] BYREF
+	float v55; // [esp+30h] [ebp-1Ch]
+	NJS_VECTOR spinDashThing; // [esp+34h] [ebp-18h] BYREF
 	NJS_VECTOR a1; // [esp+40h] [ebp-Ch] BYREF
 
 	sonicCO2 = (SonicCharObj2*)obj->Data2.Undefined;
+	SonicCharObj2* co2SS = sonicCO2;
 	data1 = obj->Data1.Entity;
-	data = data1;
 	sonicCO2Copy = sonicCO2;
-	if ((*(int*)0x174AFE2
-		|| *(int*)0x174AFE0 != 1
-		|| playID == sonicCO2->base.PlayerNum
-		|| !sub_7983F0(&data1->Position, 50.0))
-		&& (!Pose2PStart_PlayerNum || Pose2PStart_PlayerNum == sonicCO2->base.PlayerNum + 1))
-	{
 
-		pNumCopy = sonicCO2->base.PlayerNum;
-		v3 = byte_1DE4664[pNumCopy];
-		if (v3 != 1 && v3 != 5)
-		{
-			*(int*)0x25F02D8 |= 0x2400u;
-		}
-		switch (byte_174AFFD)
-		{
-		case 1:
-			getChar = playID == 0;
-			break;
-		case 2:
-			getChar = playID == 1;
-			break;
-		case 3:
-			goto LABEL_19;
-		default:
-			goto LABEL_13;
-		}
-		if (!getChar)
-		{
-		LABEL_13:
-			sub_486E50(pNumCopy);
-			goto LABEL_14;
-		}
-	LABEL_19:
-		byte_1DE4664[pNumCopy & 1] = byte_1DE4660;
-	LABEL_14:
-		memcpy(flt_1A51A00, _nj_current_matrix_ptr_, sizeof(flt_1A51A00));
-		SonicCO2PtrExtern = sonicCO2;
-		sub_427040(flt_1A51A00);
-		curChar = sonicCO2->base.CharID2;
+	if (!co2SS)
+		return;
 
-		{
-			getChar = sonicCO2->base.CharID == 0;
-			MotionDrawCallbackMaybe = (ObjectFuncPtr)0x71EAA0;         // Calc fire animation and upgrade pos I think
-			if (!getChar)
-			{
-				MotionDrawCallbackMaybe = (ObjectFuncPtr)0x71F5E0;
-			}
-		}
-		curAnim4 = sonicCO2->base.AnimInfo.Current;
-		if ((data1->field_6 & 2) != 0 && !Pose2PStart_PlayerNum)
-		{
-			goto LABEL_130;
-		}
-		currentMatrice = &_nj_current_matrix_ptr_;
-		njSetTexture(sonicCO2->TextureList);
-		njPushMatrix(CURRENT_MATRIX);
-		if (data1->Action == Action_Pulley)
-		{
-			v9 = data1;
-			a1.z = 0.0;
-			v11 = data1->Collision;
-			a1.x = 0.0;
-			v52 = (float*)&v11->CollisionArray->kind;
-			a1.y = -sonicCO2->base.PhysData.Height * 0.5;
-			njPushMatrix(flt_25F02A0);
-			v10 = (float*)_nj_current_matrix_ptr_;
-			if (data1->Rotation.z)
-			{
-				njRotateZ((float*)_nj_current_matrix_ptr_, data1->Rotation.z);
-			}
-			if (data1->Rotation.x)
-			{
-				njRotateX(v10, data1->Rotation.x);
-				v9 = data1;
-			}
-			v12 = -v9->Rotation.y;
-			if (v12)
-			{
-				njRotateY(v10, v12);
-			}
-			njCalcPoint(&a1, &v55, v10); //njcalc Vector
-			v13 = (NJS_MATRIX_PTR*)(v10 - 12);
-			njPopMatrix(1u);
-			v55.x = v52[2] + v55.x;
-			v55.y = v52[3] + v55.y;
-			v55.z = v52[4] + v55.z;
-			njTranslate(v10, v55.x, v55.y, v55.z);
-			data = data1;
-		}
-		else
-		{
-			njTranslate(*currentMatrice, data1->Position.x, data1->Position.y, data1->Position.z);
-		}
-		if (Pose2PStart_PlayerNum == sonicCO2->base.PlayerNum + 1)
-		{
-			if (data->Rotation.y == 0x8000)
-			{
-			LABEL_52:
-				njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
-				jiggle = sonicCO2->SpineJiggle;
-				if (jiggle)
-				{
-					if (sonicCO2->base.CharID2 == Characters_Amy)
-					{
-						v16 = CharacterModels[414].Model->child;
-					}
-					else
-					{
-						v17 = CharacterModels[21].Model;
-						if (sonicCO2->base.CharID)
-						{
-							v17 = CharacterModels[86].Model;
-						}
-						v16 = v17->child;
-					}
-					v51.basic = (NJS_MODEL*)v16->model;
-					v16->model = jiggle->SourceModelCopy->model;
-				}
-				if (data1->Action == 54 && sonicCO2->base.Animation)
-				{
-					SetCharaModelFlag(playID);
-					SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[sonicCO2->base.AnimInfo.Current].ModelNum].Model;
-					njCnkMotion(SonicModel, CharacterAnimations[sonicCO2->base.AnimInfo.Animations[sonicCO2->base.AnimInfo.Current].AnimNum].Animation, sonicCO2->base.AnimInfo.field_10);
-					sub_46F1E0(sonicCO2->base.PlayerNum);
-					curAnim3 = curAnim4;
-				}
-				else
-				{
-					curAnim3 = curAnim4;
-					SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[curAnim4].ModelNum].Model;
-					if (isLoading)
-					{
-						v20 = 0.0;
-					}
-					else
-					{
-						v20 = CheckDistance(*(&cameraPosMaybe + playID), &data1->Position);
-					}
-					curAnim2 = v20;
-					if (Pose2PStart_PlayerNum != sonicCO2->base.PlayerNum + 1
-						&& (SonicModel == CharacterModels[0].Model// sonic model
-							&& (LowPolyModel = CharacterModels[48].Model) != 0
-							&& (LowPolyModel2 = CharacterModels[31].Model) != 0
-							|| SonicModel == CharacterModels[65].Model// shadow model
-							&& (LowPolyModel = CharacterModels[123].Model) != 0
-							&& (LowPolyModel2 = CharacterModels[104].Model) != 0))
-					{
-						if (curAnim2 <= 150.0)
-						{
-							if (curAnim2 > 100.0 || TwoPlayerMode)
-							{
-								SonicModel = LowPolyModel2;
-							}
-						}
-						else
-						{
-							SonicModel = LowPolyModel;
-						}
-					}
-					if (sonicCO2->base.AnimInfo.AnimationFrame != 2
-						&& (data1->Status & Status_Ball) != 0
-						&& sonicCO2->base.CharID2 != Characters_MetalSonic
-						&& (sonicCO2->gap35E[2] & 0x11) != 0)
-					{
-						njSetTexture(&SSEff_Texlist);
-						SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[30].ModelNum].Model;// ball form
-						curAnim3 = 30;
-					}
+	if (!co2SS->TextureList)
+		return;
 
-
-					njCnkMotion(SonicModel, CharacterAnimations[sonicCO2->base.AnimInfo.Animations[sonicCO2->base.AnimInfo.Current].AnimNum].Animation, sonicCO2->base.AnimInfo.field_10);
-				}
-				if (curAnim3 != 30)
-				{
-					njPushMatrixEx();
-
-					upgrade2 = sonicCO2->base.Upgrades;
-					if ((upgrade2 & (Upgrades_ShadowFlameRing | Upgrades_SonicFlameRing)) != 0)
-					{
-						getChar = (upgrade2 & Upgrades_SonicFlameRing) == 0;
-						v28 = CharacterModels[25].Model;
-						if (getChar)
-						{
-							v28 = CharacterModels[100].Model;
-						}
-						v44 = v28;
-
-					}
-					njPopMatrixEx();
-				}
-
-				njPopMatrix(1u);
-			LABEL_130:
-				*(int*)0x25F02D8 &= 0xFFFFDBFF;
-				*(int*)0x25F02D4 = *(int*)0x1DEB6A0;
-				*(int*)0x1A55834 = 0;
-				*(int*)0x25F0268 = *(int*)0x1DEB6A8;
-				sub_487060(byte_1DE4400);
-				SonicHeldObjectThing(data1, &sonicCO2->base);
-				return;
-			}
-			njRotateY(_nj_current_matrix_ptr_, 0x8000 - data->Rotation.y);
-		}
-		else
-		{
-			if (data->Rotation.z)
-			{
-				njRotateZ(_nj_current_matrix_ptr_, data->Rotation.z);
-				data = data1;
-			}
-			if (data->Rotation.x)
-			{
-				njRotateX(_nj_current_matrix_ptr_, data->Rotation.x);
-				data = data1;
-			}
-			if (data->Rotation.y != 0x8000)
-			{
-				njRotateY(_nj_current_matrix_ptr_, 0x8000 - data->Rotation.y);
-			}
-			if (curAnim4 != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
-			{
-				goto LABEL_52;
-			}
-			v55.x = 0.0;
-			v55.y = -1.0;
-			v55.z = 0.0;
-			njTranslateEx(&v55);
-			v14 = (float*)_nj_current_matrix_ptr_;
-			njTranslate(_nj_current_matrix_ptr_, 0.0, 5.0, 0.0);
-			njRotateZ(v14, 0x2000);
-			njTranslate(v14, 0.0, -5.0, 0.0);
-			v55.x = 0.69999999;
-			v55.y = 1.1;
-			v55.z = 0.80000001;
-
-			njScaleEx(&v55);
-		}
-		sonicCO2 = sonicCO2Copy;
-		goto LABEL_52;
+	if (!isSuper) {
+		ObjectFunc(origin, Sonic_Display_t->Target());
+		return origin(obj);
 	}
+
+	if (data1->Status & Status_Ball)
+		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSEff_Texlist;
+	else
+		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)co2SS->TextureList;
+
+
+	SonicCO2PtrExtern = sonicCO2;
+	curAnim = sonicCO2->base.AnimInfo.Current;
+
+
+	njPushMatrix(CURRENT_MATRIX);
+	njTranslate(CURRENT_MATRIX, data1->Position.x, data1->Position.y, data1->Position.z);
+
+	if (data1->Rotation.z)
+	{
+		njRotateZ(CURRENT_MATRIX, data1->Rotation.z);
+	}
+	if (data1->Rotation.x)
+	{
+		njRotateX(CURRENT_MATRIX, data1->Rotation.x);
+	}
+	if (data1->Rotation.y != 0x8000)
+	{
+		njRotateY(CURRENT_MATRIX, 0x8000 - data1->Rotation.y);
+	}
+	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
+	{
+		DrawSonicMotion(data1, sonicCO2);
+		njPopMatrix(1u);
+		return;
+	}
+
+	spinDashThing.x = 0.0;
+	spinDashThing.y = -1.0;
+	spinDashThing.z = 0.0;
+	njTranslateEx(&spinDashThing);
+	v14 = _nj_current_matrix_ptr_;
+	njTranslate(_nj_current_matrix_ptr_, 0.0, 5.0, 0.0);
+	njRotateZ(v14, 0x2000);
+	njTranslate(v14, 0.0, -5.0, 0.0);
+	spinDashThing.x = 0.69999999;
+	spinDashThing.y = 1.1;
+	spinDashThing.z = 0.80000001;
+	njScaleEx(&spinDashThing);
+
+	Sonic_HealdObjectStuff(data1, &sonicCO2->base);
+	sonicCO2 = sonicCO2Copy;
+	DrawSonicMotion(data1, sonicCO2);
+	njPopMatrix(1u);
 }
 
 void LoadSonic_r(int playerNum) {
@@ -820,7 +655,7 @@ void LoadSonic_r(int playerNum) {
 
 void init_SuperSonic() {
 
-
+	WriteData<6>((int*)0x720207, 0x90);
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);

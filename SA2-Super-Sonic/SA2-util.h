@@ -1,6 +1,6 @@
 #pragma once
 
-FunctionPointer(void, DrawMotionAndObject, (NJS_OBJECT* a1, float a2), 0x780870);
+
 FunctionPointer(void, DrawObject, (NJS_OBJECT* a1), 0x42E730);
 
 ObjectFunc(SpinDashAura_Display, 0x756040);
