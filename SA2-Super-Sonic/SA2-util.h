@@ -121,6 +121,21 @@ static inline void sub_46F1E0(int pID)
 }
 
 
+//void __usercall drawUV(NJS_TEXLIST* a1@<esi>, NJS_OBJECT* obj, float FrameCounter)
+static const void* const drawUV_ptr = (void*)0x795790;
+static inline void DrawUV(NJS_TEXLIST* a1, NJS_OBJECT* obj, float FrameCounter)
+{
+	__asm
+	{
+		push[FrameCounter]
+		push[obj]
+		mov esi, [a1]
+		call drawUV_ptr
+		add esp, 4
+	}
+}
+
+
 FunctionPointer(void, njReleaseTexture, (NJS_TEXLIST* a1), 0x77F9F0);
 
 
@@ -137,3 +152,5 @@ DataPointer(char, isLoading, 0x174AFC0);
 DataPointer(NJS_VECTOR*, cameraPosMaybe, 0x01DD92B0);
 
 DataPointer(char, TimerStopped, 0x174afda);
+
+ObjectFunc(SuperAura, 0x49CD50);

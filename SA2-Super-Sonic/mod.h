@@ -72,3 +72,4 @@ void RestoreMusic();
 void Load_SuperPhysics(EntityData1* data);
 void init_MusicHack();
 void initPhysicsHack();
+void LoadSuperAura(char pID);

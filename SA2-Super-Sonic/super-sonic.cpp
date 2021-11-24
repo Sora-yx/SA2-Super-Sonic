@@ -54,6 +54,7 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
 	Load_SuperPhysics(data);
 	DoNextAction_r(playerID, 9, 0);
+	LoadSuperAura(playerID);
 	isSuper = true;
 }
 
@@ -100,7 +101,7 @@ void unSuper(unsigned char player) {
 	co2S->TextureList = 0;
 	co2S->TextureList = LoadCharTextures("SONICTEX");
 	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
-
+	MainCharacter[player]->DisplaySub_Delayed4 = nullptr;
 	isSuper = false;
 
 	if (IsIngame())

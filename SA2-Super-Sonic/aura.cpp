@@ -348,12 +348,65 @@ void __cdecl HomingDashAura_Display_r(ObjectMaster* a1)
 	}
 }
 
+DataPointer(WORD, word_170ACEE, 0x170ACEE);
+void SuperAura_r(ObjectMaster* obj) {
+
+	SonicCharObj2* co2 = (SonicCharObj2*)obj->Data2.Undefined;
+	EntityData1* data = obj->Data1.Entity;
+	NJS_OBJECT* v24;
+
+	if (co2->base.AnimInfo.Current == 54 || co2->base.AnimInfo.Next == 54)
+	{
+		obj->DisplaySub_Delayed4 = nullptr;
+		return;
+	}
+
+	njSetTexture(co2->TextureList);
+
+	njPushMatrix(CURRENT_MATRIX);
+
+	njTranslate(CURRENT_MATRIX, data->Position.x, data->Position.y, data->Position.z);
+	sub_42D340();
+	if (data->Rotation.z)
+	{
+		njRotateZ(CURRENT_MATRIX, data->Rotation.z);
+	}
+	if (data->Rotation.x)
+	{
+		njRotateX(CURRENT_MATRIX, data->Rotation.x);
+	}
+	if (data->Rotation.y != 0x8000)
+	{
+		njRotateY(CURRENT_MATRIX, 0x8000 - data->Rotation.y);
+	}
+	njScale(CURRENT_MATRIX, data->Scale.x, data->Scale.y, data->Scale.z);
+
+	njSetTexture(&SSONEFFTEX_TEXLIST);
+
+	word_170ACEE = word_170ACEE & 0xC000 | ((co2->base.CharID != Characters_SuperShadow ? 0 : 6)
+		+ 3);
+
+	njPushMatrix(CURRENT_MATRIX);
+	njTranslate(CURRENT_MATRIX, 0.0, -3.0, 0.0);
+	sub_42D340();
+	ProcessChunkModelsWithCallback((NJS_OBJECT*)0x170B47C, ProcessChunkModel);// Draw Aura
+	njPopMatrix(2u);
+}
+
+void LoadSuperAura(char pID)
+{
+	MainCharacter[pID]->DisplaySub_Delayed4 = SuperAura_r;
+	return;
+}
+
 //Serie of hack to make the aura display to a different texture when Super Sonic.
 void initAura_Hack() {
 
+	//regular sonic aura
 	DoSpinDashAura_t = new Trampoline((int)0x7562A0, (int)0x7562A7, DoSpinDashAuraASM);
 	DoJumpAura_t = new Trampoline((int)0x756AE0, (int)0x756AE5, DoJumpAuraASM);
 	DoHomingAura_t = new Trampoline((int)0x7566C0, (int)0x7566C5, DoHomingAuraASM);
 	HomingDashAura_Display_t = new Trampoline((int)0x757040, (int)0x757045, HomingDashAura_Display_r);
+
 	return;
 }
