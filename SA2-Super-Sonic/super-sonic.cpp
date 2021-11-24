@@ -528,120 +528,59 @@ DataPointer(float, dword_1DEB6A8, 0x1DEB6A8);
 
 DataPointer(float, dword_25F0268, 0x25F0268);
 
+FunctionPointer(void, PlayerAfterImageMaybe, (NJS_OBJECT* a1, int a2, NJS_TEXLIST* a3, float a4, char a5), 0x476C20);
 
-void __cdecl Sonic_Display_R2(ObjectMaster* obj)
+void SonicDisplayAfterImage_r(EntityData1* a1, CharObj2Base* data, SonicCharObj2* a3)
 {
-	SonicCharObj2* sonicCO2; // ebx
-	int pNumCopy; // eax
-	char v3; // cl
-	BOOL getChar; // zf
-	char curChar; // al
-	NJS_MATRIX_PTR* v6; // eax
-	NJS_MATRIX_PTR* currentMatrice; // esi
-	EntityData1* data = obj->Data1.Entity;
-	EntityData1* v9; // edi
-	float* v10; // esi
-	CollisionInfo* v11; // edx
-	Angle v12; // edi
-	NJS_MATRIX_PTR* v13; // eax
-	float* v14; // ebx
-	JiggleInfo* jiggle; // eax
-	NJS_OBJECT* v16; // ecx
-	NJS_OBJECT* v17; // ecx
-	int curAnim3; // edi
-	NJS_OBJECT* SonicModel; // esi
-	double v20; // st7
-	NJS_OBJECT* LowPolyModel; // edx
-	NJS_OBJECT* LowPolyModel2; // ecx
-	NJS_MOTION* v23; // ecx
-	int curAnim; // edx
-	double v25; // st6
-	double v26; // st7
-	double v27; // st6
-	int upgrade2; // eax
-	NJS_OBJECT* v29; // eax
-	int v30; // esi
-	signed int v31; // ecx
+	NJS_OBJECT* Model; // edi
 
-	signed int v36; // ecx
-
-	int v41; // [esp+Ch] [ebp-40h]
-	EntityData1* data1; // [esp+1Ch] [ebp-30h]
-	SonicCharObj2* sonicCO2Copy; // [esp+20h] [ebp-2Ch]
-
-	int curAnim4; // [esp+28h] [ebp-24h]
-	ModelPointers v52; // [esp+2Ch] [ebp-20h]
-	float* v53; // [esp+30h] [ebp-1Ch]
-	float curFrame; // [esp+30h] [ebp-1Ch]
-	float v55; // [esp+30h] [ebp-1Ch]
-	NJS_VECTOR spinDashThing; // [esp+34h] [ebp-18h] BYREF
-	NJS_VECTOR a1; // [esp+40h] [ebp-Ch] BYREF
-
-	sonicCO2 = (SonicCharObj2*)obj->Data2.Undefined;
-	SonicCharObj2* co2SS = sonicCO2;
-	data1 = obj->Data1.Entity;
-	sonicCO2Copy = sonicCO2;
-
-	if (!co2SS)
+	if (isSuper && !data->CharID2)
+	{
 		return;
-
-	if (!co2SS->TextureList)
-		return;
-
-	if (!isSuper) {
-		ObjectFunc(origin, Sonic_Display_t->Target());
-		return origin(obj);
 	}
 
-	if (data1->Status & Status_Ball)
-		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSEff_Texlist;
-	else
-		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)co2SS->TextureList;
-
-
-	SonicCO2PtrExtern = sonicCO2;
-	curAnim = sonicCO2->base.AnimInfo.Current;
-
-
-	njPushMatrix(CURRENT_MATRIX);
-	njTranslate(CURRENT_MATRIX, data1->Position.x, data1->Position.y, data1->Position.z);
-
-	if (data1->Rotation.z)
+	if ((FrameCountIngame & 1) == 0 && !data->CharID && CharacterModels[30].Model)
 	{
-		njRotateZ(CURRENT_MATRIX, data1->Rotation.z);
-	}
-	if (data1->Rotation.x)
-	{
-		njRotateX(CURRENT_MATRIX, data1->Rotation.x);
-	}
-	if (data1->Rotation.y != 0x8000)
-	{
-		njRotateY(CURRENT_MATRIX, 0x8000 - data1->Rotation.y);
-	}
-	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
-	{
-		DrawSonicMotion(data1, sonicCO2);
+		Model = CharacterModels[30].Model;
+		njPushMatrix(flt_25F02A0);
+		njTranslateEx(&a1->Position);
+		if (a1->Rotation.z)
+		{
+			njRotateZ(CURRENT_MATRIX, a1->Rotation.z);
+		}
+		if (a1->Rotation.x)
+		{
+			njRotateX(CURRENT_MATRIX, a1->Rotation.x);
+		}
+		if (a1->Rotation.y != 0x8000)
+		{
+			njRotateY(CURRENT_MATRIX, 0x8000 - a1->Rotation.y);
+		}
+		if (!TwoPlayerMode)
+		{
+			PlayerAfterImageMaybe(Model, 0, a3->TextureList, 0.0, data->PlayerNum);
+
+		}
 		njPopMatrix(1u);
-		return;
 	}
+}
 
-	spinDashThing.x = 0.0;
-	spinDashThing.y = -1.0;
-	spinDashThing.z = 0.0;
-	njTranslateEx(&spinDashThing);
-	v14 = _nj_current_matrix_ptr_;
-	njTranslate(_nj_current_matrix_ptr_, 0.0, 5.0, 0.0);
-	njRotateZ(v14, 0x2000);
-	njTranslate(v14, 0.0, -5.0, 0.0);
-	spinDashThing.x = 0.69999999;
-	spinDashThing.y = 1.1;
-	spinDashThing.z = 0.80000001;
-	njScaleEx(&spinDashThing);
+static void __declspec(naked) SonicDisplayAfterImageASM()
+{
+	__asm
+	{
+		push[esp + 08h] // a3
+		push[esp + 08h] // data
+		push esi // a1
 
-	Sonic_HealdObjectStuff(data1, &sonicCO2->base);
-	sonicCO2 = sonicCO2Copy;
-	DrawSonicMotion(data1, sonicCO2);
-	njPopMatrix(1u);
+		// Call your __cdecl function here:
+		call SonicDisplayAfterImage_r
+
+		pop esi // a1
+		add esp, 4 // data
+		add esp, 4 // a3
+		retn
+	}
 }
 
 void LoadSonic_r(int playerNum) {
@@ -655,7 +594,7 @@ void LoadSonic_r(int playerNum) {
 
 void init_SuperSonic() {
 
-	WriteData<6>((int*)0x720207, 0x90);
+	WriteJump((void*)0x71E460, SonicDisplayAfterImageASM);
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
