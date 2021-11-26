@@ -33,7 +33,6 @@ struct auraStruct {
 };
 
 enum SuperSonicM {
-	superSonicSetTask,
 	playerInputCheck,
 	superSonicTransfo,
 	superSonicTransition,

@@ -5,7 +5,7 @@ Trampoline* Sonic_Main_t;
 Trampoline* Sonic_Display_t;
 Trampoline* LoadSonic_t;
 
-ObjectMaster* superSonicManagerPtr = nullptr;
+
 
 bool isSuper = false;
 
@@ -102,6 +102,8 @@ void SubRings(unsigned char player, EntityData1* data) {
 
 void unSuper(unsigned char player) {
 
+	SuperSonicHack_Display(false);
+
 	if (AlwaysSuperSonic)
 		return;
 
@@ -115,7 +117,6 @@ void unSuper(unsigned char player) {
 	if (co2->CharID == Characters_Sonic)
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
-	SuperSonicHack_Display(false);
 	data->Status = 0;
 	co2->Upgrades &= ~Upgrades_SuperSonic;
 	co2->Powerups &= ~Powerups_Invincibility;
@@ -180,10 +181,6 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 	return false;
 }
 
-void SuperSonic_Manager_Delete(ObjectMaster* obj)
-{
-	superSonicManagerPtr = nullptr;
-}
 
 void SuperSonic_Manager(ObjectMaster* obj)
 {
@@ -206,10 +203,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 	switch (data->Action)
 	{
-	case superSonicSetTask:
-		obj->DeleteSub = SuperSonic_Manager_Delete;
-		data->Action++;
-		break;
+
 	case playerInputCheck:
 
 		if (CheckTransform_Input(playerID, player) || AlwaysSuperSonic)
@@ -252,14 +246,12 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 void LoadSuperSonicManager(char playNum) {
 
-	if (superSonicManagerPtr)
-		return;
 
 	int id = MainCharObj2[playNum]->CharID;
 	int id2 = MainCharObj2[playNum]->CharID2;
 
 	if (id == Characters_Sonic && id2 == Characters_Sonic) {
-		superSonicManagerPtr = LoadObject(1, "SuperSonic_Manager", SuperSonic_Manager, LoadObj_Data1);
+		ObjectMaster* superSonicManagerPtr = LoadObject(1, "SuperSonic_Manager", SuperSonic_Manager, LoadObj_Data1);
 
 		if (superSonicManagerPtr)
 		{
@@ -290,6 +282,7 @@ void Sonic_Main_r(ObjectMaster* obj)
 	SonicCharObj2* sco2 = (SonicCharObj2*)obj->Data2.Character;
 
 	SuperSonic_PlayVictoryAnimation(data1, co2);
+
 
 	ObjectFunc(origin, Sonic_Main_t->Target());
 	origin(obj);
@@ -366,6 +359,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)obj->Data2.Undefined;
 	EntityData1* data1 = obj->Data1.Entity;
 	char pID = sonicCO2->base.PlayerNum;
+	char char2 = sonicCO2->base.CharID2;
 
 	if (!sonicCO2->TextureList)
 		return;
@@ -374,12 +368,12 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	ObjectFunc(origin, Sonic_Display_t->Target());
 	origin(obj);
 
-	if (!isSuper)
+	if (!isSuper || char2 != Characters_Sonic)
 		return;
 
-	memcpy(&flt_1A51A00, CURRENT_MATRIX, 0x30u);
+	/**memcpy(&flt_1A51A00, CURRENT_MATRIX, 0x30u);
 	SonicCO2PtrExtern = sonicCO2;
-	sub_427040(flt_1A51A00);
+	sub_427040(flt_1A51A00);*/
 
 	UpgradeDrawCallback = SuperSonic_Callback_r;
 
