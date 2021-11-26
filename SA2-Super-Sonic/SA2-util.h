@@ -146,8 +146,15 @@ DataPointer(char, byte_1DE4400, 0x1DE4400);
 
 //stuff
 DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
-DataArray(float, flt_1A51A00, 0x1A51A00, 12);
-FunctionPointer(void, sub_427040, (float* a1), 0x427040);
+//DataArray(NJS_MATRIX, flt_1A51A00, 0x1A51A00, 12);
+
+typedef float NJS_MATRIX2[12];
+
+//DataArray(Float, flt_1A51A00, 0x1A51A00, 12);
+
+DataPointer(NJS_MATRIX2, flt_1A51A00, 0x1A51A00);
+
+FunctionPointer(void, sub_427040, (NJS_MATRIX2 a1), 0x427040);
 DataPointer(char, isLoading, 0x174AFC0);
 DataPointer(NJS_VECTOR*, cameraPosMaybe, 0x01DD92B0);
 
@@ -172,3 +179,69 @@ static inline void sub_426420(int a1, int a2)
 		add esp, 4
 	}
 }
+
+//void __usercall sub_426E40(float* a1@<eax>, float* a2@<edx>, float* a3@<ecx>
+static const void* const sub_426E40_ptr = (void*)0x426E40;
+static inline void sub_426E40(float* a1, float* a2, float* a3)
+{
+	__asm
+	{
+		mov ecx, a3
+		mov edx, a2
+		mov eax, a1
+		call sub_426E40_ptr
+	}
+}
+
+
+static const void* const njCalcPointPtr_ = (void*)0x426CC0;
+static inline void njCalcPoint_(float* matrix, NJS_VECTOR* v, NJS_VECTOR* transform, char additive)
+{
+	__asm
+	{
+		movzx eax, [additive]
+		push eax
+		mov ecx, [transform]
+		mov edx, [v]
+		mov eax, [matrix]
+		call njCalcPointPtr_
+		add esp, 4;
+	}
+}
+
+static const void* const njCalcVectorPtr_ = (void*)0x4273B0;
+static inline void njCalcVector_(NJS_VECTOR* transform, NJS_VECTOR* v, NJS_MATRIX_PTR m)
+{
+	__asm
+	{
+		mov ecx, [m]
+		mov edx, [v]
+		mov eax, [transform]
+		call njCalcVectorPtr_
+	}
+}
+
+static const void* const njDrawObjMotionPtr_ = (void*)0x780870;
+static inline void DrawMotionAndObject(NJS_MOTION* mtn, NJS_OBJECT* obj, float frame)
+{
+	__asm
+	{
+		push[frame]
+		push[obj]
+		mov ecx, mtn
+		call njDrawObjMotionPtr_
+		add esp, 8
+	}
+}
+
+DataPointer(NJS_MATRIX, sonic_RightHandMatrix, 0x1A51A3C);
+DataPointer(NJS_MATRIX, sonic_LeftHandMatrix, 0x1A51AA0);
+DataPointer(NJS_MATRIX, sonic_LeftFootMatrix, 0x1A51A6C);
+DataPointer(NJS_MATRIX, sonic_RightFootMatrix, 0x1A519D0);
+
+
+DataPointer(int, dword_25F02D8, 0x25F02D8);
+DataPointer(int, dword_1DEB6A4, 0x1DEB6A4);
+
+DataArray(float, flt_25F02A0, 0x25F02A0, 5);
+FunctionPointer(void, Sonic_CallBack, (NJS_OBJECT* mdl), 0x71EAA0);

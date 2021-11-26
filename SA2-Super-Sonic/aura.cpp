@@ -431,7 +431,7 @@ void SuperAura_r(ObjectMaster* obj) {
 
 		float v23[12];
 
-		njTranslate(CURRENT_MATRIX, 0, 0, 0);
+		njTranslate(CURRENT_MATRIX, co2->HeadNodePos.x, co2->HeadNodePos.y, co2->HeadNodePos.z);
 		njRotateZ(CURRENT_MATRIX, 55296);
 		njTranslate(CURRENT_MATRIX, 0.0, -14.0f, 0.0);
 		v23[0] = 1.2;
@@ -446,7 +446,7 @@ void SuperAura_r(ObjectMaster* obj) {
 		v23[9] = 0.0;
 		v23[11] = 0.0;
 		v23[10] = 1.2;
-		//sub_426E40(v18, v17, v23);
+		sub_426E40(CURRENT_MATRIX, CURRENT_MATRIX, v23);
 		njTranslate(CURRENT_MATRIX, 0.0, 5.0, 0.0);
 		sub_42D340();
 		ProcessChunkModelsWithCallback((NJS_OBJECT*)0x170BACC, ProcessChunkModel);
@@ -460,8 +460,9 @@ void LoadSuperAura(char pID)
 	return;
 }
 
+
 //Serie of hack to make the aura display to a different texture when Super Sonic.
-void initAura_Hack() {
+void init_AuraHack() {
 
 	//regular sonic aura
 	DoSpinDashAura_t = new Trampoline((int)0x7562A0, (int)0x7562A7, DoSpinDashAuraASM);

@@ -1,7 +1,7 @@
 #include "pch.h"
 
 extern NJS_TEXLIST Sonic_Texlist;
-
+Trampoline* Sonic_CallBack_t;
 
 enum SuperSonicModel {
     SSRoot = 328,
@@ -19,8 +19,6 @@ enum SuperSonicModel {
     SSLeftArm,
     SSRightHandParent2 = 351, 
     SSLeftHandParent2,
-
-
 };
 
 static NJS_MATRIX SS_RightHandMatrice;
@@ -29,10 +27,7 @@ static NJS_MATRIX SS_LeftFootMatrice;
 static NJS_MATRIX SS_RightFootMatrice;
 
 void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
-
-    if (!isSuper)
-        return;
-
+    
 
     SonicCharObj2* co2; // esi
     NJS_VECTOR v3; // ecx
@@ -51,42 +46,45 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
     NJS_VECTOR v20; // eax
     NJS_VECTOR v22; // ecx
     NJS_VECTOR v23; // eax
-    SonicCharObj2* co2Copy; // esi
     NJS_VECTOR v25; // ecx
     NJS_VECTOR v26; // eax
     ObjectMaster* heldObj; // edx
-    float v28; // eax
+    float heldObjSomething; // eax
     NJS_MATRIX_PTR* ModelMatrice; // edi
     NJS_VECTOR result; // [esp+4h] [ebp-18h] BYREF
     NJS_VECTOR posResult; // [esp+10h] [ebp-Ch] BYREF
 
     char pNum = SonicCO2PtrExtern->base.PlayerNum;
+    char char2 = SonicCO2PtrExtern->base.CharID2;
 
+    if (!isSuper || char2 != Characters_Sonic)
+    {
+        FunctionPointer(void, original, (NJS_OBJECT * mdl), Sonic_CallBack_t->Target());
+        return original(mdl);
+    }
 
     posResult.z = 0.0;
     posResult.y = 0.0;
     posResult.x = 0.0;
-
-
-    if (mdl == CharacterModels[SSRoot2].Model || mdl == CharacterModels[6].Model->child) //6 is jumpball
+    if (mdl == CharacterModels[SSRoot2].Model || mdl == CharacterModels[6].Model->child)
     {
         result.x = 1.0;
         result.z = 0.0;
         result.y = 0.0;
-        njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-        co2 = SonicCO2PtrExtern;
-        njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap224[12], &v3, 0);
-        njCalcPoint(&result, &result, CURRENT_MATRIX);
-        njCalcPoint(&v4, (NJS_VECTOR*)&co2->gap224[168], flt_1A51A00);
+        njCalcPoint_(CURRENT_MATRIX, &v3, &posResult, 0);
+        co2 = SonicCO2PtrExtern;  
+        njCalcPoint_(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap224[12], &v3, 0);
+        njCalcVector_(&result, &v4, CURRENT_MATRIX);
+        njCalcVector_(&v4, (NJS_VECTOR*)&co2->gap224[168], flt_1A51A00);
         goto LABEL_48;
     }
     if (mdl == CharacterModels[SSRoot3].Model)
     {
-        if (MainCharObj1[pNum]->Action != 1)
+        if (MainCharObj1[SonicCO2PtrExtern->base.PlayerNum]->Action != 1)
         {
             goto LABEL_48;
         }
-        v28 = *(float*)&SonicCO2PtrExtern->base.field_2C;
+        heldObjSomething = *(float*)&SonicCO2PtrExtern->base.field_2C;
     }
     else
     {
@@ -94,7 +92,7 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
         {
             if (mdl == CharacterModels[SSLeftArm].Model)
             {
-                if ((MainCharObj1[pNum]->Status & Status_HoldObject) != 0)
+                if ((MainCharObj1[SonicCO2PtrExtern->base.PlayerNum]->Status & Status_HoldObject) != 0)
                 {
                     heldObj = SonicCO2PtrExtern->base.HeldObject;
                     if (heldObj->EntityData2->field_30)
@@ -108,88 +106,88 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
                 result.x = 1.0;
                 result.z = 0.0;
                 result.y = 0.0;
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, &SonicCO2PtrExtern->HeadNodePos, &v25, 0);
-                njCalcPoint(&result, &result, CURRENT_MATRIX);
-                njCalcPoint(&v26, (NJS_VECTOR*)&co2Copy->gap224[144], flt_1A51A00);
+                njCalcPoint_(CURRENT_MATRIX, &v25, &posResult, 0);
+                co2 = SonicCO2PtrExtern;
+                njCalcPoint_(flt_1A51A00, &SonicCO2PtrExtern->HeadNodePos, &v25, 0);
+                njCalcVector_(&result, &v26, CURRENT_MATRIX);
+                njCalcVector_(&v26, (NJS_VECTOR*)&co2->gap224[144], flt_1A51A00);
             }
             else if (mdl == CharacterModels[SSHead2].Model)
             {
                 result.x = 1.0;
                 result.z = 0.0;
                 result.y = 0.0;
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)SonicCO2PtrExtern->gap224, &v22, 0);
-                njCalcPoint(&result, &result, CURRENT_MATRIX);
-                njCalcPoint(&v23, (NJS_VECTOR*)&co2Copy->gap224[156], flt_1A51A00);
+                njCalcPoint_(CURRENT_MATRIX, &v22, &posResult, 0);
+                co2 = SonicCO2PtrExtern;
+                njCalcPoint_(flt_1A51A00, (NJS_VECTOR*)SonicCO2PtrExtern->gap224, &v22, 0);
+                njCalcVector_(&result, &v23, CURRENT_MATRIX);
+                njCalcVector_(&v23, (NJS_VECTOR*)&co2->gap224[156], flt_1A51A00);
             }
             else if (mdl == CharacterModels[SSRightHandParent].Model)
             {
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[40], &v17, 0);
+                njCalcPoint_(CURRENT_MATRIX, &v17, &posResult, 0);
+                co2 = SonicCO2PtrExtern;
+                njCalcPoint_(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[40], &v17, 0);
                 result.z = 1.0;
                 result.y = 0.0;
                 result.x = 0.0;
-                njCalcPoint(&result, &result, CURRENT_MATRIX);
-                njCalcPoint(&v18, (NJS_VECTOR*)&co2Copy->gap224[72], flt_1A51A00);
+                njCalcVector_(&result, &v18, CURRENT_MATRIX);
+                njCalcVector_(&v18, (NJS_VECTOR*)&co2->gap224[72], flt_1A51A00);
                 result.y = -1.0;
                 result.x = 0.0;
                 result.z = 0.0;
-                njCalcPoint(&v19, &v19, CURRENT_MATRIX);
-                njCalcPoint(&v20, (NJS_VECTOR*)&co2Copy->gap224[96], flt_1A51A00);
+                njCalcVector_(&v19, &v19, CURRENT_MATRIX);
+                njCalcVector_(&v20, (NJS_VECTOR*)&co2->gap224[96], flt_1A51A00);
             }
             else if (mdl == CharacterModels[SSLeftHandParent].Model)
             {
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[52], &v12, 0);
+                njCalcPoint_(CURRENT_MATRIX, &v12, &posResult, 0);
+                njCalcPoint_(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[52], &v12, 0);
                 result.z = -1.0;
                 result.y = 0.0;
                 result.x = 0.0;
-                njCalcPoint(&result, &result, CURRENT_MATRIX);
-                njCalcPoint(&v13, (NJS_VECTOR*)&co2Copy->gap224[84], flt_1A51A00);
+                co2 = SonicCO2PtrExtern;
+                njCalcVector_(&result, &v13, CURRENT_MATRIX);
+                njCalcVector_(&v13, (NJS_VECTOR*)&co2->gap224[84], flt_1A51A00);
                 result.y = -1.0;
                 result.x = 0.0;
                 result.z = 0.0;
-                njCalcPoint(&v14, &v14, CURRENT_MATRIX);
-                njCalcPoint(&v15, (NJS_VECTOR*)&co2Copy->gap224[108], flt_1A51A00);
+                njCalcVector_(&v14, &v14, CURRENT_MATRIX);
+                njCalcVector_(&v15, (NJS_VECTOR*)&co2->gap224[108], flt_1A51A00);
             }
             else if (mdl == CharacterModels[SSRightFootToe].Model)
             {
                 result.x = -1.0;
                 result.z = 0.0;
                 result.y = 0.0;
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[64], &v9, 0);
-                njCalcPoint(&result, &result, CURRENT_MATRIX);
-                njCalcPoint(&v10, (NJS_VECTOR*)&co2Copy->gap224[120], flt_1A51A00);
+                njCalcPoint_(CURRENT_MATRIX, &v9, &posResult, 0);
+                co2 = SonicCO2PtrExtern;
+                njCalcPoint_(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[64], &v9, 0);
+                njCalcVector_(&result, &v10, CURRENT_MATRIX);
+                njCalcVector_(&v10, (NJS_VECTOR*)&co2->gap224[120], flt_1A51A00);
             }
             else if (mdl == CharacterModels[SSLeftFootToe].Model)
             {
                 result.x = -1.0;
                 result.z = 0.0;
                 result.y = 0.0;
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[76], &v6, 0);
-                njCalcPoint(&result, &result, CURRENT_MATRIX);
-                njCalcPoint(&v7, (NJS_VECTOR*)&co2Copy->gap224[132], flt_1A51A00);
+                njCalcPoint_(CURRENT_MATRIX, &v6, &posResult, 0);
+                co2 = SonicCO2PtrExtern;
+                njCalcPoint_(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[76], &v6, 0);
+                njCalcVector_(&result, &v7, CURRENT_MATRIX);
+                njCalcVector_(&v7, (NJS_VECTOR*)&co2->gap224[132], flt_1A51A00);
             }
             goto LABEL_48;
         }
-        if ((MainCharObj1[pNum]->Status & Status_HoldObject) == 0)
+        if ((MainCharObj1[SonicCO2PtrExtern->base.PlayerNum]->Status & Status_HoldObject) == 0)
         {
             goto LABEL_48;
         }
-        v28 = SonicCO2PtrExtern->base.HeldObject->EntityData2->field_30;
+        heldObjSomething = SonicCO2PtrExtern->base.HeldObject->EntityData2->field_30;
     }
-    if (v28 != 0.0)
+    if (heldObjSomething != 0.0)
     {
-        njRotateX(CURRENT_MATRIX, v28);
+        njRotateX(CURRENT_MATRIX, (heldObjSomething));
     }
 LABEL_48:
     if (mdl == CharacterModels[SSRightHandParent2].Model)
@@ -212,11 +210,6 @@ LABEL_48:
         memcpy(&SS_LeftFootMatrice, CURRENT_MATRIX, 0x30u);
     }
 }
-
-DataPointer(int, dword_25F02D8, 0x25F02D8);
-
-DataPointer(int, dword_1DEB6A4, 0x1DEB6A4);
-
 
 
 void DisplaySuperSonic_Upgrade(SonicCharObj2* sonicCO2) {
@@ -303,192 +296,6 @@ void DisplaySuperSonic_Upgrade(SonicCharObj2* sonicCO2) {
 }
 
 
-
-DataPointer(NJS_MATRIX, sonic_RightHandMatrix, 0x1A51A3C);
-DataPointer(NJS_MATRIX, sonic_LeftHandMatrix, 0x1A51AA0);
-DataPointer(NJS_MATRIX, sonic_LeftFootMatrix, 0x1A51A6C);
-DataPointer(NJS_MATRIX, sonic_RightFootMatrix, 0x1A519D0);
-
-
-void Sonic_Callback_r(NJS_OBJECT* mdl) {
-
-
-    NJS_MATRIX_PTR* matrice; // ebx
-    SonicCharObj2* co2; // esi
-    NJS_VECTOR v3; // ecx
-    NJS_VECTOR v4; // eax
-    NJS_VECTOR v6; // ecx
-    NJS_VECTOR v7; // eax
-    NJS_VECTOR v9; // ecx
-    NJS_VECTOR v10; // eax
-    NJS_VECTOR v12; // ecx
-    NJS_VECTOR v13; // eax
-    NJS_VECTOR v14; // eax
-    NJS_VECTOR v15; // eax
-    NJS_VECTOR v17; // ecx
-    NJS_VECTOR v18; // eax
-    NJS_VECTOR v19; // eax
-    NJS_VECTOR v20; // eax
-    NJS_VECTOR v22; // ecx
-    NJS_VECTOR v23; // eax
-    SonicCharObj2* co2Copy; // esi
-    NJS_VECTOR v25; // ecx
-    NJS_VECTOR v26; // eax
-    ObjectMaster* heldObj; // edx
-    float v28; // eax
-    NJS_MATRIX_PTR* ModelMatrice; // edi
-    NJS_VECTOR result; // [esp+4h] [ebp-18h] BYREF
-    NJS_VECTOR posResult; // [esp+10h] [ebp-Ch] BYREF
-
-    char pNum = SonicCO2PtrExtern->base.PlayerNum;
-
-    matrice = &_nj_current_matrix_ptr_;
-    posResult.z = 0.0;
-    posResult.y = 0.0;
-    posResult.x = 0.0;
-
-
-    if (mdl == CharacterModels[1].Model || mdl == CharacterModels[6].Model->child) //6 is jumpball
-    {
-        result.x = 1.0;
-        result.z = 0.0;
-        result.y = 0.0;
-        njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-        co2 = SonicCO2PtrExtern;
-        njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap224[12], &v3, 0);
-        njCalcPoint(&result, &result, (float*)matrice);
-        njCalcPoint(&v4, (NJS_VECTOR*)&co2->gap224[168], flt_1A51A00);
-        goto LABEL_48;
-    }
-    if (mdl == CharacterModels[2].Model)
-    {
-        if (MainCharObj1[pNum]->Action != 1)
-        {
-            goto LABEL_48;
-        }
-        v28 = *(float*)&SonicCO2PtrExtern->base.field_2C;
-    }
-    else
-    {
-        if (mdl != CharacterModels[17].Model)
-        {
-            if (mdl == CharacterModels[18].Model)
-            {
-                if ((MainCharObj1[pNum]->Status & Status_HoldObject) != 0)
-                {
-                    heldObj = SonicCO2PtrExtern->base.HeldObject;
-                    if (heldObj->EntityData2->field_30)
-                    {
-                        njRotateX(CURRENT_MATRIX, -(heldObj->EntityData2->field_30));
-                    }
-                }
-            }
-            else if (mdl == CharacterModels[3].Model)
-            {
-                result.x = 1.0;
-                result.z = 0.0;
-                result.y = 0.0;
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, &SonicCO2PtrExtern->HeadNodePos, &v25, 0);
-                njCalcPoint(&result, &result, (float*)matrice);
-                njCalcPoint(&v26, (NJS_VECTOR*)&co2Copy->gap224[144], flt_1A51A00);
-            }
-            else if (mdl == CharacterModels[8].Model)
-            {
-                result.x = 1.0;
-                result.z = 0.0;
-                result.y = 0.0;
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)SonicCO2PtrExtern->gap224, &v22, 0);
-                njCalcPoint(&result, &result, (float*)matrice);
-                njCalcPoint(&v23, (NJS_VECTOR*)&co2Copy->gap224[156], flt_1A51A00);
-            }
-            else if (mdl == CharacterModels[15].Model)
-            {
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[40], &v17, 0);
-                result.z = 1.0;
-                result.y = 0.0;
-                result.x = 0.0;
-                njCalcPoint(&result, &result, (float*)matrice);
-                njCalcPoint(&v18, (NJS_VECTOR*)&co2Copy->gap224[72], flt_1A51A00);
-                result.y = -1.0;
-                result.x = 0.0;
-                result.z = 0.0;
-                njCalcPoint(&v19, &v19, (float*)matrice);
-                njCalcPoint(&v20, (NJS_VECTOR*)&co2Copy->gap224[96], flt_1A51A00);
-            }
-            else if (mdl == CharacterModels[16].Model)
-            {
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[52], &v12, 0);
-                result.z = -1.0;
-                result.y = 0.0;
-                result.x = 0.0;
-                njCalcPoint(&result, &result, (float*)matrice);
-                njCalcPoint(&v13, (NJS_VECTOR*)&co2Copy->gap224[84], flt_1A51A00);
-                result.y = -1.0;
-                result.x = 0.0;
-                result.z = 0.0;
-                njCalcPoint(&v14, &v14, (float*)matrice);
-                njCalcPoint(&v15, (NJS_VECTOR*)&co2Copy->gap224[108], flt_1A51A00);
-            }
-            else if (mdl == CharacterModels[9].Model)
-            {
-                result.x = -1.0;
-                result.z = 0.0;
-                result.y = 0.0;
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[64], &v9, 0);
-                njCalcPoint(&result, &result, (float*)matrice);
-                njCalcPoint(&v10, (NJS_VECTOR*)&co2Copy->gap224[120], flt_1A51A00);
-            }
-            else if (mdl == CharacterModels[10].Model)
-            {
-                result.x = -1.0;
-                result.z = 0.0;
-                result.y = 0.0;
-                njCalcVector(CURRENT_MATRIX, &posResult, &posResult, 0);
-                co2Copy = SonicCO2PtrExtern;
-                njCalcVector(flt_1A51A00, (NJS_VECTOR*)&SonicCO2PtrExtern->gap1BC[76], &v6, 0);
-                njCalcPoint(&result, &result, (float*)matrice);
-                njCalcPoint(&v7, (NJS_VECTOR*)&co2Copy->gap224[132], flt_1A51A00);
-            }
-            goto LABEL_48;
-        }
-        if ((MainCharObj1[pNum]->Status & Status_HoldObject) == 0)
-        {
-            goto LABEL_48;
-        }
-        v28 = SonicCO2PtrExtern->base.HeldObject->EntityData2->field_30;
-    }
-    if (v28 != 0.0)
-    {
-        njRotateX(CURRENT_MATRIX, v28);
-    }
-LABEL_48:
-    if (mdl == CharacterModels[23].Model)
-    {
-        ModelMatrice = (NJS_MATRIX_PTR*)&sonic_RightHandMatrix;
-        goto LABEL_56;
-    }
-    if (mdl == CharacterModels[24].Model)
-    {
-        ModelMatrice = (NJS_MATRIX_PTR*)&sonic_LeftHandMatrix;
-    LABEL_56:
-        memcpy(ModelMatrice, CURRENT_MATRIX, 0x30u);
-    }
-    if (mdl == CharacterModels[11].Model)
-    {
-        memcpy(&sonic_RightFootMatrix, CURRENT_MATRIX, 0x30u);
-    }
-    else if (mdl == CharacterModels[12].Model)
-    {
-        memcpy(&sonic_LeftFootMatrix, CURRENT_MATRIX, 0x30u);
-    }
+void init_UpgradesHack() {
+    Sonic_CallBack_t = new Trampoline((int)0x71EAA0, (int)0x71EAA9, SuperSonic_Callback_r);
 }

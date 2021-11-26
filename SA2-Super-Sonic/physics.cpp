@@ -100,6 +100,6 @@ static void __declspec(naked) PResetAngleASM()
 	}
 }
 
-void initPhysicsHack() {
+void init_PhysicsHack() {
 	PResetAngle_t = new Trampoline((int)0x460260, (int)0x460266, PResetAngleASM);
 }

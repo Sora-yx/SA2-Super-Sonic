@@ -39,6 +39,22 @@ void __cdecl LoadSSEff_Textures() {
 	return;
 }
 
+//ugly as fuck but needed until I find a way to fix the aura matrix shit
+void __cdecl SuperSonicHack_Display(bool enabled) {
+
+	if (enabled)
+	{
+		WriteJump((void*)0x720181, (void*)0x720b20);  //force sonic display to return just after setting the matrix callback thing.
+	}
+	else { //restore original code
+		WriteData<1>((int*)0x720181, 0x3C);
+		WriteData<1>((int*)0x720182, 0x8);
+		WriteData<1>((int*)0x720183, 0x75);
+		WriteData<1>((int*)0x720184, 0x30);
+		WriteData<1>((int*)0x720185, 0xC7);
+	}
+}
+
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
 
 	StopMusic();
@@ -60,6 +76,7 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	LoadSuperAura(playerID);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
 	DoNextAction_r(playerID, 9, 0);
+	SuperSonicHack_Display(true);
 	isSuper = true;
 }
 
@@ -94,6 +111,7 @@ void unSuper(unsigned char player) {
 	if (co2->CharID == Characters_Sonic)
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
+	SuperSonicHack_Display(false);
 	data->Status = 0;
 	co2->Upgrades &= ~Upgrades_SuperSonic;
 	co2->Powerups &= ~Powerups_Invincibility;
@@ -277,7 +295,7 @@ void __cdecl Sonic_HealdObjectStuff(EntityData1* data1, CharObj2Base* co2) {
 
 	*(int*)0x25F02D8 &= 0xFFFFDBFF;
 	*(int*)0x25F02D4 = *(int*)0x1DEB6A0;
-	*(int*)0x1A55834 = 0;
+	UpgradeDrawCallback = 0;
 	*(int*)0x25F0268 = *(int*)0x1DEB6A8;
 	sub_487060(byte_1DE4400);
 	SonicHeldObjectThing(data1, co2);
@@ -335,6 +353,9 @@ void __cdecl DoSpinDashRotationModel() {
 	njScaleEx(&spinDashThing);
 }
 
+
+
+
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {
 
@@ -342,22 +363,20 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	EntityData1* data1 = obj->Data1.Entity;
 	char pID = sonicCO2->base.PlayerNum;
 
-	if (!sonicCO2)
-		return;
-
 	if (!sonicCO2->TextureList)
 		return;
 
 
-	if (!isSuper || sonicCO2->base.CharID2 != Characters_Sonic) {
-		ObjectFunc(origin, Sonic_Display_t->Target());
-		return origin(obj);
-	}
+	ObjectFunc(origin, Sonic_Display_t->Target());
+	origin(obj);
 
-	sub_486E50(pID);
-	memcpy(flt_1A51A00, _nj_current_matrix_ptr_, sizeof(flt_1A51A00));
+	if (!isSuper)
+		return;
+
+	memcpy(&flt_1A51A00, CURRENT_MATRIX, 0x30u);
 	SonicCO2PtrExtern = sonicCO2;
 	sub_427040(flt_1A51A00);
+
 	UpgradeDrawCallback = SuperSonic_Callback_r;
 
 	if ((data1->field_6 & 2) != 0 && !Pose2PStart_PlayerNum)
@@ -400,145 +419,6 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	njPopMatrixEx();
 }
 
-
-
-DataArray(char, byte_1DE4664, 0x1DE4664, 2);
-DataArray(float, flt_19EE0C0, 0x19EE0C0, 12);
-DataPointer(SuperSonicCharObj2*, SuperSonicCO2Ptr, 0x19EE150);
-DataPointer(ObjectFuncPtr, MotionDrawCallback2, 0x1A55834);
-
-void __cdecl Super_Display_r(ObjectMaster* obj)
-{
-	int v1; // edi
-	EntityData1* data; // ebx
-	SuperSonicCharObj2* co2; // ebp
-	char pNum; // al
-	char v5; // cl
-	BOOL isSuperSonic; // zf
-	NJS_MATRIX_PTR* matrice; // esi
-	NJS_MATRIX_PTR* matriceResult; // eax
-	int v9; // eax
-	char charID; // cl
-	NJS_OBJECT* childSS; // ecx
-	EntityData1* v12; // esi
-	NJS_OBJECT* v13; // ecx
-	char v14; // al
-	int animID; // [esp+1Ch] [ebp-4h]
-
-	data = obj->Data1.Entity;
-	co2 = (SuperSonicCharObj2*)obj->Data2.Undefined;
-	pNum = co2->base.PlayerNum;
-
-	(*(int*)0x1DEB6A0 = *(int*)0x25F02D4);
-	*(int*)0x25F02D4 &= 0xFFFFFDFF;
-	v5 = byte_1DE4664[pNum];
-	(*(int*)0x1DEB6A8 = (*(int*)0x25F0268));
-	if (v5 != 1 && v5 != 5)
-	{
-		(*(int*)0x25F02D8 |= 0x2400u);
-	}
-	sub_486E50(pNum);
-	memcpy(flt_19EE0C0, _nj_current_matrix_ptr_, sizeof(flt_19EE0C0));
-	SuperSonicCO2Ptr = co2;
-	sub_427040(flt_19EE0C0);
-	isSuperSonic = co2->base.CharID == Characters_SuperSonic;
-	MotionDrawCallback2 = (ObjectFuncPtr)0x49C130;
-	if (!isSuperSonic)
-	{
-		MotionDrawCallback2 = (ObjectFuncPtr)0x49C5B0;
-	}
-	matrice = &_nj_current_matrix_ptr_;
-	animID = co2->base.AnimInfo.Current;
-
-	njSetTexture(co2->TextureList);
-	njPushMatrix(CURRENT_MATRIX);
-	njTranslate(*matrice, data->Position.x, data->Position.y, data->Position.z);
-	if (data->Rotation.z)
-	{
-		njRotateZ((float*)matrice, data->Rotation.z);
-	}
-	if (data->Rotation.x)
-	{
-		njRotateX((float*)matrice, data->Rotation.x);
-	}
-	if (data->Rotation.y != 0x8000)
-	{
-		njRotateY(*matrice, 0x8000 - data->Rotation.y);
-	}
-	njScale(CURRENT_MATRIX, data->Scale.x, data->Scale.y, data->Scale.z);
-	v9 = *(DWORD*)&co2->field_1BC[428];
-	if (!v9)
-	{
-		goto LABEL_21;
-	}
-	charID = co2->base.CharID;
-	if (charID == Characters_SuperSonic)
-	{
-		childSS = CharacterModels[349].Model->child;
-		v12 = (EntityData1*)childSS->model;
-		childSS->model = *(NJS_MODEL**)(*(DWORD*)(v9 + 24) + 4);
-		goto LABEL_22;
-	}
-	if (charID == Characters_SuperShadow)
-	{
-		v13 = CharacterModels[376].Model->child;
-		v12 = (EntityData1*)v13->model;
-		v13->model = *(NJS_MODEL**)(*(DWORD*)(v9 + 24) + 4);
-	}
-	else
-	{
-	LABEL_21:
-		v12 = data;
-	}
-LABEL_22:
-
-	{
-		njCnkMotion(CharacterModels[co2->base.AnimInfo.Animations[animID].ModelNum].Model, co2->base.AnimInfo.Motion, FrameCountIngame % co2->base.AnimInfo.Motion->nbFrame);
-	}
-	if (*(DWORD*)&co2->field_1BC[428])
-	{
-		v14 = co2->base.CharID;
-		if (v14 == Characters_SuperSonic)
-		{
-			CharacterModels[349].Model->child->model = (NJS_MODEL*)v12;
-		}
-		else if (v14 == Characters_SuperShadow)
-		{
-			CharacterModels[376].Model->child->model = (NJS_MODEL*)v12;
-		}
-	}
-	njPopMatrix(1u);
-	*(int*)0x25F02D8 &= 0xFFFFDBFF;
-	*(int*)0x25F02D4 = *(int*)0x1DEB6A0;
-	*(int*)0x1A55834 = 0;
-	*(int*)0x25F0268 = *(int*)0x1DEB6A8;
-	//sub_487060(byte_1DE4400);
-}
-
-
-
-
-DataPointer(int, playID, 0x1DD92A0);
-DataPointer(char, byte_174AFFD, 0x174AFFD);
-DataPointer(char, byte_1DE4660, 0x1DE4660);
-FunctionPointer(bool, sub_7983F0, (NJS_VECTOR* a1, float a2), 0x7983F0);
-DataPointer(float, flt_1DEB070, 0x1DEB070);
-FunctionPointer(void, SetCharaModelFlag, (int a1), 0x46F0D0);
-DataArray(float, flt_25F02A0, 0x25F02A0, 5);
-
-DataPointer(ObjectFuncPtr, MotionDrawCallbackMaybe, 0x1A55834);
-
-DataPointer(char, byte_174AFE2, 0x174AFE2);
-
-DataPointer(char, byte_174AFE0, 0x174AFE0);
-
-DataPointer(int, dword_25F02D4, 0x25F02D4);
-DataPointer(int, dword_1DEB6A0, 0x1DEB6A0);
-
-
-DataPointer(float, dword_1DEB6A8, 0x1DEB6A8);
-
-DataPointer(float, dword_25F0268, 0x25F0268);
 
 FunctionPointer(void, PlayerAfterImageMaybe, (NJS_OBJECT* a1, int a2, NJS_TEXLIST* a3, float a4, char a5), 0x476C20);
 
@@ -604,12 +484,13 @@ void LoadSonic_r(int playerNum) {
 	LoadSSEff_Textures();
 }
 
+
 void init_SuperSonic() {
+
 
 	WriteJump((void*)0x71E460, SonicDisplayAfterImageASM);
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
 
-	initAura_Hack();
 }

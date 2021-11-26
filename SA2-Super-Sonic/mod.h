@@ -66,7 +66,7 @@ enum SuperSonicsMusic {
 extern bool isSuper;
 
 void init_SuperSonic();
-void initAura_Hack();
+void init_AuraHack();
 void init_MusicHack();
-void initPhysicsHack();
-
+void init_PhysicsHack();
+void init_UpgradesHack();
