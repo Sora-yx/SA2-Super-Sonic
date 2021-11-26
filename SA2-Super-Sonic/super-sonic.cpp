@@ -55,9 +55,13 @@ void __cdecl SuperSonicHack_Display(bool enabled) {
 	}
 }
 
+AnimationInfo SonicAnimCopy[203];
+
+
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
 
 	StopMusic();
+	memcpy(&SonicAnimCopy, sco2->base.AnimInfo.Animations, sizeof(SonicAnimCopy));
 	Play_SuperSonicMusic();
 	ResetMusic();
 	ControllerEnabled[playerID] = 0;
@@ -119,7 +123,7 @@ void unSuper(unsigned char player) {
 	UnloadAnimation(v4);
 	co2S->MotionList = 0;
 	co2S->base.AnimInfo.Next = 0;
-	co2S->base.AnimInfo.Animations = SonicAnimList;
+	co2S->base.AnimInfo.Animations = SonicAnimCopy;
 	njReleaseTexture(co2S->TextureList);
 	njReleaseTexture(&Sonic_Texlist);
 	co2S->TextureList = 0;
@@ -149,7 +153,7 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 	if (ControllerPointers[playerID]->press & TransformButton)
 	{
-		if (player->Action == Action_Jump) {
+		if (player->Action == Action_Jump || player->Action == Action_BounceUp && (player->Status & Status_Ball) == 0) {
 			unSuper(playerID);
 			return true;
 		}
@@ -167,7 +171,7 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 
 		if (Controllers[playerID].press & TransformButton)
 		{
-			if (player->Action == Action_Jump) {
+			if (player->Action == Action_Jump || player->Action == Action_BounceUp && (player->Status & Status_Ball) == 0) {
 				return true;
 			}
 		}
