@@ -380,9 +380,10 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	if (!isSuper || char2 != Characters_Sonic)
 		return;
 
-	/**memcpy(&flt_1A51A00, CURRENT_MATRIX, 0x30u);
+
+	//njSetMatrix(MATRIX_1A51A00, CURRENT_MATRIX);
 	SonicCO2PtrExtern = sonicCO2;
-	sub_427040(flt_1A51A00);*/
+	//sub_427040(MATRIX_1A51A00);
 
 	UpgradeDrawCallback = SuperSonic_Callback_r;
 

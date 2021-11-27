@@ -25,7 +25,6 @@ extern "C" {
 		init_MusicHack();
 		init_PhysicsHack();
 		init_AuraHack();
-		init_UpgradesHack();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame() {

@@ -70,4 +70,3 @@ void init_SuperSonic();
 void init_AuraHack();
 void init_MusicHack();
 void init_PhysicsHack();
-void init_UpgradesHack();
