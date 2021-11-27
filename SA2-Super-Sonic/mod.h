@@ -6,6 +6,7 @@ extern Buttons TransformButton;
 extern bool RemoveLimitations;
 extern bool AlwaysSuperSonic;
 extern int SuperMusicVersion;
+extern int superAuraState;
 
 extern AnimationInfo SuperSonicAnimationList_r[];
 

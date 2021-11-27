@@ -1,6 +1,7 @@
 #include "pch.h"
 
 //serie of hacks to display a yellow aura when using Super Sonic, done by using shadow texlist.
+//Also add the super aura from Finalhazard fight
 
 Trampoline* DoSpinDashAura_t;
 Trampoline* DoJumpAura_t;
@@ -75,7 +76,7 @@ void DoSpinDashAura_r(ObjectMaster* obj)
 		{
 			njRotateY(_nj_current_matrix_ptr_, (int)v5);
 		}
-		njCalcPoint(&a1, &aura->pos, v4); //njcalcvector
+		njCalcVector_(&a1, &aura->pos, v4);
 		njPopMatrix(1u);
 	}
 	v7 = aura->charID;
@@ -248,7 +249,7 @@ void DoHomingAura_r(ObjectMaster* obj)
 		{
 			njRotateY(*v6, pData->Rotation.y);
 		}
-		njCalcPoint(&result, &aura->pos, (float*)v6); //njCalcVector
+		njCalcVector_(&result, &aura->pos, (float*)v6); //njCalcVector
 		njPopMatrix(1u);
 	}
 
@@ -348,17 +349,42 @@ void __cdecl HomingDashAura_Display_r(ObjectMaster* a1)
 	}
 }
 
-DataPointer(WORD, word_170ACEE, 0x170ACEE);
+
+int superAuraArray[12] = { 16393, 16388, 16394, 16389, 16395, 16390, 16396, 16391, 16397, 16392, 16398, 16387 };
+char auraCount = 0;
+
+void DisplaySuperAura() {
+
+	*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSONEFFTEX_TEXLIST;
+
+
+	if (GameState == GameStates_Pause)
+		return;
+	
+	if (auraCount == LengthOfArray(superAuraArray) - 1)
+		auraCount = 0;
+	else
+		auraCount++;
+
+	animate_AuraThing = superAuraArray[auraCount]; //animate Aura
+}
+
 void SuperAura_r(ObjectMaster* obj) {
 
 	SonicCharObj2* co2 = (SonicCharObj2*)obj->Data2.Undefined;
 	EntityData1* data = obj->Data1.Entity;
 	NJS_OBJECT* v24;
 
-	if (co2->base.AnimInfo.Current == 54 || co2->base.AnimInfo.Next == 54)
+	if (co2->base.AnimInfo.Current == 54 || co2->base.AnimInfo.Next == 54 || !isSuper)
 	{
 		obj->DisplaySub_Delayed4 = nullptr;
 		return;
+	}
+
+	if (superAuraState == 1)
+	{
+		if (co2->base.Speed.x < 5.0f || co2->base.Speed.y < 6.0)
+			return;
 	}
 
 	njSetTexture(co2->TextureList);
@@ -381,77 +407,16 @@ void SuperAura_r(ObjectMaster* obj) {
 	}
 	njScale(CURRENT_MATRIX, data->Scale.x, data->Scale.y, data->Scale.z);
 
-	njSetTexture(&SSONEFFTEX_TEXLIST);
 
-	word_170ACEE = word_170ACEE & 0xC000 | ((co2->base.CharID != Characters_SuperShadow ? 0 : 6)
-		+ 3);
+	DisplaySuperAura();
 
 	njPushMatrix(CURRENT_MATRIX);
 	njTranslate(CURRENT_MATRIX, 0.0, -3.0, 0.0);
 	sub_42D340();
 	ProcessChunkModelsWithCallback((NJS_OBJECT*)0x170B47C, ProcessChunkModel);// Draw Aura
-	njPopMatrix(1u);
-
-	int v12 = 255 * (FrameCountIngame - 14400);
-	int v13;
-	int v14;
-	int v15;
-	int v16;
+	njPopMatrix(2u);
 
 
-		v13 = v12 / 18000 + 128;
-		if (v13 <= 255)
-		{
-			v14 = ((v13 | ((v13 | (v13 << 8)) << 8)) << 8) | v13;
-			if (!v14)
-			{
-				njPopMatrix(1u);
-			}
-		}
-		else
-		{
-			v14 = -1;
-		}
-		v15 = 49;
-		v16 = 0;
-		do
-		{
-			if ((*(unsigned int*)((char*)(void*)0x170CF1C + v16) & 0xFF000000) == -16777216)
-			{
-				*(void**)((char*)(void*)0x170B7AC + v16) = (void*)v14;
-			}
-			--v15;
-			v16 += 16;
-		} while (v15 > 0);
-		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSONEFFTEX_TEXLIST;
-		//DrawUV((int*)0x16F7C5C, (NJS_OBJECT*)0x70BAB4, *(float*)&FrameCountIngame);
-		njPopMatrix(1u);
-
-		njPushMatrixEx();
-
-		float v23[12];
-
-		njTranslate(CURRENT_MATRIX, co2->HeadNodePos.x, co2->HeadNodePos.y, co2->HeadNodePos.z);
-		njRotateZ(CURRENT_MATRIX, 55296);
-		njTranslate(CURRENT_MATRIX, 0.0, -14.0f, 0.0);
-		v23[0] = 1.2;
-		v23[1] = 0.0;
-		v23[2] = 0.0;
-		v23[3] = 0.0;
-		v23[4] = 0.0;
-		v23[5] = 1.3;
-		v23[6] = 0.0;
-		v23[7] = 0.0;
-		v23[8] = 0.0;
-		v23[9] = 0.0;
-		v23[11] = 0.0;
-		v23[10] = 1.2;
-		sub_426E40(CURRENT_MATRIX, CURRENT_MATRIX, v23);
-		njTranslate(CURRENT_MATRIX, 0.0, 5.0, 0.0);
-		sub_42D340();
-		ProcessChunkModelsWithCallback((NJS_OBJECT*)0x170BACC, ProcessChunkModel);
-		njPopMatrixEx();
-	
 }
 
 void LoadSuperAura(char pID)

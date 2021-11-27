@@ -5,8 +5,6 @@ Trampoline* Sonic_Main_t;
 Trampoline* Sonic_Display_t;
 Trampoline* LoadSonic_t;
 
-
-
 bool isSuper = false;
 
 NJS_TEXNAME SSEffTex[16];
@@ -125,7 +123,6 @@ void unSuper(unsigned char player) {
 	co2S->base.AnimInfo.Next = 15;
 	co2S->base.AnimInfo.Animations = SonicAnimCopy;
 	njReleaseTexture(co2S->TextureList);
-	njReleaseTexture(&Sonic_Texlist);
 	co2S->TextureList = 0;
 	co2S->TextureList = LoadCharTextures("SONICTEX");
 	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
@@ -137,19 +134,24 @@ void unSuper(unsigned char player) {
 		PlayAnimationThing(&co2S->base.AnimInfo);
 		RestoreMusic();
 	}
+	else {
+		njReleaseTexture(&Sonic_Texlist);
+	}
 
 	return;
 }
 
 bool CheckUntransform_Input(unsigned char playerID) {
 
-	if (AlwaysSuperSonic)
-		return false;
-
 	EntityData1* player = MainCharObj1[playerID];
 
-	if (!player)
+	if (!player || AlwaysSuperSonic)
 		return false;
+
+	if (player->NextAction != 0 || player->Status & Status_DoNextAction)
+	{
+		return false;
+	}
 
 	if (ControllerPointers[playerID]->press & TransformButton)
 	{
@@ -183,6 +185,7 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 void SuperSonic_ManagerDelete(ObjectMaster* obj)
 {
 	unSuper(obj->Data1.Entity->Index);
+	isSuper = false;
 }
 
 void SuperSonic_Manager(ObjectMaster* obj)
