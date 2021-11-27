@@ -77,7 +77,6 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	sco2->MotionList = LoadMTNFile((char*)"ssmotion.prs");
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	Load_SuperPhysics(data);
-	LoadSuperAura(playerID);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
 	DoNextAction_r(playerID, 9, 0);
 	SuperSonicHack_Display(true);
@@ -123,7 +122,7 @@ void unSuper(unsigned char player) {
 	AnimationIndex* v4 = co2S->MotionList;
 	UnloadAnimation(v4);
 	co2S->MotionList = 0;
-	co2S->base.AnimInfo.Next = 0;
+	co2S->base.AnimInfo.Next = 15;
 	co2S->base.AnimInfo.Animations = SonicAnimCopy;
 	njReleaseTexture(co2S->TextureList);
 	njReleaseTexture(&Sonic_Texlist);
@@ -181,6 +180,10 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 	return false;
 }
 
+void SuperSonic_ManagerDelete(ObjectMaster* obj)
+{
+	unSuper(obj->Data1.Entity->Index);
+}
 
 void SuperSonic_Manager(ObjectMaster* obj)
 {
@@ -204,6 +207,10 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	switch (data->Action)
 	{
 
+	case superSonicInit:
+		obj->DeleteSub = SuperSonic_ManagerDelete;
+		data->Action++;
+		break;
 	case playerInputCheck:
 
 		if (CheckTransform_Input(playerID, player) || AlwaysSuperSonic)
@@ -222,6 +229,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 		if (++data->field_6 == 100 || AlwaysSuperSonic)
 		{
+			LoadSuperAura(playerID);
 			ControllerEnabled[playerID] = 1;
 			DoNextAction_r(playerID, 15, 0);
 			data->Action++;
@@ -251,7 +259,7 @@ void LoadSuperSonicManager(char playNum) {
 	int id2 = MainCharObj2[playNum]->CharID2;
 
 	if (id == Characters_Sonic && id2 == Characters_Sonic) {
-		ObjectMaster* superSonicManagerPtr = LoadObject(1, "SuperSonic_Manager", SuperSonic_Manager, LoadObj_Data1);
+		ObjectMaster* superSonicManagerPtr = LoadObject(0, "SuperSonic_Manager", SuperSonic_Manager, LoadObj_Data1);
 
 		if (superSonicManagerPtr)
 		{
@@ -349,8 +357,6 @@ void __cdecl DoSpinDashRotationModel() {
 	spinDashThing.z = 0.80000001;
 	njScaleEx(&spinDashThing);
 }
-
-
 
 
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
