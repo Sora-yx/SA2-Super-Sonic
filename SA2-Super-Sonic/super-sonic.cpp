@@ -37,6 +37,33 @@ void __cdecl LoadSSEff_Textures() {
 	return;
 }
 
+void DeleteJiggle(SonicCharObj2* sonicCO2) {
+	JiggleInfo* Jiggle = sonicCO2->SpineJiggle;
+
+	if (Jiggle)
+	{
+		Delete_Jiggle(Jiggle);
+		sonicCO2->SpineJiggle = 0;
+	}
+
+	return;
+}
+
+void __cdecl initJiggleSuperSonic(SonicCharObj2* sonicCO2) {
+
+	int modelNumber = isSuper == true ? 21 : 349;
+
+	JiggleInfo* jiggleMDL = LoadJiggle(CharacterModels[modelNumber].Model->child);
+	sonicCO2->SpineJiggle = jiggleMDL;
+	jiggleMDL->type = 18;
+	sonicCO2->SpineJiggle->speed = 0.40000001;
+	sonicCO2->SpineJiggle->field_8 = 0;
+	sonicCO2->SpineJiggle->field_10 = 1024;
+	sonicCO2->SpineJiggle->Model = 0;
+	return;
+}
+
+
 //ugly as fuck but needed until I find a way to fix the aura matrix shit
 void __cdecl SuperSonicHack_Display(bool enabled) {
 
@@ -58,24 +85,31 @@ AnimationInfo SonicAnimCopy[203];
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
 
-	StopMusic();
+	if (SuperMusicVersion != None) {
+		StopMusic();
+		Play_SuperSonicMusic();
+		ResetMusic();
+	}
+
 	memcpy(&SonicAnimCopy, sco2->base.AnimInfo.Animations, sizeof(SonicAnimCopy));
-	Play_SuperSonicMusic();
-	ResetMusic();
+
 	ControllerEnabled[playerID] = 0;
 	sco2->base.Powerups |= Powerups_Invincibility;
 	AnimationIndex* v4 = sco2->MotionList;
 	UnloadAnimation(v4);
 	sco2->MotionList = 0;
 	SetSuperSonicModels(sco2);
-
+	DeleteJiggle(sco2);
+	initJiggleSuperSonic(sco2);
 	sco2->base.AnimInfo.Next = 0;
 	sco2->base.AnimInfo.Animations = SuperSonicAnimationList_r;
 	LoadSuperSonicCharTextures(sco2);
+
 	sco2->MotionList = LoadMTNFile((char*)"ssmotion.prs");
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	Load_SuperPhysics(data);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
+
 	DoNextAction_r(playerID, 9, 0);
 	SuperSonicHack_Display(true);
 	isSuper = true;
@@ -114,6 +148,8 @@ void unSuper(unsigned char player) {
 	if (co2->CharID == Characters_Sonic)
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
+	DeleteJiggle(co2S);
+	initJiggleSuperSonic(co2S);
 	data->Status = 0;
 	co2->Upgrades &= ~Upgrades_SuperSonic;
 	co2->Powerups &= ~Powerups_Invincibility;

@@ -244,3 +244,17 @@ DataPointer(int, dword_1DEB6A4, 0x1DEB6A4);
 DataArray(float, flt_25F02A0, 0x25F02A0, 5);
 FunctionPointer(void, Sonic_CallBack, (NJS_OBJECT* mdl), 0x71EAA0);
 DataPointer(WORD, animate_AuraThing, 0x170ACEE);
+
+
+FunctionPointer(JiggleInfo*, LoadJiggle, (NJS_OBJECT* jiggle), 0x447580);
+
+//void __usercall Delete_Jiggle(JiggleInfo* Jiggle@<esi>)
+static const void* const jiggle_ptr = (void*)0x447910;
+static inline void Delete_Jiggle(JiggleInfo* jiggle)
+{
+	__asm
+	{
+		mov esi, jiggle
+		call jiggle_ptr
+	}
+}

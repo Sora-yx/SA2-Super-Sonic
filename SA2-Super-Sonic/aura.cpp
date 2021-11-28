@@ -383,7 +383,7 @@ void SuperAura_r(ObjectMaster* obj) {
 
 	if (superAuraState == 1)
 	{
-		if (co2->base.Speed.x < 5.0f || co2->base.Speed.y < 6.0)
+		if (co2->base.Speed.x >= -5.0 && co2->base.Speed.x < 5.0f && co2->base.Speed.y >= -6.0f && co2->base.Speed.y < 6.0)
 			return;
 	}
 
