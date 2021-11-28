@@ -421,6 +421,9 @@ void SuperAura_r(ObjectMaster* obj) {
 
 void LoadSuperAura(char pID)
 {
+	if (!superAuraState)
+		return;
+
 	MainCharacter[pID]->DisplaySub_Delayed4 = SuperAura_r;
 	return;
 }

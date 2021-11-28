@@ -164,7 +164,7 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
 
 void DisplaySuperSonic_Upgrade(SonicCharObj2* sonicCO2) {
 
-	if (!sonicCO2)
+	if (!sonicCO2 || !isUpgrade)
 		return;
 
 	int curAnim = sonicCO2->base.AnimInfo.Current;

@@ -7,7 +7,7 @@ extern bool RemoveLimitations;
 extern bool AlwaysSuperSonic;
 extern int SuperMusicVersion;
 extern int superAuraState;
-
+extern bool isUpgrade;
 extern AnimationInfo SuperSonicAnimationList_r[];
 
 extern HelperFunctions HelperFunctionsGlobal;
