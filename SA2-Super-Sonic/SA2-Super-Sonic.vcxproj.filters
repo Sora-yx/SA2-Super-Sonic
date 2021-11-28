@@ -71,5 +71,8 @@
     <ClCompile Include="upgrades.cpp">
       <Filter>Source Files\Super Sonic</Filter>
     </ClCompile>
+    <ClCompile Include="fly.cpp">
+      <Filter>Source Files\Super Sonic</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

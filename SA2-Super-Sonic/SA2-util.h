@@ -3,6 +3,7 @@
 #define MATRIX_1A51A00 ((NJS_MATRIX_PTR)0x1A51A00) //matrix used for Sonic CallBack
 
 FunctionPointer(void, DrawObject, (NJS_OBJECT* a1), 0x42E730);
+FunctionPointer(void, SuperSonicGetAccel, (EntityData1* data, EntityData2* data2, CharObj2Base* co2), 0x49D870);
 
 ObjectFunc(SpinDashAura_Display, 0x756040);
 ObjectFunc(JumpAura_Display, 0x756960);
@@ -256,5 +257,83 @@ static inline void Delete_Jiggle(JiggleInfo* jiggle)
 	{
 		mov esi, jiggle
 		call jiggle_ptr
+	}
+}
+
+
+static const void* const PGetSpeedPtr = (void*)0x460860;
+static inline void PGetSpeed(EntityData1* a1, CharObj2Base* co2, EntityData2* data2)
+{
+	__asm
+	{
+		push[data2] // a3
+		mov ebx, co2 // a2
+		mov eax, a1 // a1
+
+		// Call your __cdecl function here:
+		call PGetSpeedPtr
+
+		add esp, 4 // a3
+	}
+}
+
+
+static const void* const PResetPosPtr = (void*)0x469050;
+static inline void PResetPosition(EntityData1* a1, EntityData2* a2, CharObj2Base* a3)
+{
+	__asm
+	{
+		push[a3] // a3
+		mov ebx, a2 // a2
+		mov eax, a1 // a1
+		call PResetPosPtr
+		add esp, 4 // a2
+	}
+}
+
+static const void* const PSetPositionptr = (void*)0x4616E0;
+static inline int PSetPosition(EntityData1* a1, EntityData2* a2, CharObj2Base* a3)
+{
+	int result;
+	__asm
+	{
+		push[a3]
+		push[a2]
+		mov eax, [a1]
+		call PSetPositionptr
+		add esp, 8
+		mov result, eax
+	}
+	return result;
+}
+
+FunctionPointer(void, PGetRotation, (EntityData1* data, EntityData2* data2, CharObj2Base* co2), 0x45FA70);
+FunctionPointer(double, FloatCalcResult, (float a1, float a2, float a3), 0x447520);
+
+static const void* const VibeThingPtr = (void*)0x438E70;
+static inline void VibeThing(int a1, signed int a2, int a3, signed int a4)
+{
+	__asm
+	{
+		push[a4] // int a4
+		mov ecx, a3 // a3
+		mov edx, a2 // int a2
+		mov eax, a1 // a1
+
+		// Call your __cdecl function here:
+		call VibeThingPtr
+		add esp, 4 // int a4
+	}
+}
+
+static const void* const fbossSoundPtr = (void*)0x435630;
+static inline void LoadFinalBossSound(const char* a1, void* address, char a3)
+{
+	__asm
+	{
+		push[a3] // int a4
+		push[address]
+		mov edi, a1
+		call fbossSoundPtr
 	}
 }

@@ -2,7 +2,7 @@
 
 
 AnimationInfo SuperSonicAnimationList_r[] = {
-	{ 203, 328, 3, 0, 0.0625f, 0.1f },
+	{ 203, 328, 3, 0, 0.0625f, 0.15f },
 	{ 1, 328, 3, 1, 0.25f, 0.1f },
 	{ 2, 328, 3, 2, 0.25f, 0.1f },
 	{ 3, 328, 4, 0, 0.25f, 1 },
@@ -207,6 +207,17 @@ AnimationInfo SuperSonicAnimationList_r[] = {
 	{ 202, 328, 3, 202, 0.125f, 0.5f },
 	{ 205, 328, 6, 0, 1, 0.8f }, //turning to super
 	{ 205, 328, 4, 54, 1, 0.5f }, //victory pose
+	{ 204, 328, 3, superSonicFlying1, 0.0625f, 0.5f }, //fly 1
+	{ 206, 328, 3, superSonicFlying2, 0.0625f, 0.5f }, //fly 2
+	{ 207, 328, 4, ssAscending, 0.125f, 0.5f }, //begin ascent
+	{ 208, 328, 3, ssAscending, 0.125f, 0.5f }, //ascending
+	{ 209, 328, 4, ssDescend, 0.125f, 0.5f }, //begin descent
+	{ 210, 328, 3, ssDescend, 0.125f, 0.5f }, //descending
+	{ 211, 328, 4, ssDash, 0.0625f, 0.5f }, //begin dash
+	{ 212, 328, 3, ssDash, 0.0625f, 0.5f }, //dash
+	{ 213, 328, 4, ssDash2, 0.0625f, 0.5f }, //begin dash 2
+	{ 214, 328, 3, ssDash2, 0.0625f, 0.5f }, //dash2
+
 };
 
 AnimationInfo SuperSonicAnimationList[] = {

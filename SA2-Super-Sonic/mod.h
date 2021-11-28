@@ -3,6 +3,7 @@
 void ReadConfig(const char* path);
 
 extern Buttons TransformButton;
+extern Buttons FlightButton;
 extern bool RemoveLimitations;
 extern bool AlwaysSuperSonic;
 extern int SuperMusicVersion;
@@ -45,13 +46,22 @@ enum SuperSonicM {
 
 enum SuperSonicAnim {
 	superSonicStanding,
+
+	superSonicIntro = 203,
+	superSonicVictory = 204,
 	superSonicFlying1,
 	superSonicFlying2,
-	superSonicIntro = 203,
-	superSonicVictory = 204
+	ssBeginAscent,
+	ssAscending,
+	ssBeginDescent,
+	ssDescend,
+	ssBeginDash,
+	ssDash,
+	ssBeginDash2,
+	ssDash2
 };
 
-enum SuperSonicsMusic {
+enum SuperSonicMusic {
 
 	None,
 	Sonic2,

@@ -4,6 +4,7 @@
 Trampoline* Sonic_Main_t;
 Trampoline* Sonic_Display_t;
 Trampoline* LoadSonic_t;
+Trampoline* Sonic_runsActions_t;
 
 bool isSuper = false;
 
@@ -308,33 +309,6 @@ void LoadSuperSonicManager(char playNum) {
 	}
 }
 
-void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
-
-	if (data1->Action == Action_ObjectControl)
-	{
-		if (TimerStopped != 0 && (co2->AnimInfo.Next == 54 || co2->AnimInfo.Current == 54)) { //Check if the level is finished
-			if (isSuper) {
-
-				co2->AnimInfo.Next = superSonicVictory;
-				data1->Action = 120;
-			}
-		}
-	}
-}
-
-void Sonic_Main_r(ObjectMaster* obj)
-{
-	CharObj2Base* co2 = MainCharObj2[obj->Data2.Character->PlayerNum];
-	EntityData1* data1 = MainCharObj1[obj->Data2.Character->PlayerNum];
-	SonicCharObj2* sco2 = (SonicCharObj2*)obj->Data2.Character;
-
-	SuperSonic_PlayVictoryAnimation(data1, co2);
-
-
-	ObjectFunc(origin, Sonic_Main_t->Target());
-	origin(obj);
-}
-
 void __cdecl Sonic_HealdObjectStuff(EntityData1* data1, CharObj2Base* co2) {
 
 	*(int*)0x25F02D8 &= 0xFFFFDBFF;
@@ -529,12 +503,51 @@ void LoadSonic_r(int playerNum) {
 }
 
 
+void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
+
+	if (data1->Action == Action_ObjectControl)
+	{
+		if (TimerStopped != 0 && (co2->AnimInfo.Next == 54 || co2->AnimInfo.Current == 54)) { //Check if the level is finished
+			{
+				co2->AnimInfo.Next = superSonicVictory;
+				data1->Action = 120;
+			}
+		}
+	}
+}
+
+void Sonic_Main_r(ObjectMaster* obj)
+{
+	CharObj2Base* co2 = MainCharObj2[obj->Data2.Character->PlayerNum];
+	EntityData1* data1 = MainCharObj1[obj->Data2.Character->PlayerNum];
+	EntityData2* data2 = MainCharData2[obj->Data2.Character->PlayerNum];
+	SonicCharObj2* sco2 = (SonicCharObj2*)obj->Data2.Character;
+
+	if (isSuper) {
+		SuperSonic_PlayVictoryAnimation(data1, co2);
+		SuperSonicFly_MainManagement(data1, co2, data2);
+	}
+
+	ObjectFunc(origin, Sonic_Main_t->Target());
+	origin(obj);
+}
+
+void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, SonicCharObj2* SonicCO2)
+{
+
+	SuperSonicFly_ActionsManagement(data1, co2, data2);
+
+	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
+	original(data1, data2, co2, SonicCO2);
+}
+
 void init_SuperSonic() {
 
-
 	WriteJump((void*)0x71E460, SonicDisplayAfterImageASM);
+
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
+	Sonic_runsActions_t = new Trampoline((int)0x719920, (int)0x719920 + 0x8, Sonic_runsActions_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
-
+	return;
 }

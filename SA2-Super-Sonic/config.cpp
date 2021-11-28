@@ -1,7 +1,7 @@
 #include "pch.h"
 
-
 Buttons TransformButton = Buttons_B;
+Buttons FlightButton = Buttons_Y;
 bool RemoveLimitations = false;
 bool AlwaysSuperSonic = false;
 int SuperMusicVersion = SA2LiveAndLearn;
@@ -19,9 +19,12 @@ static const Buttons ButtonsList[]
 void ReadConfig(const char* path) {
 
 	const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
-	TransformButton = ButtonsList[config->getInt("General", "TransformButton", 0)];
+
 	RemoveLimitations = config->getBool("General", "RemoveLimitations", false);
 	AlwaysSuperSonic = config->getBool("General", "AlwaysSuperSonic", false);
+
+	TransformButton = ButtonsList[config->getInt("Controls", "TransformButton", 0)];
+	FlightButton = ButtonsList[config->getInt("Controls", "FlightButton", 1)];
 
 	superAuraState = config->getInt("Appearance", "superAuraState", 2);
 	isUpgrade = config->getBool("Appearance", "isUpgrade", true);
