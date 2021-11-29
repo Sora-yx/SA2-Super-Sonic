@@ -3,7 +3,6 @@
 std::string currentSuperMusic;
 std::string lastMusic;
 
-Trampoline* PlaySong_Queue_t;
 Trampoline* PlayMusic_t;
 
 std::string SuperSonicMusic_Array[8] = {
@@ -59,19 +58,6 @@ void RestoreMusic() {
 	return;
 }
 
-
-void PlaySongQueue_Origin(const char* song)
-{
-	auto target2 = PlaySong_Queue_t->Target();
-
-	__asm
-	{
-		mov eax, [song]
-		call target2
-	}
-}
-
-
 void PlaySong_Queue_r(const char* song)
 {
 
@@ -79,7 +65,15 @@ void PlaySong_Queue_r(const char* song)
 		return;
 	}
 
-	PlaySongQueue_Origin(song);
+	if (sub_458970())
+	{
+		strcpy_s(CurrentSongName, sizeof(song), song);
+	}
+	else
+	{
+		PlayMusic(song);
+		ResetMusic();
+	}
 
 	if (!isSuperMusicPlaying()) {
 		lastMusic = song;
@@ -92,12 +86,9 @@ static void __declspec(naked) PlaySong_QueueASM()
 {
 	__asm
 	{
-		push eax // char *song
-
-		// Call your __cdecl function here:
+		push eax
 		call PlaySong_Queue_r
-
-		pop eax // char *song
+		pop eax 
 		retn
 	}
 }
@@ -152,5 +143,5 @@ void init_MusicHack() {
 		return;
 
 	PlayMusic_t = new Trampoline((int)0x442CF0, (int)0x442CF5, PlayMusicASM);
-	PlaySong_Queue_t = new Trampoline((int)0x443530, (int)0x443538, PlaySong_QueueASM);
+	WriteJump((void*)0x443530, PlaySong_QueueASM);
 }

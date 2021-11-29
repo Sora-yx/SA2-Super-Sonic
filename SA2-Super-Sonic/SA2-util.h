@@ -337,3 +337,20 @@ static inline void LoadFinalBossSound(const char* a1, void* address, char a3)
 		call fbossSoundPtr
 	}
 }
+
+//int __usercall Sonic_CheckNextAction@<eax>(SonicCharObj2* a1@<eax>, EntityData1* a2, EntityData2* a3, CharObj2Base* a4)
+static const void* const SonicNactPtr = (void*)0x7220E0;
+static inline signed int  Sonic_CheckNextAction(SonicCharObj2* a1, EntityData1* a2, EntityData2* a3, CharObj2Base* a4)
+{
+	signed int result;
+	__asm
+	{
+		push[a4] 
+		push[a3]
+		push[a2]
+		mov eax, a1
+		call SonicNactPtr
+		mov result, eax
+		add esp, 12
+	}
+}
