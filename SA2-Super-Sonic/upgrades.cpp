@@ -176,13 +176,14 @@ void DisplaySuperSonic_Upgrade(SonicCharObj2* sonicCO2) {
 	njPushMatrixEx();
 
 	NJS_OBJECT* FlameRingMDL = CharacterModels[25].Model;
-	NJS_VECTOR FRPos = { FlameRingMDL->child->pos[0], FlameRingMDL->child->pos[1], FlameRingMDL->child->pos[2] };
+
 	int upgrade = sonicCO2->base.Upgrades;
 
 	if ((upgrade & (Upgrades_SonicFlameRing)) != 0)
 	{
 		if (FlameRingMDL)
 		{
+			NJS_VECTOR FRPos = { FlameRingMDL->child->pos[0], FlameRingMDL->child->pos[1], FlameRingMDL->child->pos[2] };
 			memcpy(CURRENT_MATRIX, &SS_LeftHandMatrice, 0x30u);
 			DrawChunkModel(FlameRingMDL->getchunkmodel());// Display FlameRing Model on Sonic
 			signed int v30 = dword_25F02D8;
@@ -230,16 +231,20 @@ void DisplaySuperSonic_Upgrade(SonicCharObj2* sonicCO2) {
 	if ((upgrade & Upgrades_SonicMagicGloves) != 0 && CharacterModels[27].Model)
 	{
 		NJS_OBJECT* GloveMDL = CharacterModels[27].Model;
-		memcpy(CURRENT_MATRIX, &SS_RightHandMatrice, 0x30u);
-		DrawObjWithCallBack(GloveMDL);
+		if (GloveMDL) {
+			memcpy(CURRENT_MATRIX, &SS_RightHandMatrice, 0x30u);
+			DrawObjWithCallBack(GloveMDL);
+		}
 	}
 	if ((upgrade & Upgrades_SonicLightShoes) != 0 && CharacterModels[14].Model)
 	{
 		NJS_OBJECT* ShoesMDL = CharacterModels[14].Model;
-		memcpy(CURRENT_MATRIX, &SS_LeftFootMatrice, 0x30u);
-		DrawObjWithCallBack(ShoesMDL);
-		memcpy(CURRENT_MATRIX, &SS_RightFootMatrice, 0x30u);
-		DrawObjWithCallBack(CharacterModels[13].Model);
+		if (ShoesMDL) {
+			memcpy(CURRENT_MATRIX, &SS_LeftFootMatrice, 0x30u);
+			DrawObjWithCallBack(ShoesMDL);
+			memcpy(CURRENT_MATRIX, &SS_RightFootMatrice, 0x30u);
+			DrawObjWithCallBack(CharacterModels[13].Model);
+		}
 	}
 
 	njPopMatrixEx();

@@ -7,6 +7,7 @@ bool AlwaysSuperSonic = false;
 int SuperMusicVersion = SA2LiveAndLearn;
 int superAuraState = 1;
 bool isUpgrade = true;
+bool isPhysics = true;
 
 static const Buttons ButtonsList[]
 {
@@ -20,8 +21,9 @@ void ReadConfig(const char* path) {
 
 	const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
 
-	RemoveLimitations = config->getBool("General", "RemoveLimitations", false);
-	AlwaysSuperSonic = config->getBool("General", "AlwaysSuperSonic", false);
+	RemoveLimitations = config->getBool("Gameplay", "RemoveLimitations", false);
+	AlwaysSuperSonic = config->getBool("Gameplay", "AlwaysSuperSonic", false);
+	isPhysics = config->getBool("Gameplay", "isPhysics", true);
 
 	TransformButton = ButtonsList[config->getInt("Controls", "TransformButton", 0)];
 	FlightButton = ButtonsList[config->getInt("Controls", "FlightButton", 1)];

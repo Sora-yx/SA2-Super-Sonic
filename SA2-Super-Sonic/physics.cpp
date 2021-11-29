@@ -1,7 +1,6 @@
 #include "pch.h"
 
 Trampoline* PResetAngle_t;
-
 PhysicsData sonicPhysicsCopy;
 
 void __cdecl SuperPhysics_Delete(ObjectMaster* obj) {
@@ -32,6 +31,7 @@ void __cdecl SuperPhysics_Load(ObjectMaster* obj)
 		co2->PhysData.AirResist = -0.001f;
 		co2->PhysData.AirDecel = -0.0200000009f;
 		co2->PhysData.AirAccel = 0.035f;
+		co2->PhysData.CenterHeight = 6.4f;
 
 		obj->MainSub = SuperPhysics_Main;
 		obj->DeleteSub = SuperPhysics_Delete;
@@ -44,8 +44,10 @@ void __cdecl SuperPhysics_Load(ObjectMaster* obj)
 }
 
 
-
 void Load_SuperPhysics(EntityData1* data) {
+
+	if (!isPhysics)
+		return;
 
 	ObjectMaster* physics = LoadObject(2, "SuperSonic_Physics", SuperPhysics_Load, LoadObj_Data1 | LoadObj_UnknownB);
 

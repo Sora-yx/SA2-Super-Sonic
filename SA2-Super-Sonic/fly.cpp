@@ -252,7 +252,13 @@ void SS_Ascending(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 
 	float spdY = 3.5f;
 
-	co2->Speed.y = spdY;
+	if (co2->Speed.y < spdY)
+	{
+		co2->Speed.y += 0.5f;
+	}
+	else {
+		co2->Speed.y = spdY;
+	}
 
 	return;
 }
@@ -278,7 +284,15 @@ void SS_Descending(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 
 
 	float spdY = -3.5f;
-	co2->Speed.y = spdY;
+
+
+	if (co2->Speed.y > spdY)
+	{
+		co2->Speed.y -= 0.5f;
+	}
+	else {
+		co2->Speed.y = spdY;
+	}
 
 	return;
 }
