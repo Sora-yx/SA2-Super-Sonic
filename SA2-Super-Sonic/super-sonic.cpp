@@ -86,23 +86,6 @@ void ResetJiggle(SonicCharObj2* sonicCO2)
 	CharacterModels[349].Model->child->chunkmodel = jigleSSMDL;
 }
 
-
-//ugly as fuck but needed until I find a way to fix the aura matrix shit
-void __cdecl SuperSonicHack_Display(bool enabled) {
-
-	if (enabled)
-	{
-		WriteJump((void*)0x720181, (void*)0x720b20);  //force sonic display to return just after setting the matrix callback thing.
-	}
-	else { //restore original code
-		WriteData<1>((int*)0x720181, 0x3C);
-		WriteData<1>((int*)0x720182, 0x8);
-		WriteData<1>((int*)0x720183, 0x75);
-		WriteData<1>((int*)0x720184, 0x30);
-		WriteData<1>((int*)0x720185, 0xC7);
-	}
-}
-
 AnimationInfo SonicAnimCopy[203];
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
@@ -133,7 +116,6 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
 
 	DoNextAction_r(playerID, 9, 0);
-	SuperSonicHack_Display(true);
 	isSuper = true;
 }
 
@@ -154,8 +136,6 @@ void SubRings(unsigned char player, EntityData1* data) {
 }
 
 void unSuper(unsigned char player) {
-
-	SuperSonicHack_Display(false);
 
 	if (AlwaysSuperSonic)
 		return;
@@ -405,16 +385,15 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 		return;
 
 
-	ObjectFunc(origin, Sonic_Display_t->Target());
-	origin(obj);
+	if (!isSuper || char2 != Characters_Sonic) {
 
-	if (!isSuper || char2 != Characters_Sonic)
-		return;
+		ObjectFunc(origin, Sonic_Display_t->Target());
+		return origin(obj);
+	}
 
-
-	//njSetMatrix(MATRIX_1A51A00, CURRENT_MATRIX);
+	njSetMatrix(MATRIX_1A51A00, CURRENT_MATRIX);
 	SonicCO2PtrExtern = sonicCO2;
-	//sub_427040(MATRIX_1A51A00);
+	sub_427040(MATRIX_1A51A00, CURRENT_MATRIX);
 
 	UpgradeDrawCallback = SuperSonic_Callback_r;
 

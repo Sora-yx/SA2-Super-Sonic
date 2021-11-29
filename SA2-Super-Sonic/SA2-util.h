@@ -153,7 +153,7 @@ DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
 
 //DataArray(Float, flt_1A51A00, 0x1A51A00, 12);
 
-FunctionPointer(void, sub_427040, (NJS_MATRIX a1), 0x427040);
+FunctionPointer(void, sub_427040, (NJS_MATRIX a1, float* a2), 0x427040);
 DataPointer(char, isLoading, 0x174AFC0);
 DataPointer(NJS_VECTOR*, cameraPosMaybe, 0x01DD92B0);
 
