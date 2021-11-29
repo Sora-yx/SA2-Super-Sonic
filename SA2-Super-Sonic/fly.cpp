@@ -38,7 +38,8 @@ void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 	if (isFlyMode || co2->AnimInfo.Current == 30)
 		return;
 
-	if (Controllers[pID].on & FlightButton)
+
+	if (Controllers[pID].press & FlightButton)
 	{
 		co2->Speed.y += 4.0f;
 		data1->Status &= ~Status_Ball;
@@ -57,19 +58,24 @@ void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 	}
 }
 
+
 char timerFly = 0;
+
 void SS_DisableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 
-	if (!isFlyMode || data1->NextAction != 0 || data1->Status & Status_DoNextAction)
+	if (!isFlyMode)
 		return;
+
+	if (timerFly > 20)
+		timerFly = 20;
 
 	if (++timerFly < 20)
 		return;
 
-	if (data1->Status & (Status_Ground | Status_OnObjectColli))
+	if (Controllers[pID].press & FlightButton)
 	{
-		data1->Action = 0;
-		co2->AnimInfo.Next = 16;
+		data1->Action = 10;
+		co2->AnimInfo.Next = 15;
 		timerFly = 0;
 		isFlyMode = false;
 	}
@@ -316,11 +322,11 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 
 	if (!isFlyMode) {
 
-		if (data1->Action > Action_HomingAttack)
+		if (data1->Action != Action_Jump && data1->Action != Action_Fall || !ControllerEnabled[co2->PlayerNum])
 			return;
 	}
 
-	if (Sonic_CheckNextAction(sCo2, data1, data2, co2) || Sonic_CheckActionWindow(data1, data2, co2, sCo2))
+	if (Sonic_CheckActionWindow(data1, data2, co2, sCo2) || Sonic_CheckNextAction(sCo2, data1, data2, co2))
 		return;
 
 	SS_EnableFly_CheckInput(data1, co2, co2->PlayerNum);
