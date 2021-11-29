@@ -160,10 +160,8 @@ void SS_Moving(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 		return;
 	}
 
-
 	SS_SetFlyNextAction(data1, co2, (char)SSFly::Descending, ssBeginDash2);
 	data1->Status |= Status_Attack;
-
 
 	VibeThing(0, 15, co2->PlayerNum, 4);
 	return;
@@ -311,12 +309,12 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 			return;
 	}
 
-	if (Sonic_CheckActionWindow(data1, data2, co2, sCo2) || Sonic_CheckNextAction(sCo2, data1, data2, co2))
-		return;
+	if (!sub_721480(co2, data1, 32.0)) {
+		SS_EnableFly_CheckInput(data1, co2, co2->PlayerNum);
+		SS_DisableFly_CheckInput(data1, co2, co2->PlayerNum);
+	}
 
-	SS_EnableFly_CheckInput(data1, co2, co2->PlayerNum);
 	SuperSonicFly_RunsActions(data1, co2, data2);
-	SS_DisableFly_CheckInput(data1, co2, co2->PlayerNum);
 	return;
 }
 

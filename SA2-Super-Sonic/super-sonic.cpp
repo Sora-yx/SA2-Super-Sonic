@@ -415,8 +415,12 @@ void Sonic_Main_r(ObjectMaster* obj)
 	SonicCharObj2* sco2 = (SonicCharObj2*)obj->Data2.Character;
 
 	if (isSuper) {
-		SuperSonic_PlayVictoryAnimation(data1, co2);
-		SuperSonicFly_MainManagement(data1, co2, data2);
+
+		if (!Sonic_CheckActionWindow(data1, data2, co2, sco2) || !Sonic_CheckNextAction(sco2, data1, data2, co2)) {
+
+			SuperSonic_PlayVictoryAnimation(data1, co2);
+			SuperSonicFly_MainManagement(data1, co2, data2);
+		}
 	}
 
 	ObjectFunc(origin, Sonic_Main_t->Target());
@@ -425,6 +429,7 @@ void Sonic_Main_r(ObjectMaster* obj)
 
 void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, SonicCharObj2* SonicCO2)
 {
+
 	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2, data2);
 
 	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());

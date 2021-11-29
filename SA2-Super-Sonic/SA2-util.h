@@ -343,3 +343,29 @@ static inline signed int  Sonic_CheckNextAction(SonicCharObj2* a1, EntityData1* 
 		add esp, 12
 	}
 }
+
+#pragma pack(push, 1)
+struct __declspec(align(2)) HomingAttackTarget
+{
+	EntityData1* entity;
+	float distance;
+};
+#pragma pack(pop)
+
+
+//HomingAttackTarget* __usercall sub_721480@<eax>(CharObj2Base* eax0@<eax>, EntityData1* a2, float a3)
+static const void* const sub_721480_ptr = (void*)0x721480;
+static inline HomingAttackTarget* sub_721480(CharObj2Base* a1, EntityData1* a2, float a3)
+{
+	HomingAttackTarget* result;
+	__asm
+	{
+		push[a3]
+		push[a2]
+		mov eax, a1
+		call sub_721480_ptr
+		mov result, eax
+		add esp, 8
+	}
+	return result;
+}
