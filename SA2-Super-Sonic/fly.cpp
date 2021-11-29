@@ -58,7 +58,6 @@ void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 	}
 }
 
-
 char timerFly = 0;
 
 void SS_DisableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {

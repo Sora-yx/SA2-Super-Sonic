@@ -15,6 +15,7 @@ NJS_TEXNAME SonicTex[16];
 NJS_TEXLIST Sonic_Texlist = { arrayptrandlength(SonicTex) };
 
 ModelIndex* SuperSonicMdl;
+extern std::string currentSuperMusic;
 
 //add super sonic model to sonic model pointer
 void __cdecl SetSuperSonicModels(SonicCharObj2* sco2) {
@@ -221,6 +222,7 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 
 void SuperSonic_ManagerDelete(ObjectMaster* obj)
 {
+	currentSuperMusic = "";
 	unSuper(obj->Data1.Entity->Index);
 	isSuper = false;
 }
