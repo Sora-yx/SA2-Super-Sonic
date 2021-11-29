@@ -39,53 +39,6 @@ void __cdecl LoadSSEff_Textures() {
 	return;
 }
 
-void DeleteJiggle(SonicCharObj2* sonicCO2) {
-	JiggleInfo* Jiggle = sonicCO2->SpineJiggle;
-
-	if (Jiggle)
-	{
-		Delete_Jiggle(Jiggle);
-		sonicCO2->SpineJiggle = 0;
-	}
-
-	return;
-}
-
-void __cdecl initJiggleSuperSonic(SonicCharObj2* sonicCO2) {
-
-	int modelNumber = isSuper == true ? 21 : 349;
-
-	JiggleInfo* jiggleMDL = LoadJiggle(CharacterModels[modelNumber].Model->child);
-	sonicCO2->SpineJiggle = jiggleMDL;
-	jiggleMDL->type = 18;
-	sonicCO2->SpineJiggle->speed = 0.40000001;
-	sonicCO2->SpineJiggle->field_8 = 0;
-	sonicCO2->SpineJiggle->field_10 = 1024;
-	sonicCO2->SpineJiggle->Model = 0;
-	return;
-}
-
-NJS_CNK_MODEL* jigleSSMDL = nullptr;
-
-void SetJiggle(SonicCharObj2* sonicCO2)
-{
-	if (!sonicCO2->SpineJiggle) {
-		return;
-	}
-
-	jigleSSMDL = CharacterModels[349].Model->child->chunkmodel;
-	CharacterModels[349].Model->child->chunkmodel = sonicCO2->SpineJiggle->SourceModelCopy->chunkmodel;
-}
-
-void ResetJiggle(SonicCharObj2* sonicCO2)
-{
-	if (!sonicCO2->SpineJiggle || !jigleSSMDL) {
-		return;
-	}
-
-	CharacterModels[349].Model->child->chunkmodel = jigleSSMDL;
-}
-
 AnimationInfo SonicAnimCopy[203];
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
@@ -229,7 +182,6 @@ void SuperSonic_ManagerDelete(ObjectMaster* obj)
 
 void SuperSonic_Manager(ObjectMaster* obj)
 {
-
 	EntityData1* data = obj->Data1.Entity;
 	EntityData1* player = MainCharObj1[data->Index];
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
@@ -248,7 +200,6 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 	switch (data->Action)
 	{
-
 	case superSonicInit:
 		obj->DeleteSub = SuperSonic_ManagerDelete;
 		data->Action++;
@@ -296,11 +247,9 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 void LoadSuperSonicManager(char playNum) {
 
-
-	int id = MainCharObj2[playNum]->CharID;
 	int id2 = MainCharObj2[playNum]->CharID2;
 
-	if (id == Characters_Sonic && id2 == Characters_Sonic) {
+	if (id2 == Characters_Sonic) {
 		ObjectMaster* superSonicManagerPtr = LoadObject(0, "SuperSonic_Manager", SuperSonic_Manager, LoadObj_Data1);
 
 		if (superSonicManagerPtr)
@@ -375,7 +324,6 @@ void __cdecl DoSpinDashRotationModel() {
 
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {
-
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)obj->Data2.Undefined;
 	EntityData1* data1 = obj->Data1.Entity;
 	char pID = sonicCO2->base.PlayerNum;
@@ -384,13 +332,13 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	if (!sonicCO2->TextureList)
 		return;
 
-
 	if (!isSuper || char2 != Characters_Sonic) {
 
 		ObjectFunc(origin, Sonic_Display_t->Target());
 		return origin(obj);
 	}
 
+	//used to calc matrix for upgrades, pick/drop object and aura position.
 	njSetMatrix(MATRIX_1A51A00, CURRENT_MATRIX);
 	SonicCO2PtrExtern = sonicCO2;
 	sub_427040(MATRIX_1A51A00, CURRENT_MATRIX);
@@ -437,62 +385,6 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	njPopMatrixEx();
 }
 
-
-FunctionPointer(void, PlayerAfterImageMaybe, (NJS_OBJECT* a1, int a2, NJS_TEXLIST* a3, float a4, char a5), 0x476C20);
-
-void SonicDisplayAfterImage_r(EntityData1* a1, CharObj2Base* data, SonicCharObj2* a3)
-{
-	NJS_OBJECT* Model; // edi
-
-	if (isSuper && !data->CharID2)
-	{
-		return;
-	}
-
-	if ((FrameCountIngame & 1) == 0 && !data->CharID && CharacterModels[30].Model)
-	{
-		Model = CharacterModels[30].Model;
-		njPushMatrix(flt_25F02A0);
-		njTranslateEx(&a1->Position);
-		if (a1->Rotation.z)
-		{
-			njRotateZ(CURRENT_MATRIX, a1->Rotation.z);
-		}
-		if (a1->Rotation.x)
-		{
-			njRotateX(CURRENT_MATRIX, a1->Rotation.x);
-		}
-		if (a1->Rotation.y != 0x8000)
-		{
-			njRotateY(CURRENT_MATRIX, 0x8000 - a1->Rotation.y);
-		}
-		if (!TwoPlayerMode)
-		{
-			PlayerAfterImageMaybe(Model, 0, a3->TextureList, 0.0, data->PlayerNum);
-
-		}
-		njPopMatrix(1u);
-	}
-}
-
-static void __declspec(naked) SonicDisplayAfterImageASM()
-{
-	__asm
-	{
-		push[esp + 08h] // a3
-		push[esp + 08h] // data
-		push esi // a1
-
-		// Call your __cdecl function here:
-		call SonicDisplayAfterImage_r
-
-		pop esi // a1
-		add esp, 4 // data
-		add esp, 4 // a3
-		retn
-	}
-}
-
 void LoadSonic_r(int playerNum) {
 
 	auto original = reinterpret_cast<decltype(LoadSonic_r)*>(LoadSonic_t->Target());
@@ -501,7 +393,6 @@ void LoadSonic_r(int playerNum) {
 	LoadSuperSonicManager(playerNum);
 	LoadSSEff_Textures();
 }
-
 
 void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
 
@@ -534,7 +425,6 @@ void Sonic_Main_r(ObjectMaster* obj)
 
 void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, SonicCharObj2* SonicCO2)
 {
-
 	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2, data2);
 
 	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
@@ -542,13 +432,10 @@ void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj
 }
 
 void init_SuperSonic() {
-
-	WriteJump((void*)0x71E460, SonicDisplayAfterImageASM);
-
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
-
 	Sonic_runsActions_t = new Trampoline((int)0x719920, (int)0x719920 + 0x8, Sonic_runsActions_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
+	init_AfterImages();
 	return;
 }

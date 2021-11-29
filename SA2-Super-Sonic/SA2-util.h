@@ -139,19 +139,12 @@ static inline void DrawUV(int* a1, NJS_OBJECT* obj, float FrameCounter)
 
 
 FunctionPointer(void, njReleaseTexture, (NJS_TEXLIST* a1), 0x77F9F0);
-
-
 DataPointer(RenderInfo, Has_texlist_batadvPlayerChara_in_it, 0x2670544);
-DataPointer(void**, ebx0, 0x1A55998);
 FunctionPointer(int, sub_458970, (), 0x458970);
 DataPointer(char, byte_1DE4400, 0x1DE4400);
 
 //stuff
 DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
-//DataArray(NJS_MATRIX, flt_1A51A00, 0x1A51A00, 12);
-
-
-//DataArray(Float, flt_1A51A00, 0x1A51A00, 12);
 
 FunctionPointer(void, sub_427040, (NJS_MATRIX a1, float* a2), 0x427040);
 DataPointer(char, isLoading, 0x174AFC0);
@@ -164,7 +157,6 @@ ObjectFunc(SuperAura, 0x49CD50);
 using ModelFuncPtr = void(__cdecl*)(NJS_OBJECT*);
 DataPointer(ModelFuncPtr, UpgradeDrawCallback, 0x1A55834);
 FunctionPointer(void, DrawObjWithCallBack, (NJS_OBJECT* obj), 0x42E730);
-
 
 //void __usercall sub_426420(int a1@<eax>, int a2)
 static const void* const sub426420_ptr = (void*)0x426420;
@@ -191,7 +183,6 @@ static inline void sub_426E40(float* a1, float* a2, float* a3)
 		call sub_426E40_ptr
 	}
 }
-
 
 static const void* const njCalcPointPtr_ = (void*)0x426CC0;
 static inline void njCalcPoint_(float* matrix, NJS_VECTOR* v, NJS_VECTOR* transform, char additive)
@@ -238,14 +229,12 @@ DataPointer(NJS_MATRIX, sonic_LeftHandMatrix, 0x1A51AA0);
 DataPointer(NJS_MATRIX, sonic_LeftFootMatrix, 0x1A51A6C);
 DataPointer(NJS_MATRIX, sonic_RightFootMatrix, 0x1A519D0);
 
-
 DataPointer(int, dword_25F02D8, 0x25F02D8);
 DataPointer(int, dword_1DEB6A4, 0x1DEB6A4);
 
 DataArray(float, flt_25F02A0, 0x25F02A0, 5);
 FunctionPointer(void, Sonic_CallBack, (NJS_OBJECT* mdl), 0x71EAA0);
 DataPointer(WORD, animate_AuraThing, 0x170ACEE);
-
 
 FunctionPointer(JiggleInfo*, LoadJiggle, (NJS_OBJECT* jiggle), 0x447580);
 

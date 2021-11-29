@@ -74,5 +74,11 @@
     <ClCompile Include="fly.cpp">
       <Filter>Source Files\Super Sonic</Filter>
     </ClCompile>
+    <ClCompile Include="jiggle.cpp">
+      <Filter>Source Files\Super Sonic</Filter>
+    </ClCompile>
+    <ClCompile Include="afterimage.cpp">
+      <Filter>Source Files\Super Sonic</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

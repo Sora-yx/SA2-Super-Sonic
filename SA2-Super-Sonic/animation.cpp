@@ -1,6 +1,5 @@
 #include "pch.h"
 
-
 AnimationInfo SuperSonicAnimationList_r[] = {
 	{ 203, 328, 3, 0, 0.0625f, 0.15f },
 	{ 1, 328, 3, 1, 0.25f, 0.1f },

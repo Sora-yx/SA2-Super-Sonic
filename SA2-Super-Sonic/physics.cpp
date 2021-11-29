@@ -3,9 +3,10 @@
 Trampoline* PResetAngle_t;
 PhysicsData sonicPhysicsCopy;
 
+//restore sonic's original physics.
 void __cdecl SuperPhysics_Delete(ObjectMaster* obj) {
-	//restore sonic's original physics.
 	memcpy(&PhysicsArray[Characters_Sonic], &sonicPhysicsCopy, sizeof(PhysicsData));
+	return;
 }
 
 void __cdecl SuperPhysics_Main(ObjectMaster* obj) {
@@ -16,10 +17,8 @@ void __cdecl SuperPhysics_Main(ObjectMaster* obj) {
 		DeleteObject_(obj);
 }
 
-
 void __cdecl SuperPhysics_Load(ObjectMaster* obj)
 {
-
 	CharObj2Base* co2 = MainCharObj2[obj->Data1.Entity->Index];
 
 	if (co2)
@@ -35,7 +34,6 @@ void __cdecl SuperPhysics_Load(ObjectMaster* obj)
 
 		obj->MainSub = SuperPhysics_Main;
 		obj->DeleteSub = SuperPhysics_Delete;
-
 	}
 	else
 	{

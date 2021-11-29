@@ -46,7 +46,6 @@ void SS_SetMatrixPosition(NJS_OBJECT* mdl)
 	}
 }
 
-
 void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
 
 	NJS_MATRIX_PTR m = _nj_current_matrix_ptr_;
@@ -160,7 +159,6 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
 		}
 	}
 }
-
 
 void DisplaySuperSonic_Upgrade(SonicCharObj2* sonicCO2) {
 
