@@ -7,7 +7,7 @@ enum SuperSonicModel {
 	SSRoot = 328,
 	SSRoot2,
 	SSRoot3,
-	SSHead = 331,
+	SSHead,
 	SSHead2 = 336,
 	SSRightFootToe,
 	SSLeftFootToe,

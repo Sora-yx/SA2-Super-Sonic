@@ -65,6 +65,27 @@ void __cdecl initJiggleSuperSonic(SonicCharObj2* sonicCO2) {
 	return;
 }
 
+NJS_CNK_MODEL* jigleSSMDL = nullptr;
+
+void SetJiggle(SonicCharObj2* sonicCO2)
+{
+	if (!sonicCO2->SpineJiggle) {
+		return;
+	}
+
+	jigleSSMDL = CharacterModels[349].Model->child->chunkmodel;
+	CharacterModels[349].Model->child->chunkmodel = sonicCO2->SpineJiggle->SourceModelCopy->chunkmodel;
+}
+
+void ResetJiggle(SonicCharObj2* sonicCO2)
+{
+	if (!sonicCO2->SpineJiggle || !jigleSSMDL) {
+		return;
+	}
+
+	CharacterModels[349].Model->child->chunkmodel = jigleSSMDL;
+}
+
 
 //ugly as fuck but needed until I find a way to fix the aura matrix shit
 void __cdecl SuperSonicHack_Display(bool enabled) {
@@ -83,7 +104,6 @@ void __cdecl SuperSonicHack_Display(bool enabled) {
 }
 
 AnimationInfo SonicAnimCopy[203];
-
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
 
@@ -354,9 +374,9 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 	}
 
 	njSetTexture(texlist);
-	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10);// Draw Sonic animated
+	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10); //Draw Sonic animated
+	ResetJiggle(sonicCO2);
 }
-
 
 void __cdecl DoSpinDashRotationModel() {
 
@@ -372,7 +392,6 @@ void __cdecl DoSpinDashRotationModel() {
 	spinDashThing.z = 0.80000001;
 	njScaleEx(&spinDashThing);
 }
-
 
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {
@@ -407,10 +426,10 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 
 	int curAnim = sonicCO2->base.AnimInfo.Current;
 
-
 	njPushMatrixEx();
 	njTranslateEx(&data1->Position);
 	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
+	SetJiggle(sonicCO2);
 
 	if (data1->Rotation.z)
 	{
