@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ss.h"
 
 enum class SSFly {
 	Standing = 100,
@@ -29,7 +30,9 @@ void SuperSonic_CommonPhysics(CharObj2Base* co2, EntityData1* data1, EntityData2
 void SuperSonic_CommonPhysicsV(CharObj2Base* co2, EntityData1* data1, EntityData2* data2, float A, float B)
 {
 	co2->Speed.y = FloatCalcResult(co2->Speed.y, A, B);
+	PResetAngle_r(data1, co2);
 	SuperSonic_CommonPhysics(co2, data1, data2);
+
 }
 
 void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
@@ -303,6 +306,14 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 	if (!data1 || !isSuper || !isFly)
 		return;
 
+	if (TimerStopped != 0 && isFlyMode)
+	{
+		data1->Action = 10;
+		co2->AnimInfo.Next = 15;
+		timerFly = 0;
+		isFlyMode = false;
+	}
+
 	if (!isFlyMode) {
 
 		if (data1->Action != Action_Jump && data1->Action != Action_Fall || !ControllerEnabled[co2->PlayerNum])
@@ -343,7 +354,7 @@ void SuperSonicFly_MainActions(EntityData1* data1, CharObj2Base* co2, EntityData
 
 void SuperSonicFly_MainManagement(EntityData1* data1, CharObj2Base* co2, EntityData2* data2) {
 
-	if (!data1 || !isFlyMode || !isFly)
+	if (!data1 || !isFlyMode || !isFly || TimerStopped != 0)
 		return;
 
 	SuperSonicFly_MainActions(data1, co2, data2);

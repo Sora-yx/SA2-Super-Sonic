@@ -322,6 +322,7 @@ void __cdecl DoSpinDashRotationModel() {
 	njScaleEx(&spinDashThing);
 }
 
+
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)obj->Data2.Undefined;
@@ -366,6 +367,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	{
 		njRotateX(CURRENT_MATRIX, data1->Rotation.x);
 	}
+
 	if (data1->Rotation.y != 0x8000)
 	{
 		njRotateY(CURRENT_MATRIX, 0x8000 - data1->Rotation.y);
@@ -374,7 +376,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
 	{
 		DrawSonicMotion(data1, sonicCO2);
-		DisplaySuperSonic_Upgrade(sonicCO2);
+		DisplaySuperSonic_Upgrade(data1, sonicCO2);
 		Sonic_HealdObjectStuff(data1, &sonicCO2->base);
 		njPopMatrixEx();
 		return;
@@ -416,11 +418,8 @@ void Sonic_Main_r(ObjectMaster* obj)
 
 	if (isSuper) {
 
-		if (!Sonic_CheckActionWindow(data1, data2, co2, sco2) || !Sonic_CheckNextAction(sco2, data1, data2, co2)) {
-
-			SuperSonic_PlayVictoryAnimation(data1, co2);
-			SuperSonicFly_MainManagement(data1, co2, data2);
-		}
+		SuperSonic_PlayVictoryAnimation(data1, co2);
+		SuperSonicFly_MainManagement(data1, co2, data2);
 	}
 
 	ObjectFunc(origin, Sonic_Main_t->Target());

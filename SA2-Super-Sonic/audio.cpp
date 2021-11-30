@@ -67,7 +67,7 @@ void PlaySong_Queue_r(const char* song)
 
 	if (sub_458970())
 	{
-		strcpy_s(CurrentSongName, sizeof(song), song);
+		strcpy_s(CurrentSongName, 32, song);
 	}
 	else
 	{

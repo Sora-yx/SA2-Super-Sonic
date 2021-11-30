@@ -160,14 +160,14 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
 	}
 }
 
-void DisplaySuperSonic_Upgrade(SonicCharObj2* sonicCO2) {
+void DisplaySuperSonic_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
 	if (!sonicCO2 || !isUpgrade)
 		return;
 
 	int curAnim = sonicCO2->base.AnimInfo.Current;
 
-	if (curAnim == 30 || curAnim == 11 || curAnim == 12 || curAnim == 100)
+	if (data1->Status & Status_Ball || curAnim == 30 || curAnim == 11 || curAnim == 12 || curAnim == 100)
 		return;
 
 	njSetTexture(&Sonic_Texlist);
