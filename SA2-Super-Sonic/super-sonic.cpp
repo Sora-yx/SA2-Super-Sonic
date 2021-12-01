@@ -186,9 +186,12 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	EntityData1* player = MainCharObj1[data->Index];
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
 
-	//if player dies, remove transformation.
-	if (GameState == GameStates_LoadFinished && !AlwaysSuperSonic) {
-		unSuper(sonicCO2->base.PlayerNum);
+
+	//if player dies, remove transformation and reset manager action.
+	if (GameState == GameStates_LoadFinished && !AlwaysSuperSonic && data->Action > playerInputCheck) {
+
+		unSuper(data->Index);
+		data->Action = playerInputCheck;
 		return;
 	}
 
