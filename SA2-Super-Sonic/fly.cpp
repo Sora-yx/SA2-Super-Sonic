@@ -316,7 +316,7 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 
 	if (!isFlyMode) {
 
-		if (data1->Action != Action_Jump && data1->Action != Action_Fall || !ControllerEnabled[co2->PlayerNum])
+		if (data1->Action != Action_HomingAttack && data1->Action != Action_Fall || !ControllerEnabled[co2->PlayerNum])
 			return;
 	}
 
