@@ -74,7 +74,7 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 
 void SubRings(unsigned char player, EntityData1* data) {
 
-	if (RemoveLimitations || AlwaysSuperSonic || MainCharObj2[player]->CharID != Characters_Sonic || !isSuper || TimeStopped != 0)
+	if (RemoveLimitations || AlwaysSuperSonic || MainCharObj2[player]->CharID != Characters_Sonic || !isSuper || TimerStopped != 0)
 		return;
 
 	if (FrameCountIngame % 60 == 0 && RingCount[player] > 0) {
