@@ -2,6 +2,7 @@
 
 #define MATRIX_1A51A00 ((NJS_MATRIX_PTR)0x1A51A00) //matrix used for Sonic CallBack
 
+
 FunctionPointer(void, DrawObject, (NJS_OBJECT* a1), 0x42E730);
 FunctionPointer(void, SuperSonicGetAccel, (EntityData1* data, EntityData2* data2, CharObj2Base* co2), 0x49D870);
 
@@ -145,8 +146,7 @@ DataPointer(char, byte_1DE4400, 0x1DE4400);
 
 //stuff
 DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x01A51A9C);
-
-FunctionPointer(void, sub_427040, (NJS_MATRIX a1, float* a2), 0x427040);
+FunctionPointer(void, sub_427040, (NJS_MATRIX_PTR a1, NJS_MATRIX_PTR a2), 0x427040); //njs_matrix_ptr not float, optimization in release = fucked
 DataPointer(char, isLoading, 0x174AFC0);
 DataPointer(NJS_VECTOR*, cameraPosMaybe, 0x01DD92B0);
 

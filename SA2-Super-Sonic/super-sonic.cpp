@@ -199,6 +199,12 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		return;
 	}
 
+	if ( (CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2) && data->Index == 1 && AlwaysSuperSonic)
+	{
+		return;
+	}
+	
+
 	unsigned char playerID = data->Index;
 
 	switch (data->Action)
@@ -342,12 +348,14 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 		return origin(obj);
 	}
 
+
 	//used to calc matrix for upgrades, pick/drop object and aura position.
-	njSetMatrix(MATRIX_1A51A00, CURRENT_MATRIX);
+	memcpy(MATRIX_1A51A00, CURRENT_MATRIX, 0x30u);
 	SonicCO2PtrExtern = sonicCO2;
 	sub_427040(MATRIX_1A51A00, CURRENT_MATRIX);
 
 	UpgradeDrawCallback = SuperSonic_Callback_r;
+
 
 	if ((data1->field_6 & 2) != 0 && !Pose2PStart_PlayerNum)
 	{
@@ -389,6 +397,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	DrawSonicMotion(data1, sonicCO2);
 	njPopMatrixEx();
 }
+
 
 void LoadSonic_r(int playerNum) {
 
