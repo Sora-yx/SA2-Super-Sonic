@@ -8,7 +8,7 @@ Trampoline* Sonic_runsActions_t;
 
 bool isSuper = false;
 
-NJS_TEXNAME SSEffTex[16];
+NJS_TEXNAME SSEffTex[17];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
 
 NJS_TEXNAME SonicTex[16];
@@ -28,7 +28,12 @@ void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 	njReleaseTexture(sco2->TextureList);
 	sco2->TextureList = 0;
 	sco2->TextureList = LoadCharTextures("SSONICTEX");
-	LoadTextureList("sonictex", &Sonic_Texlist); //used for upgrade textures.
+
+	//used for upgrade textures.
+	if (AltCostume[sco2->base.PlayerNum] != 0)
+		LoadTextureList("SONIC1TEX", &Sonic_Texlist);
+	else
+		LoadTextureList("SONICTEX", &Sonic_Texlist);
 	return;
 }
 
@@ -115,7 +120,12 @@ void unSuper(unsigned char player) {
 	co2S->base.AnimInfo.Animations = SonicAnimCopy;
 	njReleaseTexture(co2S->TextureList);
 	co2S->TextureList = 0;
-	co2S->TextureList = LoadCharTextures("SONICTEX");
+
+	if (AltCostume[player] != 0)
+		co2S->TextureList = LoadCharTextures("SONIC1TEX");
+	else
+		co2S->TextureList = LoadCharTextures("SONICTEX");
+
 	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
 	MainCharacter[player]->DisplaySub_Delayed4 = nullptr;
 	isSuper = false;
@@ -311,7 +321,9 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 		texlist = &SSEff_Texlist;
 	}
 
-	njSetTexture(texlist);
+	if (AltCostume[sonicCO2->base.PlayerNum] == 0)
+		njSetTexture(texlist);
+
 	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10); //Draw Sonic animated
 	ResetJiggle(sonicCO2);
 }
@@ -448,6 +460,8 @@ void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj
 }
 
 void init_SuperSonic() {
+
+
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
 	Sonic_runsActions_t = new Trampoline((int)0x719920, (int)0x719920 + 0x8, Sonic_runsActions_r);
