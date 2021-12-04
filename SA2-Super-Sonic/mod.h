@@ -11,9 +11,11 @@ extern int superAuraState;
 extern bool isUpgrade;
 extern bool isPhysics;
 extern bool isFly;
+extern bool unTransform;
 extern AnimationInfo SuperSonicAnimationList_r[];
 
 extern HelperFunctions HelperFunctionsGlobal;
+
 
 #define CURRENT_MATRIX _nj_current_matrix_ptr_
 

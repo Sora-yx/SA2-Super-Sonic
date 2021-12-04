@@ -147,7 +147,7 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 	EntityData1* player = MainCharObj1[playerID];
 
-	if (!player || AlwaysSuperSonic)
+	if (!player || AlwaysSuperSonic || !unTransform)
 		return false;
 
 	if (player->NextAction != 0 || player->Status & Status_DoNextAction)
@@ -157,7 +157,7 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 	if (ControllerPointers[playerID]->press & TransformButton)
 	{
-		if (player->Action == Action_Jump || player->Action == Action_BounceUp && (player->Status & Status_Ball) == 0) {
+		if (player->Action == Action_HomingAttack || player->Action == Action_Fall && (player->Status & Status_Ball) == 0) {
 			unSuper(playerID);
 			return true;
 		}
