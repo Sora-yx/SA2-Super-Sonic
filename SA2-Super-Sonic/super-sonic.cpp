@@ -313,6 +313,7 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 			SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[30].ModelNum].Model;// ball form
 			curAnim = 30;
 		}
+
 		Motion = CharacterAnimations[sonicCO2->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
 	}
 
@@ -377,6 +378,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 
 	int curAnim = sonicCO2->base.AnimInfo.Current;
 
+	njSetTexture(sonicCO2->TextureList);
 	njPushMatrixEx();
 	njTranslateEx(&data1->Position);
 	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);

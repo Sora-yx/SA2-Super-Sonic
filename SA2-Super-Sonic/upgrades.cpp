@@ -165,6 +165,9 @@ void DisplaySuperSonic_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 	if (!sonicCO2 || !isUpgrade)
 		return;
 
+	if (AltCostume[sonicCO2->base.PlayerNum] != 0)
+		return;
+
 	int curAnim = sonicCO2->base.AnimInfo.Current;
 
 	if (data1->Status & Status_Ball || curAnim == 30 || curAnim == 11 || curAnim == 12 || curAnim == 100)
