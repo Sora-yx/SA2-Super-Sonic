@@ -429,7 +429,7 @@ void LoadSuperAura(char pID)
 }
 
 
-//Serie of hack to make the aura display to a different texture when Super Sonic.
+//Serie of hack to make every aura display a yellow texture when Super Sonic. (Using Shadow texlist)
 void init_AuraHack() {
 
 	//regular sonic aura
