@@ -157,7 +157,7 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 	if (ControllerPointers[playerID]->press & TransformButton)
 	{
-		if (player->Action == Action_HomingAttack || player->Action == Action_Fall && (player->Status & Status_Ball) == 0) {
+		if (player->Action == Action_HomingAttack && (player->Status & Status_Ball) == 0) {
 			unSuper(playerID);
 			return true;
 		}
