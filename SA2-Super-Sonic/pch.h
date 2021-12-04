@@ -10,11 +10,11 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 #include "SA2ModLoader.h"
+#include "UsercallFunctionHandler.h"
 #include "SA2-util.h"
 #include "Trampoline.h"
 #include "IniFile.hpp"
 #include "ModelInfo.h"
-#include "UsercallFunctionHandler.h"
 #include "mod.h"
 #include "util.h"
 #endif //PCH_H

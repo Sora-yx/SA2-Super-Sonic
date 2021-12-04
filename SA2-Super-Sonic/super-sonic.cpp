@@ -6,6 +6,8 @@ Trampoline* Sonic_Display_t;
 Trampoline* LoadSonic_t;
 Trampoline* Sonic_runsActions_t;
 
+Trampoline* CheckLightDash_t;
+
 bool isSuper = false;
 
 NJS_TEXNAME SSEffTex[17];
@@ -54,8 +56,9 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 		ResetMusic();
 	}
 
-	memcpy(&SonicAnimCopy, sco2->base.AnimInfo.Animations, sizeof(SonicAnimCopy));
+	sco2->base.Speed.x = 0;
 
+	memcpy(&SonicAnimCopy, sco2->base.AnimInfo.Animations, sizeof(SonicAnimCopy));
 	ControllerEnabled[playerID] = 0;
 	sco2->base.Powerups |= Powerups_Invincibility;
 	AnimationIndex* v4 = sco2->MotionList;
@@ -72,8 +75,6 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	Load_SuperPhysics(data);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
-
-	DoNextAction_r(playerID, 9, 0);
 	isSuper = true;
 }
 
@@ -172,13 +173,16 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 
 	if (RingCount[playerID] >= 50 || RemoveLimitations) {
 
-		if (Controllers[playerID].press & TransformButton)
-		{
-			if (player->Action == Action_Jump || player->Action == Action_BounceUp && (player->Status & Status_Ball) == 0) {
+		if (player->Action == Action_Jump || player->Action == Action_BounceUp && (player->Status & Status_Ball) == 0) {
+
+			if (Controllers[playerID].press & TransformButton)
+			{
+				player->Action = 18;
 				return true;
 			}
 		}
 	}
+	
 
 	return false;
 }
@@ -296,6 +300,9 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
 	NJS_TEXLIST* texlist = sonicCO2->TextureList;
 
+	if (!texlist)
+		return;
+
 	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
 
 	int curAnim = sonicCO2->base.AnimInfo.Current;
@@ -352,7 +359,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	char pID = sonicCO2->base.PlayerNum;
 	char char2 = sonicCO2->base.CharID2;
 
-	if (!sonicCO2->TextureList)
+	if (!sonicCO2->TextureList || !sonicCO2->MotionList)
 		return;
 
 	if (!isSuper || char2 != Characters_Sonic) {
@@ -360,7 +367,6 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 		ObjectFunc(origin, Sonic_Display_t->Target());
 		return origin(obj);
 	}
-
 
 	//used to calc matrix for upgrades, pick/drop object and aura position.
 	memcpy(MATRIX_1A51A00, CURRENT_MATRIX, 0x30u);
