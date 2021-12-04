@@ -201,6 +201,12 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
 
 
+	if (sonicCO2->base.CharID2 != Characters_Sonic)
+	{
+		DeleteObject_(obj);
+		return;
+	}
+
 	//if player dies, remove transformation and reset manager action.
 	if (GameState == GameStates_LoadFinished && !AlwaysSuperSonic && data->Action > playerInputCheck) {
 
@@ -424,8 +430,10 @@ void LoadSonic_r(int playerNum) {
 	auto original = reinterpret_cast<decltype(LoadSonic_r)*>(LoadSonic_t->Target());
 	original(playerNum);
 
-	LoadSuperSonicManager(playerNum);
-	LoadSSEff_Textures();
+	if (CurrentLevel != LevelIDs_FinalHazard) {
+		LoadSuperSonicManager(playerNum);
+		LoadSSEff_Textures();
+	}
 }
 
 void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
