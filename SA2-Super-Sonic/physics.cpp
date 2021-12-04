@@ -13,7 +13,7 @@ void __cdecl SuperPhysics_Main(ObjectMaster* obj) {
 
 	CharObj2Base* co2 = MainCharObj2[obj->Data1.Entity->Index];
 
-	if (!co2 || !isSuper)
+	if (!co2 || !isSuper[obj->Data1.Entity->Index])
 		DeleteObject_(obj);
 }
 

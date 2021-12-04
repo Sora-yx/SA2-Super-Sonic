@@ -76,7 +76,7 @@ enum SuperSonicMusic {
 	Random
 };
 
-extern bool isSuper;
+extern bool isSuper[2];
 
 void init_SuperSonic();
 void init_AuraHack();

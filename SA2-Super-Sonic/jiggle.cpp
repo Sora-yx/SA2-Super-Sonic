@@ -16,7 +16,7 @@ void DeleteJiggle(SonicCharObj2* sonicCO2) {
 
 void __cdecl initJiggleSuperSonic(SonicCharObj2* sonicCO2) {
 
-	int modelNumber = isSuper == true ? 21 : 349;
+	int modelNumber = isSuper[sonicCO2->base.PlayerNum] == true ? 21 : 349;
 
 	JiggleInfo* jiggleMDL = LoadJiggle(CharacterModels[modelNumber].Model->child);
 	sonicCO2->SpineJiggle = jiggleMDL;

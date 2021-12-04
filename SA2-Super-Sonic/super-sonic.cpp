@@ -8,7 +8,7 @@ Trampoline* Sonic_runsActions_t;
 
 Trampoline* CheckLightDash_t;
 
-bool isSuper = false;
+bool isSuper[2] = { 0, 0 };
 
 NJS_TEXNAME SSEffTex[17];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
@@ -75,12 +75,12 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	Load_SuperPhysics(data);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
-	isSuper = true;
+	isSuper[playerID] = true;
 }
 
 void SubRings(unsigned char player, EntityData1* data) {
 
-	if (RemoveLimitations || AlwaysSuperSonic || MainCharObj2[player]->CharID != Characters_Sonic || !isSuper || TimerStopped != 0)
+	if (RemoveLimitations || AlwaysSuperSonic || MainCharObj2[player]->CharID != Characters_Sonic || !isSuper[player] || TimerStopped != 0)
 		return;
 
 	if (FrameCountIngame % 60 == 0 && RingCount[player] > 0) {
@@ -103,7 +103,7 @@ void unSuper(unsigned char player) {
 	CharObj2Base* co2 = MainCharObj2[player];
 	SonicCharObj2* co2S = (SonicCharObj2*)MainCharacter[player]->Data2.Character;
 
-	if (!data || !isSuper)
+	if (!data || !isSuper[player])
 		return;
 
 	if (co2->CharID == Characters_Sonic)
@@ -129,7 +129,7 @@ void unSuper(unsigned char player) {
 
 	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
 	MainCharacter[player]->DisplaySub_Delayed4 = nullptr;
-	isSuper = false;
+	isSuper[player] = false;
 
 	if (IsIngame())
 	{
@@ -168,7 +168,7 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 bool CheckTransform_Input(char playerID, EntityData1* player)
 {
-	if (isSuper)
+	if (isSuper[playerID])
 		return false;
 
 	if (RingCount[playerID] >= 50 || RemoveLimitations) {
@@ -191,7 +191,7 @@ void SuperSonic_ManagerDelete(ObjectMaster* obj)
 {
 	currentSuperMusic = "";
 	unSuper(obj->Data1.Entity->Index);
-	isSuper = false;
+	isSuper[obj->Data1.Entity->Index] = false;
 }
 
 void SuperSonic_Manager(ObjectMaster* obj)
@@ -362,7 +362,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	if (!sonicCO2->TextureList || !sonicCO2->MotionList)
 		return;
 
-	if (!isSuper || char2 != Characters_Sonic) {
+	if (!isSuper[pID] || char2 != Characters_Sonic) {
 
 		ObjectFunc(origin, Sonic_Display_t->Target());
 		return origin(obj);
@@ -448,7 +448,7 @@ void Sonic_Main_r(ObjectMaster* obj)
 	EntityData2* data2 = MainCharData2[obj->Data2.Character->PlayerNum];
 	SonicCharObj2* sco2 = (SonicCharObj2*)obj->Data2.Character;
 
-	if (isSuper) {
+	if (isSuper[co2->PlayerNum]) {
 
 		SuperSonic_PlayVictoryAnimation(data1, co2);
 		SuperSonicFly_MainManagement(data1, co2, data2);

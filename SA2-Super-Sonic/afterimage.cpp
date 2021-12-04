@@ -19,7 +19,7 @@ static inline void Sonic_AfterImageOrigin(EntityData1* a1, CharObj2Base* a2, Son
 
 void SonicDisplayAfterImage_r(EntityData1* a1, CharObj2Base* a2, SonicCharObj2* a3)
 {
-	if (isSuper && !a2->CharID2)
+	if (isSuper[a2->PlayerNum] && !a2->CharID2)
 	{
 		return;
 	}

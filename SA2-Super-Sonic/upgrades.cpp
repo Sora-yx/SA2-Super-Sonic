@@ -54,7 +54,7 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
 	char pNum = wk->base.PlayerNum;
 	char char2 = wk->base.CharID2;
 
-	if (!isSuper || char2 != Characters_Sonic)
+	if (!isSuper[pNum] || char2 != Characters_Sonic)
 	{
 		return;
 	}

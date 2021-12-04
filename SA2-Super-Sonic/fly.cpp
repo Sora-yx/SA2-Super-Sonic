@@ -303,7 +303,7 @@ void SuperSonicFly_RunsActions(EntityData1* data1, CharObj2Base* co2, EntityData
 
 void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, CharObj2Base* co2, EntityData2* data2) {
 
-	if (!data1 || !isSuper || !isFly)
+	if (!data1 || !isSuper[co2->PlayerNum] || !isFly)
 		return;
 
 	if (TimerStopped != 0 && isFlyMode)

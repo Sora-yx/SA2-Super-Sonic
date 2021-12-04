@@ -61,7 +61,7 @@ void RestoreMusic() {
 void PlaySong_Queue_r(const char* song)
 {
 
-	if (isSuper && lastMusic != "rndclear" && IsIngame()) {
+	if ( (isSuper[0] || isSuper[1]) && lastMusic != "rndclear" && IsIngame()) {
 		return;
 	}
 
@@ -109,7 +109,7 @@ void PlayMusic_Origin(const char* song)
 void PlayMusic_r(const char* song)
 {
 
-	if (isSuper && lastMusic != "rndclear" && IsIngame()) {
+	if ( (isSuper[0] || isSuper[1]) && lastMusic != "rndclear" && IsIngame()) {
 		return;
 	}
 

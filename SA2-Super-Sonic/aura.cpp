@@ -13,7 +13,7 @@ bool isNotSuperSonic(CharObj2Base* co2)
 {
 	char charID2 = co2->CharID2;
 
-	if (charID2 == Characters_Amy || charID2 == Characters_MetalSonic || co2->CharID == Characters_Shadow || !isSuper)
+	if (charID2 == Characters_Amy || charID2 == Characters_MetalSonic || co2->CharID == Characters_Shadow || !isSuper[co2->PlayerNum])
 	{
 		return true;
 	}
@@ -375,7 +375,7 @@ void SuperAura_r(ObjectMaster* obj) {
 	EntityData1* data = obj->Data1.Entity;
 	NJS_OBJECT* v24;
 
-	if (co2->base.AnimInfo.Current == 54 || co2->base.AnimInfo.Next == 54 || !isSuper)
+	if (co2->base.AnimInfo.Current == 54 || co2->base.AnimInfo.Next == 54 || !isSuper[co2->base.PlayerNum])
 	{
 		obj->DisplaySub_Delayed4 = nullptr;
 		return;
