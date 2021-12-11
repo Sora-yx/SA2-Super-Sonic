@@ -60,7 +60,9 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 
 	memcpy(&SonicAnimCopy, sco2->base.AnimInfo.Animations, sizeof(SonicAnimCopy));
 	ControllerEnabled[playerID] = 0;
-	sco2->base.Powerups |= Powerups_Invincibility;
+
+	if (CurrentLevel != LevelIDs_ChaoWorld)
+		sco2->base.Powerups |= Powerups_Invincibility;
 
 	SetSuperSonicModels(sco2);
 	DeleteJiggle(sco2);
@@ -72,7 +74,10 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	Load_SuperPhysics(data);
-	sco2->base.Upgrades |= Upgrades_SuperSonic;
+
+	if (CurrentLevel != LevelIDs_ChaoWorld)
+		sco2->base.Upgrades |= Upgrades_SuperSonic;
+
 	isSuper[playerID] = true;
 }
 
