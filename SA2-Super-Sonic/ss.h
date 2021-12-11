@@ -15,3 +15,6 @@ void SetJiggle(SonicCharObj2* sonicCO2);
 void ResetJiggle(SonicCharObj2* sonicCO2);
 void init_AfterImages();
 void PResetAngle_r(EntityData1* data1, CharObj2Base* co2);
+void Load_NewSuperSonicAnim();
+void Delete_SSAnim();
+void SuperSonic_DisableFly(EntityData1* data1, CharObj2Base* co2);

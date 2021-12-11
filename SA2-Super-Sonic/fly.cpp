@@ -274,6 +274,12 @@ void SS_Descending(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 
 void SuperSonicFly_RunsActions(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 {
+	if (!isSuper[co2->PlayerNum] && data1->Action >= (char)SSFly::Standing)
+	{
+		data1->Action = Action_Fall;
+
+	}
+
 	switch ((SSFly)data1->Action)
 	{
 	case SSFly::Standing:
@@ -301,17 +307,22 @@ void SuperSonicFly_RunsActions(EntityData1* data1, CharObj2Base* co2, EntityData
 	}
 }
 
+void SuperSonic_DisableFly(EntityData1* data1, CharObj2Base* co2) {
+	data1->Action = 10;
+	co2->AnimInfo.Next = 15;
+	timerFly = 0;
+	isFlyMode = false;
+	return;
+}
+
 void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, CharObj2Base* co2, EntityData2* data2) {
 
-	if (!data1 || !isSuper[co2->PlayerNum] || !isFly)
+	if (!data1 || !isFly)
 		return;
 
 	if (TimerStopped != 0 && isFlyMode)
 	{
-		data1->Action = 10;
-		co2->AnimInfo.Next = 15;
-		timerFly = 0;
-		isFlyMode = false;
+		SuperSonic_DisableFly(data1, co2);
 	}
 
 	if (!isFlyMode) {
@@ -320,7 +331,7 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 			return;
 	}
 
-	if (!sub_721480(co2, data1, 32.0)) {
+	if (!sub_721480(co2, data1, 32.0) && isSuper[co2->PlayerNum]) {
 		SS_EnableFly_CheckInput(data1, co2, co2->PlayerNum);
 		SS_DisableFly_CheckInput(data1, co2, co2->PlayerNum);
 	}

@@ -61,9 +61,7 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	memcpy(&SonicAnimCopy, sco2->base.AnimInfo.Animations, sizeof(SonicAnimCopy));
 	ControllerEnabled[playerID] = 0;
 	sco2->base.Powerups |= Powerups_Invincibility;
-	AnimationIndex* v4 = sco2->MotionList;
-	UnloadAnimation(v4);
-	sco2->MotionList = 0;
+
 	SetSuperSonicModels(sco2);
 	DeleteJiggle(sco2);
 	initJiggleSuperSonic(sco2);
@@ -71,7 +69,7 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	sco2->base.AnimInfo.Animations = SuperSonicAnimationList_r;
 	LoadSuperSonicCharTextures(sco2);
 
-	sco2->MotionList = LoadMTNFile((char*)"ssmotion.prs");
+
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	Load_SuperPhysics(data);
 	sco2->base.Upgrades |= Upgrades_SuperSonic;
@@ -114,9 +112,6 @@ void unSuper(unsigned char player) {
 	data->Status = 0;
 	co2->Upgrades &= ~Upgrades_SuperSonic;
 	co2->Powerups &= ~Powerups_Invincibility;
-	AnimationIndex* v4 = co2S->MotionList;
-	UnloadAnimation(v4);
-	co2S->MotionList = 0;
 	co2S->base.AnimInfo.Next = 15;
 	co2S->base.AnimInfo.Animations = SonicAnimCopy;
 	njReleaseTexture(co2S->TextureList);
@@ -127,7 +122,7 @@ void unSuper(unsigned char player) {
 	else
 		co2S->TextureList = LoadCharTextures("SONICTEX");
 
-	co2S->MotionList = LoadMTNFile((char*)"sonicmtn.prs");
+
 	MainCharacter[player]->DisplaySub_Delayed4 = nullptr;
 	isSuper[player] = false;
 
@@ -192,6 +187,8 @@ void SuperSonic_ManagerDelete(ObjectMaster* obj)
 	currentSuperMusic = "";
 	unSuper(obj->Data1.Entity->Index);
 	isSuper[obj->Data1.Entity->Index] = false;
+	ReleaseMDLFile(SuperSonicMdl);
+	Delete_SSAnim();
 }
 
 void SuperSonic_Manager(ObjectMaster* obj)
@@ -268,7 +265,9 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 		break;
 	case superSonicUntransfo:
+		SuperSonic_DisableFly(player, &sonicCO2->base);
 		unSuper(playerID);
+
 		data->Action = playerInputCheck;
 		break;
 	}
@@ -284,6 +283,7 @@ void LoadSuperSonicManager(char playNum) {
 		if (superSonicManagerPtr)
 		{
 			SuperSonicMdl = LoadMDLFile((char*)"SSONICMDL.PRS");
+			Load_NewSuperSonicAnim();
 			superSonicManagerPtr->Data1.Entity->Index = playNum;
 		}
 	}

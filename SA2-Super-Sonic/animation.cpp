@@ -1,5 +1,7 @@
 #include "pch.h"
 
+AnimationIndex* SuperSonicNewAnimList;
+
 AnimationInfo SuperSonicAnimationList_r[] = {
 	{ 203, 328, 3, 0, 0.0625f, 0.15f },
 	{ 1, 328, 3, 1, 0.25f, 0.1f },
@@ -217,3 +219,47 @@ AnimationInfo SuperSonicAnimationList_r[] = {
 	{ 213, 328, 4, ssDash2, 0.0625f, 0.5f }, //begin dash 2
 	{ 214, 328, 3, ssDash2, 0.0625f, 0.5f }, //dash2
 };
+
+void Delete_SSAnim() {
+	AnimationIndex* copy = SuperSonicNewAnimList;
+	UnloadAnimation(copy);
+
+	SuperSonicNewAnimList = 0;
+	return;
+}
+
+void Load_NewSuperSonicAnim() {
+
+	int id;
+	AnimationIndex* SSNewAnim; 
+	__int16 animIndex;
+	int indexCopy; 
+	__int16 count; 
+	NJS_MOTION* anim; 
+
+	id = 0;
+
+	SuperSonicNewAnimList = LoadMTNFile((char*)"ssmotion.prs");
+
+	if (SuperSonicNewAnimList[0].Index != 0xFFFF)
+	{
+		SSNewAnim = SuperSonicNewAnimList;
+		animIndex = SuperSonicNewAnimList[0].Index;
+		do
+		{
+			if (animIndex >= 0 && animIndex < 300)
+			{
+				indexCopy = animIndex;
+				if (!CharacterAnimations[indexCopy].Animation)
+				{
+					count = SSNewAnim->Count;
+					anim = SSNewAnim->Animation;
+					CharacterAnimations[indexCopy].Count = count;
+					CharacterAnimations[indexCopy].Animation = anim;
+				}
+			}
+			animIndex = SuperSonicNewAnimList[++id].Index;
+			SSNewAnim = &SuperSonicNewAnimList[id];
+		} while (animIndex != -1);
+	}
+}
