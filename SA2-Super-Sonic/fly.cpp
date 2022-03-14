@@ -97,7 +97,7 @@ signed int isSuperSonicStanding(CharObj2Base* a1, EntityData1* a2)
 	return 1;
 }
 
-void SS_Standing(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
+void SS_Standing(EntityData1* data1, CharObj2Base* co2)
 {
 
 	float spdY = 0.0;
@@ -136,7 +136,7 @@ void SS_Standing(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 	return;
 }
 
-void SS_Moving(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
+void SS_Moving(EntityData1* data1, CharObj2Base* co2)
 {
 	if (data1->NextAction != 0 || data1->Status & Status_DoNextAction || isSuperSonicStanding(co2, data1))
 	{
@@ -170,7 +170,7 @@ void SS_Moving(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 	return;
 }
 
-void SS_AscendingIntro(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
+void SS_AscendingIntro(EntityData1* data1, CharObj2Base* co2)
 {
 
 	char pnum = co2->PlayerNum;
@@ -192,7 +192,7 @@ void SS_AscendingIntro(EntityData1* data1, CharObj2Base* co2, EntityData2* data2
 	return;
 }
 
-void SS_DescendingIntro(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
+void SS_DescendingIntro(EntityData1* data1, CharObj2Base* co2)
 {
 
 	char pnum = co2->PlayerNum;
@@ -216,7 +216,7 @@ void SS_DescendingIntro(EntityData1* data1, CharObj2Base* co2, EntityData2* data
 	return;
 }
 
-void SS_Ascending(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
+void SS_Ascending(EntityData1* data1, CharObj2Base* co2)
 {
 
 	if (isSuperSonicStanding(co2, data1))
@@ -244,7 +244,7 @@ void SS_Ascending(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 	return;
 }
 
-void SS_Descending(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
+void SS_Descending(EntityData1* data1, CharObj2Base* co2)
 {
 
 	if (isSuperSonicStanding(co2, data1))
@@ -272,7 +272,7 @@ void SS_Descending(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 	return;
 }
 
-void SuperSonicFly_RunsActions(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
+void SuperSonicFly_RunsActions(EntityData1* data1, CharObj2Base* co2)
 {
 	if (!isSuper[co2->PlayerNum] && data1->Action >= (char)SSFly::Standing)
 	{
@@ -283,22 +283,22 @@ void SuperSonicFly_RunsActions(EntityData1* data1, CharObj2Base* co2, EntityData
 	switch ((SSFly)data1->Action)
 	{
 	case SSFly::Standing:
-		SS_Standing(data1, co2, data2);
+		SS_Standing(data1, co2);
 		return;
 	case SSFly::Moving:
-		SS_Moving(data1, co2, data2);
+		SS_Moving(data1, co2);
 		return;
 	case SSFly::AscendingIntro:
-		SS_AscendingIntro(data1, co2, data2);
+		SS_AscendingIntro(data1, co2);
 		return;
 	case SSFly::DescendingIntro:
-		SS_DescendingIntro(data1, co2, data2);
+		SS_DescendingIntro(data1, co2);
 		return;
 	case SSFly::Ascending:
-		SS_Ascending(data1, co2, data2);
+		SS_Ascending(data1, co2);
 		return;
 	case SSFly::Descending:
-		SS_Descending(data1, co2, data2);
+		SS_Descending(data1, co2);
 		return;
 	default:
 		isFlyMode = false;
@@ -315,7 +315,7 @@ void SuperSonic_DisableFly(EntityData1* data1, CharObj2Base* co2) {
 	return;
 }
 
-void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, CharObj2Base* co2, EntityData2* data2) {
+void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, CharObj2Base* co2) {
 
 	if (!data1 || !isFly)
 		return;
@@ -336,7 +336,7 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 		SS_DisableFly_CheckInput(data1, co2, co2->PlayerNum);
 	}
 
-	SuperSonicFly_RunsActions(data1, co2, data2);
+	SuperSonicFly_RunsActions(data1, co2);
 	return;
 }
 

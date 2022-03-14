@@ -13,11 +13,15 @@ bool isSuper[2] = { 0, 0 };
 NJS_TEXNAME SSEffTex[17];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
 
-NJS_TEXNAME SonicTex[16];
-NJS_TEXLIST Sonic_Texlist = { arrayptrandlength(SonicTex) };
+NJS_TEXLIST* Sonic_Texlist = nullptr;
 
 ModelIndex* SuperSonicMdl;
 extern std::string currentSuperMusic;
+
+NJS_TEXLIST* getSonicTexlist()
+{
+	return Sonic_Texlist;
+}
 
 //add super sonic model to sonic model pointer
 void __cdecl SetSuperSonicModels(SonicCharObj2* sco2) {
@@ -33,9 +37,10 @@ void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 
 	//used for upgrade textures.
 	if (AltCostume[sco2->base.PlayerNum] != 0)
-		LoadTextureList("SONIC1TEX", &Sonic_Texlist);
+		Sonic_Texlist = LoadCharTextures("SONIC1TEX");
 	else
-		LoadTextureList("SONICTEX", &Sonic_Texlist);
+		Sonic_Texlist = LoadCharTextures("SONICTEX");
+
 	return;
 }
 
@@ -137,7 +142,8 @@ void unSuper(unsigned char player) {
 		RestoreMusic();
 	}
 	else {
-		njReleaseTexture(&Sonic_Texlist);
+		njReleaseTexture(Sonic_Texlist);
+		Sonic_Texlist = nullptr;
 	}
 
 	return;
@@ -386,7 +392,6 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 
 	UpgradeDrawCallback = SuperSonic_Callback_r;
 
-
 	if ((data1->field_6 & 2) != 0 && !Pose2PStart_PlayerNum)
 	{
 		Sonic_HealdObjectStuff(data1, &sonicCO2->base);
@@ -474,11 +479,29 @@ void Sonic_Main_r(ObjectMaster* obj)
 void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, SonicCharObj2* SonicCO2)
 {
 
-	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2, data2);
+	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2);
 
 	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
 	original(data1, data2, co2, SonicCO2);
 }
+
+static void LoadMenuButtonsTex()
+{
+	char buffer[40];
+
+	if (*(int*)0x174B5FC)
+	{
+		sprintf_s(buffer, "\\SOC\\menuButton%d\\menu_button_%d.png", TextLanguage, TextLanguage);
+	}
+	else
+	{
+		sprintf_s(buffer, "\\SOC\\menuButtonK%d\\menu_button_%d.png", TextLanguage, TextLanguage);
+	}
+
+	MenuButtonImage = LoadPNG(buffer);
+}
+
+
 
 void init_SuperSonic() {
 

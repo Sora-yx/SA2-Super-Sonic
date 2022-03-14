@@ -1,6 +1,5 @@
 #include "pch.h"
 
-extern NJS_TEXLIST Sonic_Texlist;
 Trampoline* Sonic_CallBack_t;
 
 enum SuperSonicModel {
@@ -173,7 +172,7 @@ void DisplaySuperSonic_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 	if (data1->Status & Status_Ball || curAnim == 30 || curAnim == 11 || curAnim == 12 || curAnim == 100)
 		return;
 
-	njSetTexture(&Sonic_Texlist);
+	njSetTexture(getSonicTexlist());
 	njPushMatrixEx();
 
 	NJS_OBJECT* FlameRingMDL = CharacterModels[25].Model;

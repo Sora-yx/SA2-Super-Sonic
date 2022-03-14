@@ -84,3 +84,4 @@ void init_SuperSonic();
 void init_AuraHack();
 void init_MusicHack();
 void init_PhysicsHack();
+NJS_TEXLIST* getSonicTexlist();
