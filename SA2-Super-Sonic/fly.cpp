@@ -10,7 +10,7 @@ enum class SSFly {
 	Descending,
 };
 
-bool isFlyMode = false;
+bool isFlyMode[2] = { false, false };
 
 void SS_SetFlyNextAction(EntityData1* data1, CharObj2Base* co2, char action, int anim) {
 	data1->Action = action;
@@ -37,7 +37,7 @@ void SuperSonic_CommonPhysicsV(CharObj2Base* co2, EntityData1* data1, EntityData
 
 void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 
-	if (isFlyMode || co2->AnimInfo.Current == 30)
+	if (isFlyMode[pID] || co2->AnimInfo.Current == 30)
 		return;
 
 	if (Controllers[pID].press & FlightButton)
@@ -54,7 +54,7 @@ void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 		PlayVoice(3, rng);
 
 		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, ssBeginDash2);
-		isFlyMode = true;
+		isFlyMode[pID] = true;
 		return;
 	}
 }
@@ -63,7 +63,7 @@ char timerFly = 0;
 
 void SS_DisableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 
-	if (!isFlyMode)
+	if (!isFlyMode[pID])
 		return;
 
 	if (timerFly > 20)
@@ -77,7 +77,7 @@ void SS_DisableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 		data1->Action = 10;
 		co2->AnimInfo.Next = 15;
 		timerFly = 0;
-		isFlyMode = false;
+		isFlyMode[pID] = false;
 	}
 
 	return;
@@ -277,7 +277,6 @@ void SuperSonicFly_RunsActions(EntityData1* data1, CharObj2Base* co2)
 	if (!isSuper[co2->PlayerNum] && data1->Action >= (char)SSFly::Standing)
 	{
 		data1->Action = Action_Fall;
-
 	}
 
 	switch ((SSFly)data1->Action)
@@ -301,7 +300,7 @@ void SuperSonicFly_RunsActions(EntityData1* data1, CharObj2Base* co2)
 		SS_Descending(data1, co2);
 		return;
 	default:
-		isFlyMode = false;
+		isFlyMode[co2->PlayerNum] = false;
 		timerFly = 0;
 		return;
 	}
@@ -311,29 +310,31 @@ void SuperSonic_DisableFly(EntityData1* data1, CharObj2Base* co2) {
 	data1->Action = 10;
 	co2->AnimInfo.Next = 15;
 	timerFly = 0;
-	isFlyMode = false;
+	isFlyMode[co2->PlayerNum] = false;
 	return;
 }
 
 void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, CharObj2Base* co2) {
 
-	if (!data1 || !isFly)
+	if (!data1 || !isFlyAllowed)
 		return;
 
-	if (TimerStopped != 0 && isFlyMode)
+	char pnum = co2->PlayerNum;
+
+	if (TimerStopped != 0 && isFlyMode[pnum])
 	{
 		SuperSonic_DisableFly(data1, co2);
 	}
 
-	if (!isFlyMode) {
+	if (!isFlyMode[pnum]) {
 
-		if (data1->Action != Action_HomingAttack && data1->Action != Action_Fall || !ControllerEnabled[co2->PlayerNum])
+		if (data1->Action != Action_HomingAttack && data1->Action != Action_Fall || !ControllerEnabled[pnum])
 			return;
 	}
 
-	if (!sub_721480(co2, data1, 32.0) && isSuper[co2->PlayerNum]) {
-		SS_EnableFly_CheckInput(data1, co2, co2->PlayerNum);
-		SS_DisableFly_CheckInput(data1, co2, co2->PlayerNum);
+	if (!sub_721480(co2, data1, 32.0) && isSuper[pnum]) {
+		SS_EnableFly_CheckInput(data1, co2, pnum);
+		SS_DisableFly_CheckInput(data1, co2, pnum);
 	}
 
 	SuperSonicFly_RunsActions(data1, co2);
@@ -365,7 +366,7 @@ void SuperSonicFly_MainActions(EntityData1* data1, CharObj2Base* co2, EntityData
 
 void SuperSonicFly_MainManagement(EntityData1* data1, CharObj2Base* co2, EntityData2* data2) {
 
-	if (!data1 || !isFlyMode || !isFly || TimerStopped != 0)
+	if (!isFlyAllowed || !data1 || !isFlyMode[co2->PlayerNum] || TimerStopped != 0)
 		return;
 
 	SuperSonicFly_MainActions(data1, co2, data2);

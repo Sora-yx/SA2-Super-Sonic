@@ -8,7 +8,7 @@ Trampoline* Sonic_runsActions_t;
 
 Trampoline* CheckLightDash_t;
 
-bool isSuper[2] = { 0, 0 };
+bool isSuper[2] = { false, false };
 
 NJS_TEXNAME SSEffTex[17];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
@@ -479,7 +479,9 @@ void Sonic_Main_r(ObjectMaster* obj)
 void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, SonicCharObj2* SonicCO2)
 {
 
-	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2);
+	if (isSuper[co2->PlayerNum]) {
+		SuperSonicFly_ActionsManagement(data1, SonicCO2, co2);
+	}
 
 	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
 	original(data1, data2, co2, SonicCO2);

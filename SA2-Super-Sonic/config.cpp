@@ -8,7 +8,7 @@ int SuperMusicVersion = SA2LiveAndLearn;
 int superAuraState = 1;
 bool isUpgrade = true;
 bool isPhysics = true;
-bool isFly = true;
+bool isFlyAllowed = true;
 bool unTransform = true;
 
 static const Buttons ButtonsList[]
@@ -26,7 +26,7 @@ void ReadConfig(const char* path) {
 	RemoveLimitations = config->getBool("Gameplay", "RemoveLimitations", false);
 	AlwaysSuperSonic = config->getBool("Gameplay", "AlwaysSuperSonic", false);
 	isPhysics = config->getBool("Gameplay", "isPhysics", true);
-	isFly = config->getBool("Gameplay", "isFly", true);
+	isFlyAllowed = config->getBool("Gameplay", "isFly", true);
 	unTransform = config->getBool("Gameplay", "unTransform", true);
 
 	TransformButton = ButtonsList[config->getInt("Controls", "TransformButton", 0)];

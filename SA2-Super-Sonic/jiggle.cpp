@@ -9,6 +9,7 @@ void DeleteJiggle(SonicCharObj2* sonicCO2) {
 	{
 		Delete_Jiggle(Jiggle);
 		sonicCO2->SpineJiggle = 0;
+		jigleSSMDL = nullptr;
 	}
 
 	return;

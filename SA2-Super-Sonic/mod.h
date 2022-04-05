@@ -10,7 +10,7 @@ extern int SuperMusicVersion;
 extern int superAuraState;
 extern bool isUpgrade;
 extern bool isPhysics;
-extern bool isFly;
+extern bool isFlyAllowed;
 extern bool unTransform;
 extern AnimationInfo SuperSonicAnimationList_r[];
 
