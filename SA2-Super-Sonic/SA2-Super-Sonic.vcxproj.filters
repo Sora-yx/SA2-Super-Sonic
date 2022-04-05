@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Super Sonic">
       <UniqueIdentifier>{7dd5e1ea-a6f9-4cb2-95fc-f1e0bcee8848}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Abilities">
+      <UniqueIdentifier>{7fffe95a-3d37-4122-9e43-262432499aa9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -71,14 +74,17 @@
     <ClCompile Include="upgrades.cpp">
       <Filter>Source Files\Super Sonic</Filter>
     </ClCompile>
-    <ClCompile Include="fly.cpp">
-      <Filter>Source Files\Super Sonic</Filter>
-    </ClCompile>
     <ClCompile Include="jiggle.cpp">
       <Filter>Source Files\Super Sonic</Filter>
     </ClCompile>
     <ClCompile Include="afterimage.cpp">
       <Filter>Source Files\Super Sonic</Filter>
+    </ClCompile>
+    <ClCompile Include="fly.cpp">
+      <Filter>Source Files\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="chaos-control.cpp">
+      <Filter>Source Files\Abilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

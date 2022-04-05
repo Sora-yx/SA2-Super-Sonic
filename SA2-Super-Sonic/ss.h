@@ -18,3 +18,6 @@ void PResetAngle_r(EntityData1* data1, CharObj2Base* co2);
 void Load_NewSuperSonicAnim();
 void Delete_SSAnim();
 void SuperSonic_DisableFly(EntityData1* data1, CharObj2Base* co2);
+void ChaosControl_Management(CharObj2Base* co2);
+void ResetChaosControl(char pnum);
+void initChaosControl_Hack();

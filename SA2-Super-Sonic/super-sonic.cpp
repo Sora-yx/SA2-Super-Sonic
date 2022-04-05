@@ -117,6 +117,7 @@ void unSuper(unsigned char player) {
 	if (co2->CharID == Characters_Sonic)
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
+	ResetChaosControl(player);
 	DeleteJiggle(co2S);
 	initJiggleSuperSonic(co2S);
 	data->Status = 0;
@@ -161,9 +162,10 @@ bool CheckUntransform_Input(unsigned char playerID) {
 		return false;
 	}
 
-	if (ControllerPointers[playerID]->press & TransformButton)
+	if (ControllerPointers[playerID]->on & TransformButton)
 	{
-		if (player->Action == Action_HomingAttack && (player->Status & Status_Ball) == 0) {
+		if (player->Action == Action_HomingAttack) {
+			player->Status &= ~Status_Ball;
 			unSuper(playerID);
 			return true;
 		}
@@ -184,6 +186,7 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 			if (Controllers[playerID].press & TransformButton)
 			{
 				player->Action = 18;
+				player->Status &= ~Status_Ball;
 				return true;
 			}
 		}
@@ -196,8 +199,10 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 void SuperSonic_ManagerDelete(ObjectMaster* obj)
 {
 	currentSuperMusic = "";
-	unSuper(obj->Data1.Entity->Index);
-	isSuper[obj->Data1.Entity->Index] = false;
+	char pnum = obj->Data1.Entity->Index;
+	unSuper(pnum);
+	isSuper[pnum] = false;
+	ResetChaosControl(pnum);
 	ReleaseMDLFile(SuperSonicMdl);
 	Delete_SSAnim();
 }
@@ -257,13 +262,13 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		break;
 	case superSonicWait:
 
-		if (++data->field_6 == 100 || AlwaysSuperSonic)
+		if (++data->Timer == 100 || AlwaysSuperSonic)
 		{
 			LoadSuperAura(playerID);
 			ControllerEnabled[playerID] = 1;
 			DoNextAction_r(playerID, 15, 0);
 			data->Action++;
-			data->field_6 = 0;
+			data->Timer = 0;
 		}
 		break;
 	case superSonicOnFrames:
@@ -392,7 +397,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 
 	UpgradeDrawCallback = SuperSonic_Callback_r;
 
-	if ((data1->field_6 & 2) != 0 && !Pose2PStart_PlayerNum)
+	if ((data1->Timer & 2) != 0 && !Pose2PStart_PlayerNum)
 	{
 		Sonic_HealdObjectStuff(data1, &sonicCO2->base);
 		return;
@@ -459,6 +464,12 @@ void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
 	}
 }
 
+void SuperSonic_RunCustomAction(EntityData1* data1, SonicCharObj2* SonicCO2, CharObj2Base* co2)
+{
+	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2);
+	ChaosControl_Management(co2);
+}
+
 void Sonic_Main_r(ObjectMaster* obj)
 {
 	CharObj2Base* co2 = MainCharObj2[obj->Data2.Character->PlayerNum];
@@ -478,9 +489,8 @@ void Sonic_Main_r(ObjectMaster* obj)
 
 void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, SonicCharObj2* SonicCO2)
 {
-
 	if (isSuper[co2->PlayerNum]) {
-		SuperSonicFly_ActionsManagement(data1, SonicCO2, co2);
+		SuperSonic_RunCustomAction(data1, SonicCO2, co2);
 	}
 
 	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
@@ -503,8 +513,6 @@ static void LoadMenuButtonsTex()
 	MenuButtonImage = LoadPNG(buffer);
 }
 
-
-
 void init_SuperSonic() {
 
 
@@ -513,5 +521,7 @@ void init_SuperSonic() {
 	Sonic_runsActions_t = new Trampoline((int)0x719920, (int)0x719920 + 0x8, Sonic_runsActions_r);
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
 	init_AfterImages();
+	initChaosControl_Hack();
+
 	return;
 }

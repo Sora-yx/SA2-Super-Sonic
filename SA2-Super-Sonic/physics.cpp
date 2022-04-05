@@ -87,14 +87,11 @@ static void __declspec(naked) PResetAngleASM()
 {
 	__asm
 	{
-		push ebx // data2
-		push eax // data1
-
-		// Call your __cdecl function here:
+		push ebx 
+		push eax 
 		call PResetAngle_r
-
-		pop eax // data1
-		pop ebx // data2
+		pop eax
+		pop ebx 
 		retn
 	}
 }

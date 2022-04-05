@@ -126,12 +126,9 @@ static void __declspec(naked) PlayMusicASM()
 {
 	__asm
 	{
-		push edi // char *song
-
-		// Call your __cdecl function here:
+		push edi
 		call PlayMusic_r
-
-		pop edi // char *song
+		pop edi 
 		retn
 	}
 }

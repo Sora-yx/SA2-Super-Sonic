@@ -171,6 +171,7 @@
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="aura.cpp" />
+    <ClCompile Include="chaos-control.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="fly.cpp" />
