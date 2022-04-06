@@ -41,6 +41,7 @@ void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 	else
 		Sonic_Texlist = LoadCharTextures("SONICTEX");
 
+
 	return;
 }
 
@@ -75,7 +76,6 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 	sco2->base.AnimInfo.Next = 0;
 	sco2->base.AnimInfo.Animations = SuperSonicAnimationList_r;
 	LoadSuperSonicCharTextures(sco2);
-
 
 	PlayAnimationThing(&sco2->base.AnimInfo);
 	Load_SuperPhysics(data);
@@ -191,7 +191,7 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 			}
 		}
 	}
-	
+
 
 	return false;
 }
@@ -232,11 +232,10 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		return;
 	}
 
-	if ( (CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2) && data->Index == 1 && AlwaysSuperSonic)
+	if ((CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2) && data->Index == 1 && AlwaysSuperSonic)
 	{
 		return;
 	}
-	
 
 	unsigned char playerID = data->Index;
 

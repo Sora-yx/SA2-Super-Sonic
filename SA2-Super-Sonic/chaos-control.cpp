@@ -1,11 +1,15 @@
 #include "pch.h"
 
-const int chaosControlCDTimer = 100;
+const int chaosControlCDTimer = 300;
 int chaosControlCD[2] = { 0, 0 };
 bool isChaosControlEnabled[2] = { false, false };
 const int chaosControlDuration = 1200;
 int chaosControlTimer = 0;
 Trampoline* sub_724A50_t = nullptr;
+Trampoline* seagull_t = nullptr;
+Trampoline* mhcont_t = nullptr;
+Trampoline* mhcont0_t = nullptr;
+Trampoline* mhMissile_t = nullptr;
 
 void ResetChaosControl(char pnum)
 {
@@ -45,6 +49,9 @@ void ChaosControl_ManageDuration(CharObj2Base* co2)
 
 	if (chaosControlTimer < chaosControlDuration)
 	{
+		if (Controllers[co2->PlayerNum].on & Buttons_L && Controllers[co2->PlayerNum].on & Buttons_R)
+			chaosControlTimer = chaosControlDuration;
+
 		chaosControlTimer++;
 	}
 	else
@@ -94,6 +101,42 @@ void ChaosControl_FixCamPose(ObjectMaster* obj)
 	DeleteObject_(obj);
 }
 
+void __cdecl seagull_r(ObjectMaster* a1)
+{
+	if (TimeStopped != 0)
+		return;
+
+	auto original = reinterpret_cast<decltype(seagull_r)*>(seagull_t->Target());
+	original(a1);
+}
+
+void __cdecl mhcont_r(ObjectMaster* a1)
+{
+	if (TimeStopped != 0)
+		return;
+
+	auto original = reinterpret_cast<decltype(mhcont_r)*>(mhcont_t->Target());
+	original(a1);
+}
+
+void __cdecl mhcont0_r(ObjectMaster* a1)
+{
+	if (TimeStopped != 0)
+		return;
+
+	auto original = reinterpret_cast<decltype(mhcont0_r)*>(mhcont0_t->Target());
+	original(a1);
+}
+
+void __cdecl mhmissile_r(ObjectMaster* a1)
+{
+	if (TimeStopped != 0)
+		return;
+
+	auto original = reinterpret_cast<decltype(mhmissile_r)*>(mhMissile_t->Target());
+	original(a1);
+}
+
 void initChaosControl_Hack()
 {
 	//fix crash when 2P doesn't exist
@@ -101,4 +144,10 @@ void initChaosControl_Hack()
 	WriteCall((void*)0x47746F, ChaosControl_FixCamPose);	
 	WriteCall((void*)0x477445, ChaosControl_FixCamPose);
 	WriteCall((void*)0x4773e9, ChaosControl_FixCamPose);
+
+	//freeze time on objects
+	seagull_t = new Trampoline((int)0x6F6070, (int)0x6F6076, seagull_r);
+	mhcont_t = new Trampoline((int)0x6F9120, (int)0x6F9125, mhcont_r);
+	mhcont0_t = new Trampoline((int)0x6F86E0, (int)0x6F86E5, mhcont0_r);
+	mhMissile_t = new Trampoline((int)0x6F4260, (int)0x6F4266, mhmissile_r);
 }
