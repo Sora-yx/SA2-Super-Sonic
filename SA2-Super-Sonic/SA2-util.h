@@ -221,3 +221,41 @@ static inline HomingAttackTarget* sub_721480(CharObj2Base* a1, EntityData1* a2, 
 }
 
 ObjectFunc(sub_437E10, 0x437E10);
+
+static const void* const sub_458BB0Ptr = (void*)0x458BB0;
+static inline void sub_458BB0(float* result)
+{
+	__asm
+	{
+		mov eax, [result]
+		call sub_458BB0Ptr
+	}
+}
+
+static const void* const sub_458C30Ptr = (void*)0x458BB0;
+static inline void sub_458C30(int a1)
+{
+	__asm
+	{
+		mov eax, [a1]
+		call sub_458C30Ptr
+	}
+}
+
+DataPointer(float, HorizontalStretch, 0x01A559E4);
+
+
+static const void* const PoseEffectManPtr = (void*)0x477490;
+static inline void PoseEffectMan_Load_(int a1, int a2)
+{
+	__asm
+	{
+		push[a2]
+		mov eax, [a1]
+		call PoseEffectManPtr
+		add esp, 4
+	}
+}
+
+FunctionPointer(void, LoadChaosControlEffect, (char pnum), 0x758C60);
+ObjectFunc(ChaosControl_Display, 0x724780);

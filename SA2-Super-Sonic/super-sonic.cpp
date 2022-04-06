@@ -6,8 +6,6 @@ Trampoline* Sonic_Display_t;
 Trampoline* LoadSonic_t;
 Trampoline* Sonic_runsActions_t;
 
-Trampoline* CheckLightDash_t;
-
 bool isSuper[2] = { false, false };
 
 NJS_TEXNAME SSEffTex[17];
