@@ -55,7 +55,7 @@ void __cdecl TransfoSuperShadow(EntityData1* data, int playerID, SonicCharObj2* 
 
 	SetSuperShadowModels(sco2);
 	DeleteSSHJiggle(sco2);
-	//initJiggleSuperShadow(sco2);
+	initJiggleSuperShadow(sco2);
 	sco2->base.AnimInfo.Next = 0;
 	sco2->base.AnimInfo.Animations = SuperShadowAnimationList_r;
 	LoadSuperShadowCharTextures(sco2);

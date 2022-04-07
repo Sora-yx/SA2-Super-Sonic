@@ -14,7 +14,10 @@ bool isFlyMode[2] = { false, false };
 
 void SS_SetFlyNextAction(EntityData1* data1, CharObj2Base* co2, char action, int anim) {
 	data1->Action = action;
-	co2->AnimInfo.Next = anim;
+
+	int animation = co2->CharID2 == Characters_Sonic ? anim : anim + 46; //adjust the animation ID used for Super Shadow
+
+	co2->AnimInfo.Next = animation;
 	return;
 }
 

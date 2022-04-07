@@ -337,6 +337,8 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 	if (!texlist)
 		return;
 
+	bool isSonic = sonicCO2->base.CharID2 == Characters_Sonic;
+
 	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
 
 	int curAnim = sonicCO2->base.AnimInfo.Current;
@@ -367,7 +369,11 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 		njSetTexture(texlist);
 
 	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10); //Draw Sonic animated
-	ResetSSJiggle(sonicCO2);
+
+	if (isSonic)
+		ResetSSJiggle(sonicCO2);
+	else
+		ResetSSHJiggle(sonicCO2);
 }
 
 void __cdecl DoSpinDashRotationModel() {
@@ -384,7 +390,6 @@ void __cdecl DoSpinDashRotationModel() {
 	spinDashThing.z = 0.80000001;
 	njScaleEx(&spinDashThing);
 }
-
 
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {

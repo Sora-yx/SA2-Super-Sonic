@@ -5,48 +5,46 @@ enum SuperShadowModel {
 	SSHRoot2,
 	SSHRoot3,
 	SSHHead,
-	SSHHead2 = 336,
+	SSHHead2 = 363,
 	SSHRightFootToe,
 	SSHLeftFootToe,
 	SSHRightFootHeel,
 	SSHLeftFootHeel,
-	SSHRightHandParent = 343,
+	SSHRightHandParent = 370,
 	SSHLeftHandParent,
 	SSHRightArm,
 	SSHLeftArm,
-	SSHRightHandParent2 = 351,
+	SSHRightHandParent2 = 378,
 	SSHLeftHandParent2,
 };
 
-static NJS_MATRIX SS_RightHandMatrice;
-static NJS_MATRIX SS_LeftHandMatrice;
-static NJS_MATRIX SS_LeftFootMatrice;
-static NJS_MATRIX SS_RightFootMatrice;
+static NJS_MATRIX SSH_RightHandMatrice;
+static NJS_MATRIX SSH_LeftHandMatrice;
+static NJS_MATRIX SSH_LeftFootMatrice;
 static NJS_MATRIX SSH_RightFootMatrice;
+
 
 void SSH_SetMatrixPosition(NJS_OBJECT* mdl)
 {
-	/**if (mdl == CharacterModels[SSRightHandParent2].Model)
+	if (mdl == CharacterModels[SSHRightHandParent2].Model)
 	{
-		njSetMatrix(SS_RightHandMatrice, CURRENT_MATRIX);
+		njSetMatrix(SSH_RightHandMatrice, CURRENT_MATRIX);
 	}
-	if (mdl == CharacterModels[SSLeftHandParent2].Model)
+	if (mdl == CharacterModels[SSHLeftHandParent2].Model)
 	{
-		njSetMatrix(SS_LeftHandMatrice, CURRENT_MATRIX);
+		njSetMatrix(SSH_LeftHandMatrice, CURRENT_MATRIX);
 	}
-	if (mdl == CharacterModels[SSRightFootHeel].Model)
+	if (mdl == CharacterModels[SSHRightFootHeel].Model)
 	{
-		njSetMatrix(SS_RightFootMatrice, CURRENT_MATRIX);
+		njSetMatrix(SSH_RightFootMatrice, CURRENT_MATRIX);
 	}
-	else if (mdl == CharacterModels[SSLeftFootHeel].Model)
+	else if (mdl == CharacterModels[SSHLeftFootHeel].Model)
 	{
-		njSetMatrix(SS_LeftFootMatrice, CURRENT_MATRIX);
-	}*/
+		njSetMatrix(SSH_LeftFootMatrice, CURRENT_MATRIX);
+	}
 }
 
 void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
-
-	return;
 
 	NJS_MATRIX_PTR m = _nj_current_matrix_ptr_;
 	SonicCharObj2* wk = SonicCO2PtrExtern;
@@ -59,7 +57,7 @@ void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
 		return;
 	}
 
-	if (mdl == CharacterModels[SSHRoot2].Model || mdl == CharacterModels[6].Model->child)
+	if (mdl == CharacterModels[SSHRoot2].Model || mdl == CharacterModels[71].Model->child)
 	{
 		NJS_VECTOR pt{};
 		njCalcPoint_(m, &pt, &pt, FALSE);
@@ -170,8 +168,6 @@ void DisplaySuperShadow_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 	if (data1->Status & Status_Ball || curAnim == 30 || curAnim == 11 || curAnim == 12 || curAnim == 100)
 		return;
 
-	return;
-
 	njSetTexture(getShadowTexlist());
 	njPushMatrixEx();
 
@@ -184,7 +180,7 @@ void DisplaySuperShadow_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 		if (FlameRingMDL)
 		{
 			NJS_VECTOR FRPos = { FlameRingMDL->child->pos[0], FlameRingMDL->child->pos[1], FlameRingMDL->child->pos[2] };
-			memcpy(CURRENT_MATRIX, &SS_LeftHandMatrice, 0x30u);
+			memcpy(CURRENT_MATRIX, &SSH_LeftHandMatrice, 0x30u);
 			DrawChunkModel(FlameRingMDL->getchunkmodel());// Display FlameRing Model on Shadow
 			signed int v30 = dword_25F02D8;
 			signed int v31 = *(DWORD*)&sonicCO2->field_36A[6];
@@ -204,7 +200,7 @@ void DisplaySuperShadow_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 	{
 		NJS_OBJECT* ShoesMDL = CharacterModels[79].Model;
 		if (ShoesMDL) {
-			memcpy(CURRENT_MATRIX, &SS_LeftFootMatrice, 0x30u);
+			memcpy(CURRENT_MATRIX, &SSH_LeftFootMatrice, 0x30u);
 			DrawObjWithCallBack(ShoesMDL);
 			memcpy(CURRENT_MATRIX, &SSH_RightFootMatrice, 0x30u);
 			DrawObjWithCallBack(CharacterModels[78].Model);
