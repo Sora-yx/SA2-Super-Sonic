@@ -64,7 +64,7 @@ void __cdecl TransfoSuperShadow(EntityData1* data, int playerID, SonicCharObj2* 
 	LoadSuperShadowCharTextures(sco2);
 
 	PlayAnimationThing(&sco2->base.AnimInfo);
-	Load_SuperPhysics(data);
+	Load_SuperShadowPhysics(data);
 
 	if (CurrentLevel != LevelIDs_ChaoWorld)
 		sco2->base.Upgrades |= Upgrades_SuperSonic;

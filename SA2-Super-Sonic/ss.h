@@ -39,3 +39,5 @@ void Load_NewSuperShadowAnim();
 void Delete_SSHAnim();
 void DisplaySuperShadow_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2);
 void SuperShadow_Callback_r(NJS_OBJECT* mdl);
+
+void Load_SuperShadowPhysics(EntityData1* data);

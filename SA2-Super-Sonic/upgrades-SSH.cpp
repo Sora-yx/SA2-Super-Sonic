@@ -24,6 +24,11 @@ static NJS_MATRIX SSH_LeftFootMatrice;
 static NJS_MATRIX SSH_RightFootMatrice;
 
 
+DataArray(float, flt_1A51ADC, 0x1A51ADC, 12); 
+DataArray(float, flt_1A51994, 0x1A51994, 12);
+DataArray(float, flt_1A51930, 0x1A51930, 12);
+DataArray(float, flt_1A51900, 0x1A51900, 12);
+
 void SSH_SetMatrixPosition(NJS_OBJECT* mdl)
 {
 	if (mdl == CharacterModels[SSHRightHandParent2].Model)
@@ -81,7 +86,6 @@ void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
 		{
 			if (mdl == CharacterModels[SSHLeftArm].Model)
 			{
-
 				if ((MainCharObj1[wk->base.PlayerNum]->Status & Status_HoldObject) != 0)
 				{
 					njRotateX(m, *((uint32_t*)wk->base.HeldObject->EntityData2 + 12));
@@ -137,6 +141,7 @@ void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
 				pt = { -1.0f, 0.0f, 0.0f };
 				njCalcVector_(&pt, &pt, m);
 				njCalcVector_(&pt, &wk->rightfoot_vec, MATRIX_1A51A00);
+				sub_42F770(flt_1A51ADC);
 			}
 			else if (mdl == CharacterModels[SSHLeftFootToe].Model)
 			{
@@ -146,6 +151,16 @@ void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
 				pt = { -1.0f, 0.0f, 0.0f };
 				njCalcVector_(&pt, &pt, m);
 				njCalcVector_(&pt, &wk->leftfoot_vec, MATRIX_1A51A00);
+				sub_42F770(flt_1A51994);
+			} 
+			else if (mdl == CharacterModels[90].Model
+				|| mdl == CharacterModels[380].Model)
+			{
+				sub_42F770(flt_1A51930); //used for roller light effect
+			}
+			else if (mdl == CharacterModels[91].Model || mdl == CharacterModels[381].Model)
+			{
+				sub_42F770(flt_1A51900);
 			}
 			SSH_SetMatrixPosition(mdl);
 			return;

@@ -98,5 +98,8 @@
     <ClCompile Include="animation-ssh.cpp">
       <Filter>Source Files\Super Shadow</Filter>
     </ClCompile>
+    <ClCompile Include="physics-ssh.cpp">
+      <Filter>Source Files\Super Shadow</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

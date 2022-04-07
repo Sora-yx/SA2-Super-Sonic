@@ -244,3 +244,14 @@ static inline void PoseEffectMan_Load_(int a1, int a2)
 
 FunctionPointer(void, LoadChaosControlEffect, (char pnum), 0x758C60);
 ObjectFunc(ChaosControl_Display, 0x724780);
+
+
+static const void* const sub_42F770Ptr = (void*)0x42F770;
+static inline void sub_42F770(float* a1)
+{
+	__asm
+	{
+		mov eax, [a1]
+		call sub_42F770Ptr
+	}
+}

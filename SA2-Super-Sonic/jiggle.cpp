@@ -72,7 +72,6 @@ void ResetSSHJiggle(SonicCharObj2* sonicCO2)
 }
 
 
-
 void DeleteSSHJiggle(SonicCharObj2* sonicCO2) {
 	JiggleInfo* Jiggle = sonicCO2->SpineJiggle;
 
