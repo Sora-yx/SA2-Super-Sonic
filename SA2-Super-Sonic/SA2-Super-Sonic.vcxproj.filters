@@ -13,11 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Abilities">
+      <UniqueIdentifier>{7fffe95a-3d37-4122-9e43-262432499aa9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Super Sonic">
       <UniqueIdentifier>{7dd5e1ea-a6f9-4cb2-95fc-f1e0bcee8848}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Abilities">
-      <UniqueIdentifier>{7fffe95a-3d37-4122-9e43-262432499aa9}</UniqueIdentifier>
+    <Filter Include="Source Files\Super Shadow">
+      <UniqueIdentifier>{209833a0-1e8f-4ec2-a590-238b01317d18}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +88,15 @@
     </ClCompile>
     <ClCompile Include="chaos-control.cpp">
       <Filter>Source Files\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="super-shadow.cpp">
+      <Filter>Source Files\Super Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="upgrades-SSH.cpp">
+      <Filter>Source Files\Super Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="animation-ssh.cpp">
+      <Filter>Source Files\Super Shadow</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

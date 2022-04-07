@@ -53,9 +53,7 @@ void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 			else
 				co2SH->TextureList = LoadCharTextures("teriostex");
 		}
-
 	}
-
 
 	return;
 }
@@ -86,7 +84,7 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 		sco2->base.Powerups |= Powerups_Invincibility;
 
 	SetSuperSonicModels(sco2);
-	DeleteJiggle(sco2);
+	DeleteSSJiggle(sco2);
 	initJiggleSuperSonic(sco2);
 	sco2->base.AnimInfo.Next = 0;
 	sco2->base.AnimInfo.Animations = SuperSonicAnimationList_r;
@@ -133,7 +131,7 @@ void unSuper(unsigned char player) {
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
 	ResetChaosControl(player);
-	DeleteJiggle(co2S);
+	DeleteSSJiggle(co2S);
 	initJiggleSuperSonic(co2S);
 	data->Status = 0;
 	co2->Upgrades &= ~Upgrades_SuperSonic;
@@ -369,7 +367,7 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 		njSetTexture(texlist);
 
 	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10); //Draw Sonic animated
-	ResetJiggle(sonicCO2);
+	ResetSSJiggle(sonicCO2);
 }
 
 void __cdecl DoSpinDashRotationModel() {
@@ -398,18 +396,23 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	if (!sonicCO2->TextureList || !sonicCO2->MotionList)
 		return;
 
-	if (!isSuper[pID] || char2 != Characters_Sonic) {
+	if (!isSuper[pID] || char2 != Characters_Sonic && char2 != Characters_Shadow) {
 
 		ObjectFunc(origin, Sonic_Display_t->Target());
 		return origin(obj);
 	}
+
+	bool isShadow = char2 == Characters_Shadow;
 
 	//used to calc matrix for upgrades, pick/drop object and aura position.
 	memcpy(MATRIX_1A51A00, CURRENT_MATRIX, 0x30u);
 	SonicCO2PtrExtern = sonicCO2;
 	sub_427040(MATRIX_1A51A00, CURRENT_MATRIX);
 
-	UpgradeDrawCallback = SuperSonic_Callback_r;
+	if (isShadow)
+		UpgradeDrawCallback = SuperShadow_Callback_r;
+	else
+		UpgradeDrawCallback = SuperSonic_Callback_r;
 
 	if ((data1->Timer & 2) != 0 && !Pose2PStart_PlayerNum)
 	{
@@ -423,7 +426,11 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	njPushMatrixEx();
 	njTranslateEx(&data1->Position);
 	njScale(CURRENT_MATRIX, data1->Scale.x, data1->Scale.y, data1->Scale.z);
-	SetJiggle(sonicCO2);
+
+	if (isShadow)
+		Set_SSHJiggle(sonicCO2);
+	else
+		Set_SSJiggle(sonicCO2);
 
 	if (data1->Rotation.z)
 	{
@@ -442,7 +449,12 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
 	{
 		DrawSonicMotion(data1, sonicCO2);
-		DisplaySuperSonic_Upgrade(data1, sonicCO2);
+
+		if (isShadow)
+			DisplaySuperShadow_Upgrade(data1, sonicCO2);
+		else
+			DisplaySuperSonic_Upgrade(data1, sonicCO2);
+
 		Sonic_HealdObjectStuff(data1, &sonicCO2->base);
 		njPopMatrixEx();
 		return;

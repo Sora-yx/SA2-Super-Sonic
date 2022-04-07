@@ -12,6 +12,7 @@ extern bool isUpgrade;
 extern bool isPhysics;
 extern bool isFlyAllowed;
 extern bool unTransform;
+extern bool AlwaysSuperShadow;
 extern AnimationInfo SuperSonicAnimationList_r[];
 
 extern HelperFunctions HelperFunctionsGlobal;
@@ -78,6 +79,23 @@ enum SuperSonicMusic {
 	Random
 };
 
+enum SuperShadowcAnim {
+	superShadowStanding,
+
+	superShadowIntro = 249,
+	superShadowVictory = 250,
+	superShadowFlying1,
+	superShadowFlying2,
+	ssHBeginAscent,
+	ssHAscending,
+	ssHBeginDescent,
+	ssHDescend,
+	ssHBeginDash,
+	ssHDash,
+	ssHBeginDash2,
+	ssHDash2
+};
+
 extern bool isSuper[2];
 
 void init_SuperSonic();
@@ -85,3 +103,4 @@ void init_AuraHack();
 void init_MusicHack();
 void init_PhysicsHack();
 NJS_TEXLIST* getSonicTexlist();
+NJS_TEXLIST* getShadowTexlist();

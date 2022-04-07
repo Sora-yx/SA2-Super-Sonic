@@ -11,6 +11,8 @@ bool isPhysics = true;
 bool isFlyAllowed = true;
 bool unTransform = true;
 
+bool AlwaysSuperShadow = false;
+
 static const Buttons ButtonsList[]
 {
 	Buttons_B,
