@@ -8,6 +8,9 @@ extern NJS_TEXLIST SSEff_Texlist;
 
 extern std::string currentSuperMusic;
 
+NJS_TEXNAME SSHEffTex[17];
+NJS_TEXLIST SSHEff_Texlist = { arrayptrandlength(SSHEffTex) };
+
 NJS_TEXLIST* getShadowTexlist()
 {
 	return Shadow_Texlist;

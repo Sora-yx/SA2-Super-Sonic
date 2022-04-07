@@ -15,6 +15,7 @@ NJS_TEXLIST* Sonic_Texlist = nullptr;
 
 ModelIndex* SuperSonicMdl;
 extern std::string currentSuperMusic;
+extern NJS_TEXLIST SSHEff_Texlist;
 
 NJS_TEXLIST* getSonicTexlist()
 {
@@ -62,6 +63,7 @@ void __cdecl LoadSSEff_Textures() {
 	LoadTextureList("ss_efftex", &SSEff_Texlist);
 	LoadTextureList("SSONEFFTEX", &SSONEFFTEX_TEXLIST);
 	LoadTextureList("sh_efftex", &Texlist_ShadEff);
+	LoadTextureList("ssh_efftex", &SSHEff_Texlist);
 	return;
 }
 
@@ -362,7 +364,10 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
 	if (curAnim == 30)
 	{
-		texlist = &SSEff_Texlist;
+		if (isSonic)
+			texlist = &SSEff_Texlist;
+		else
+			texlist = &SSHEff_Texlist;
 	}
 
 	if (AltCostume[sonicCO2->base.PlayerNum] == 0)
