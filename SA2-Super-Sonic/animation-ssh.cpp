@@ -3,7 +3,7 @@
 AnimationIndex* SuperShadowNewAnimList;
 
 AnimationInfo SuperShadowAnimationList_r[] = {
-	{ 169, 355, 3, 0, 0.0625f, 0.1f },
+	{ 203, 355, 3, 0, 0.0625f, 0.1f },
 	{ 170, 355, 3, 1, 0.25f, 0.1f },
 	{ 2, 355, 3, 2, 0.25f, 0.1f },
 	{ 3, 355, 4, 0, 0.25f, 1 },
@@ -12,7 +12,7 @@ AnimationInfo SuperShadowAnimationList_r[] = {
 	{ 6, 355, 11, 6, 0.25f, 3.4f },
 	{ 171, 355, 11, 7, 0.25f, 1 },
 	{ 172, 355, 11, 8, 0.25f, 0.12f },
-	{ 173, 355, 11, 9, 0.25f, 0.15f },
+	{ 173, 355, 11, 9, 0.25f, 0.15f},
 	{ 174, 355, 10, 10, 0.5f, 0.2f },
 	{ 11, 355, 11, 11, 0.25f, 0.2f },
 	{ 12, 355, 10, 12, 0.25f, 0.7f },
@@ -206,19 +206,19 @@ AnimationInfo SuperShadowAnimationList_r[] = {
 	{ 200, 355, 3, 200, 0.25f, 0.2f },
 	{ 201, 355, 6, 201, 0.125f, 0.2f },
 	{ 202, 355, 3, 202, 0.125f, 0.5f },
-	{ 203, 355, 4, 0, 0.25f, 0.4f },
-	{ 204, 355, 4, 0, 0.25f, 0.4f },
-	{ 205, 355, 4, 0, 0.25f, 0.4f },
-	{ 206, 355, 4, 0, 0.25f, 0.4f },
-	{ 207, 355, 4, 0, 0.25f, 0.4f },
-	{ 208, 355, 4, 0, 0.25f, 0.4f },
-	{ 209, 355, 4, 0, 0.25f, 0.4f },
-	{ 210, 355, 4, 0, 0.25f, 0.4f },
-	{ 211, 355, 4, 0, 0.25f, 0.4f },
-	{ 212, 355, 4, 0, 0.25f, 0.4f },
-	{ 213, 355, 4, 0, 0.25f, 0.4f },
-	{ 214, 355, 4, 0, 0.25f, 0.4f },
-	{ 215, 355, 4, 0, 0.25f, 0.4f },
+	{ 205, 355, 6, 0, 1, 0.8f }, //turning to super
+	{ 205, 355, 4, 54, 1, 0.5f }, //victory pose
+	{ 204, 355, 3, superSonicFlying1, 0.0625f, 0.5f }, //fly 1
+	{ 206, 355, 3, superSonicFlying2, 0.0625f, 0.5f }, //fly 2
+	{ 207, 355, 4, ssAscending, 0.125f, 0.5f }, //begin ascent
+	{ 208, 355, 3, ssAscending, 0.125f, 0.5f }, //ascending
+	{ 209, 355, 4, ssDescend, 0.125f, 0.5f }, //begin descent
+	{ 210, 355, 3, ssDescend, 0.125f, 0.5f }, //descending
+	{ 211, 355, 4, ssDash, 0.0625f, 0.5f }, //begin dash
+	{ 212, 355, 3, ssDash, 0.0625f, 0.5f }, //dash
+	{ 213, 355, 4, ssDash2, 0.0625f, 0.5f }, //begin dash 2
+	{ 214, 355, 3, ssDash2, 0.0625f, 0.5f }, //dash2
+	{ 215, 355, 4, 0, 0.25f, 0.4f }, //placeholder? those are originally on shadow anim list, probably unused.
 	{ 216, 355, 4, 0, 0.25f, 0.4f },
 	{ 217, 355, 4, 0, 0.25f, 0.4f },
 	{ 218, 355, 4, 0, 0.25f, 0.4f },
@@ -252,18 +252,6 @@ AnimationInfo SuperShadowAnimationList_r[] = {
 	{ 246, 355, 4, 0, 0.25f, 0.4f },
 	{ 247, 355, 4, 0, 0.25f, 0.4f },
 	{ 248, 355, 4, 0, 0.25f, 0.4f },
-	{ 251, 355, 6, 0, 1, 0.8f }, //turning to super
-	{ 251, 355, 4, 54, 1, 0.5f }, //victory pose
-	{ 250, 355, 3, superShadowFlying1, 0.0625f, 0.5f }, //fly 1
-	{ 252, 355, 3, superShadowFlying2, 0.0625f, 0.5f }, //fly 2
-	{ 253, 355, 4, ssHAscending, 0.125f, 0.5f }, //begin ascent
-	{ 254, 355, 3, ssHAscending, 0.125f, 0.5f }, //ascending
-	{ 255, 355, 4, ssHDescend, 0.125f, 0.5f }, //begin descent
-	{ 256, 355, 3, ssHDescend, 0.125f, 0.5f }, //descending
-	{ 257, 355, 4, ssHDash, 0.0625f, 0.5f }, //begin dash
-	{ 258, 355, 3, ssHDash, 0.0625f, 0.5f }, //dash
-	{ 259, 355, 4, ssHDash2, 0.0625f, 0.5f }, //begin dash 2
-	{ 260, 355, 3, ssHDash2, 0.0625f, 0.5f }, //dash2
 };
 
 void Delete_SSHAnim() {
@@ -275,37 +263,5 @@ void Delete_SSHAnim() {
 }
 
 void Load_NewSuperShadowAnim() {
-
-	int id;
-	AnimationIndex* SSNewAnim;
-	__int16 animIndex;
-	int indexCopy;
-	__int16 count;
-	NJS_MOTION* anim;
-
-	id = 0;
-
-	SuperShadowNewAnimList = LoadMTNFile((char*)"sshmotion.prs");
-
-	if (SuperShadowNewAnimList[0].Index != 0xFFFF)
-	{
-		SSNewAnim = SuperShadowNewAnimList;
-		animIndex = SuperShadowNewAnimList[0].Index;
-		do
-		{
-			if (animIndex >= 0 && animIndex < 300)
-			{
-				indexCopy = animIndex;
-				if (!CharacterAnimations[indexCopy].Animation)
-				{
-					count = SSNewAnim->Count;
-					anim = SSNewAnim->Animation;
-					CharacterAnimations[indexCopy].Count = count;
-					CharacterAnimations[indexCopy].Animation = anim;
-				}
-			}
-			animIndex = SuperShadowNewAnimList[++id].Index;
-			SSNewAnim = &SuperShadowNewAnimList[id];
-		} while (animIndex != -1);
-	}
+	SuperShadowNewAnimList = LoadMTNFile((char*)"ssmotion.prs");
 }

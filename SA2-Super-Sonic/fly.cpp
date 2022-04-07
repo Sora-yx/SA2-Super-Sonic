@@ -12,12 +12,9 @@ enum class SSFly {
 
 bool isFlyMode[2] = { false, false };
 
-void SS_SetFlyNextAction(EntityData1* data1, CharObj2Base* co2, char action, int anim) {
+void SS_SetFlyNextAction(EntityData1* data1, CharObj2Base* co2, char action, __int16 anim) {
 	data1->Action = action;
-
-	int animation = co2->CharID2 == Characters_Sonic ? anim : anim + 46; //adjust the animation ID used for Super Shadow
-
-	co2->AnimInfo.Next = animation;
+	co2->AnimInfo.Next = (__int16)anim;
 	return;
 }
 
@@ -48,15 +45,18 @@ void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 		co2->Speed.y += 4.0f;
 		data1->Status &= ~Status_Ball;
 
+		bool isSonic = co2->CharID2 == Characters_Sonic;
+
 		int rng = rand() % 2;
 
 		if (rng)
-			rng = 1577;
+			rng = isSonic ? 1577 : 1552;
 		else
-			rng = 1585;
+			rng = isSonic ? 1585 : 1520;
+
 		PlayVoice(3, rng);
 
-		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, ssBeginDash2);
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, (__int16)ssBeginDash2);
 		isFlyMode[pID] = true;
 		return;
 	}
@@ -95,7 +95,7 @@ signed int isSuperSonicStanding(CharObj2Base* a1, EntityData1* a2)
 	{
 		return 0;
 	}
-	SS_SetFlyNextAction(a2, a1, (char)SSFly::Standing, superSonicStanding);
+	SS_SetFlyNextAction(a2, a1, (char)SSFly::Standing, (__int16)superSonicStanding);
 	a1->IdleTime = 0;
 	return 1;
 }
@@ -108,14 +108,14 @@ void SS_Standing(EntityData1* data1, CharObj2Base* co2)
 
 	if ((0.0 != AnalogThings[co2->PlayerNum].magnitude) || (data1->Status & Status_DisableControl))
 	{
-		SS_SetFlyNextAction(data1, co2, (char)SSFly::Moving, superSonicFlying1);
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::Moving, (__int16)superSonicFlying1);
 		return;
 	}
 
 	if (Jump_Held[pnum])
 	{
 		spdY = 2.7;
-		SS_SetFlyNextAction(data1, co2, (char)SSFly::AscendingIntro, ssBeginAscent);
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::AscendingIntro, (__int16)ssBeginAscent);
 		data1->Status |= Status_Attack;
 		if (co2->Speed.y >= 2.7)
 		{
@@ -129,7 +129,7 @@ void SS_Standing(EntityData1* data1, CharObj2Base* co2)
 		return;
 	}
 	spdY = -4.5;
-	SS_SetFlyNextAction(data1, co2, (char)SSFly::DescendingIntro, ssBeginDescent);
+	SS_SetFlyNextAction(data1, co2, (char)SSFly::DescendingIntro, (__int16)ssBeginDescent);
 	data1->Status |= Status_Attack;
 	if (co2->Speed.y > spdY)
 	{
@@ -152,7 +152,7 @@ void SS_Moving(EntityData1* data1, CharObj2Base* co2)
 	if (Jump_Held[pnum])
 	{
 		curSpeed = 2.7;
-		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, ssBeginDash);
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, (__int16)ssBeginDash);
 		data1->Status |= Status_Attack;
 		if (co2->Speed.y >= 2.7)
 		{
@@ -166,7 +166,7 @@ void SS_Moving(EntityData1* data1, CharObj2Base* co2)
 		return;
 	}
 
-	SS_SetFlyNextAction(data1, co2, (char)SSFly::Descending, ssBeginDash2);
+	SS_SetFlyNextAction(data1, co2, (char)SSFly::Descending, (__int16)ssBeginDash2);
 	data1->Status |= Status_Attack;
 
 	VibeThing(0, 15, co2->PlayerNum, 4);
@@ -182,13 +182,13 @@ void SS_AscendingIntro(EntityData1* data1, CharObj2Base* co2)
 		&& 0.0 != AnalogThings[pnum].magnitude
 		&& ((data1->Status & Status_OnPath) != 0 || !co2->DisableControlTimer))
 	{
-		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, ssBeginDash);
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, (__int16)ssBeginDash);
 		return;
 	}
 	bool isHeldBtn = Jump_Held[pnum] == 0;
 	if (isHeldBtn)
 	{
-		SS_SetFlyNextAction(data1, co2, (char)SSFly::Standing, superSonicStanding);
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::Standing, (__int16)superSonicStanding);
 		data1->Status &= ~Status_Attack;
 	}
 
@@ -204,7 +204,7 @@ void SS_DescendingIntro(EntityData1* data1, CharObj2Base* co2)
 		&& 0.0 != AnalogThings[pnum].magnitude
 		&& ((data1->Status & Status_OnPath) != 0 || !co2->DisableControlTimer))
 	{
-		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, ssBeginDash2);
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, (__int16)ssBeginDash2);
 		return;
 	}
 
@@ -212,7 +212,7 @@ void SS_DescendingIntro(EntityData1* data1, CharObj2Base* co2)
 
 	if (isHeldBtn)
 	{
-		SS_SetFlyNextAction(data1, co2, (char)SSFly::Standing, superSonicStanding);
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::Standing, (__int16)superSonicStanding);
 		data1->Status &= ~Status_Attack;
 	}
 

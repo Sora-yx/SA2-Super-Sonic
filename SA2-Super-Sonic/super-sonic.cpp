@@ -181,7 +181,12 @@ bool CheckUntransform_Input(unsigned char playerID) {
 	{
 		if (player->Action == Action_HomingAttack) {
 			player->Status &= ~Status_Ball;
-			unSuper(playerID);
+
+			if (MainCharObj2[playerID]->CharID2 == Characters_Sonic)
+				unSuper(playerID);
+			else
+				unSuperShadow(playerID);
+
 			return true;
 		}
 	}

@@ -72,7 +72,6 @@ void __cdecl TransfoSuperShadow(EntityData1* data, int playerID, SonicCharObj2* 
 	isSuper[playerID] = true;
 }
 
-
 void unSuperShadow(unsigned char player) {
 
 	if (AlwaysSuperShadow)
@@ -130,7 +129,7 @@ void SuperShadow_ManagerDelete(ObjectMaster* obj)
 	isSuper[pnum] = false;
 	ResetChaosControl(pnum);
 	ReleaseMDLFile(SuperShadowMdl);
-	Delete_SSAnim();
+	Delete_SSHAnim();
 }
 
 void SuperShadow_Manager(ObjectMaster* obj)
@@ -182,7 +181,7 @@ void SuperShadow_Manager(ObjectMaster* obj)
 		data->Action++;
 		break;
 	case superSonicTransition:
-		shadowCO2->base.AnimInfo.Next = superShadowIntro;
+		shadowCO2->base.AnimInfo.Next = superSonicIntro;
 		data->Action++;
 		break;
 	case superSonicWait:

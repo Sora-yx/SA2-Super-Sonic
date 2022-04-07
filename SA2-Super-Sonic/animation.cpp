@@ -229,37 +229,5 @@ void Delete_SSAnim() {
 }
 
 void Load_NewSuperSonicAnim() {
-
-	int id;
-	AnimationIndex* SSNewAnim; 
-	__int16 animIndex;
-	int indexCopy; 
-	__int16 count; 
-	NJS_MOTION* anim; 
-
-	id = 0;
-
 	SuperSonicNewAnimList = LoadMTNFile((char*)"ssmotion.prs");
-
-	if (SuperSonicNewAnimList[0].Index != 0xFFFF)
-	{
-		SSNewAnim = SuperSonicNewAnimList;
-		animIndex = SuperSonicNewAnimList[0].Index;
-		do
-		{
-			if (animIndex >= 0 && animIndex < 300)
-			{
-				indexCopy = animIndex;
-				if (!CharacterAnimations[indexCopy].Animation)
-				{
-					count = SSNewAnim->Count;
-					anim = SSNewAnim->Animation;
-					CharacterAnimations[indexCopy].Count = count;
-					CharacterAnimations[indexCopy].Animation = anim;
-				}
-			}
-			animIndex = SuperSonicNewAnimList[++id].Index;
-			SSNewAnim = &SuperSonicNewAnimList[id];
-		} while (animIndex != -1);
-	}
 }
