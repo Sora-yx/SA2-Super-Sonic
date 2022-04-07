@@ -14,6 +14,7 @@ extern bool isFlyAllowed;
 extern bool unTransform;
 extern bool AlwaysSuperShadow;
 extern AnimationInfo SuperSonicAnimationList_r[];
+extern AnimationInfo SuperShadowAnimationList_r[];
 
 extern HelperFunctions HelperFunctionsGlobal;
 
@@ -104,3 +105,4 @@ void init_MusicHack();
 void init_PhysicsHack();
 NJS_TEXLIST* getSonicTexlist();
 NJS_TEXLIST* getShadowTexlist();
+void init_SuperShadow();

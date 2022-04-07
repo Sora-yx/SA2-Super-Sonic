@@ -55,9 +55,9 @@ void __cdecl TransfoSuperShadow(EntityData1* data, int playerID, SonicCharObj2* 
 
 	SetSuperShadowModels(sco2);
 	DeleteSSHJiggle(sco2);
-	initJiggleSuperShadow(sco2);
+	//initJiggleSuperShadow(sco2);
 	sco2->base.AnimInfo.Next = 0;
-	sco2->base.AnimInfo.Animations = SuperSonicAnimationList_r;
+	sco2->base.AnimInfo.Animations = SuperShadowAnimationList_r;
 	LoadSuperShadowCharTextures(sco2);
 
 	PlayAnimationThing(&sco2->base.AnimInfo);
@@ -170,7 +170,7 @@ void SuperShadow_Manager(ObjectMaster* obj)
 		break;
 	case playerInputCheck:
 
-		if (CheckTransform_Input(playerID, player) || AlwaysSuperSonic)
+		if (CheckTransform_Input(playerID, player) || AlwaysSuperShadow)
 			data->Action++;
 
 		break;
@@ -179,12 +179,12 @@ void SuperShadow_Manager(ObjectMaster* obj)
 		data->Action++;
 		break;
 	case superSonicTransition:
-		shadowCO2->base.AnimInfo.Next = superSonicIntro;
+		shadowCO2->base.AnimInfo.Next = superShadowIntro;
 		data->Action++;
 		break;
 	case superSonicWait:
 
-		if (++data->Timer == 100 || AlwaysSuperSonic)
+		if (++data->Timer == 100 || AlwaysSuperShadow)
 		{
 			LoadSuperAura(playerID);
 			ControllerEnabled[playerID] = 1;
@@ -220,7 +220,7 @@ void LoadSuperShadowManager(char playNum) {
 
 		if (superShadowManagerPtr)
 		{
-			SuperShadowMdl = LoadMDLFile((char*)"SSONICMDL.PRS");
+			SuperShadowMdl = LoadMDLFile((char*)"sshadowmdl.prs");
 			Load_NewSuperShadowAnim();
 			superShadowManagerPtr->Data1.Entity->Index = playNum;
 		}
@@ -234,9 +234,7 @@ void LoadShadow_r(int playerNum) {
 
 	if (CurrentLevel != LevelIDs_FinalHazard) {
 		LoadSuperShadowManager(playerNum);
-
-		if (playerNum > 0)
-			LoadSSEff_Textures();
+		LoadSSEff_Textures();
 	}
 }
 

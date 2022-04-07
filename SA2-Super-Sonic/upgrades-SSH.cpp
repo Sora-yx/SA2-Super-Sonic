@@ -46,6 +46,8 @@ void SSH_SetMatrixPosition(NJS_OBJECT* mdl)
 
 void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
 
+	return;
+
 	NJS_MATRIX_PTR m = _nj_current_matrix_ptr_;
 	SonicCharObj2* wk = SonicCO2PtrExtern;
 
@@ -167,6 +169,8 @@ void DisplaySuperShadow_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
 	if (data1->Status & Status_Ball || curAnim == 30 || curAnim == 11 || curAnim == 12 || curAnim == 100)
 		return;
+
+	return;
 
 	njSetTexture(getShadowTexlist());
 	njPushMatrixEx();
