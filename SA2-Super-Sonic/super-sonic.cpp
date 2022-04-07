@@ -29,6 +29,7 @@ void __cdecl SetSuperSonicModels(SonicCharObj2* sco2) {
 }
 
 void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
+
 	njReleaseTexture(sco2->TextureList);
 	sco2->TextureList = 0;
 	sco2->TextureList = LoadCharTextures("SSONICTEX");
@@ -38,6 +39,22 @@ void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 		Sonic_Texlist = LoadCharTextures("SONIC1TEX");
 	else
 		Sonic_Texlist = LoadCharTextures("SONICTEX");
+
+	//ugly way to fix Shadow eyes texture when transforming to super, thanks to the awful GBIX Texture system.
+	if (TwoPlayerMode)
+	{
+		char OtherPlayer = sco2->base.PlayerNum == 0 ? 1 : 0;
+		if (MainCharObj2[OtherPlayer] && MainCharObj2[OtherPlayer]->CharID2 == Characters_Shadow)
+		{
+			SonicCharObj2* co2SH = (SonicCharObj2*)MainCharacter[OtherPlayer]->Data2.Character;
+
+			if (AltCostume[OtherPlayer] != 0)
+				co2SH->TextureList = LoadCharTextures("SHADOW1TEX");
+			else
+				co2SH->TextureList = LoadCharTextures("teriostex");
+		}
+
+	}
 
 
 	return;
@@ -494,24 +511,8 @@ void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj
 	original(data1, data2, co2, SonicCO2);
 }
 
-static void LoadMenuButtonsTex()
-{
-	char buffer[40];
-
-	if (*(int*)0x174B5FC)
-	{
-		sprintf_s(buffer, "\\SOC\\menuButton%d\\menu_button_%d.png", TextLanguage, TextLanguage);
-	}
-	else
-	{
-		sprintf_s(buffer, "\\SOC\\menuButtonK%d\\menu_button_%d.png", TextLanguage, TextLanguage);
-	}
-
-	MenuButtonImage = LoadPNG(buffer);
-}
 
 void init_SuperSonic() {
-
 
 	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
 	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);

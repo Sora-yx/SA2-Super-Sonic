@@ -90,21 +90,6 @@ static inline void sub_46F1E0(int pID)
 }
 
 
-//void __usercall drawUV(NJS_TEXLIST* a1@<esi>, NJS_OBJECT* obj, float FrameCounter)
-static const void* const drawUV_ptr = (void*)0x795790;
-static inline void DrawUV(int* a1, NJS_OBJECT* obj, float FrameCounter)
-{
-	__asm
-	{
-		push[FrameCounter]
-		push[obj]
-		mov esi, [a1]
-		call drawUV_ptr
-		add esp, 4
-	}
-}
-
-
 FunctionPointer(void, njReleaseTexture, (NJS_TEXLIST* a1), 0x77F9F0);
 DataPointer(RenderInfo, Has_texlist_batadvPlayerChara_in_it, 0x2670544);
 FunctionPointer(int, sub_458970, (), 0x458970);
