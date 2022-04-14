@@ -246,6 +246,9 @@ static void __declspec(naked) RenderNumberASM()
 
 void initChaosControl_Hack()
 {
+	if (!AllowSuperAttacks)
+		return;
+
 	//fix crash when 2P doesn't exist
 	sub_724A50_t = new Trampoline((int)0x724A50, (int)0x724A55, sub_724A50_r);
 

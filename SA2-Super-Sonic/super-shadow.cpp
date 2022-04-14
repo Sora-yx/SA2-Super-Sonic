@@ -35,6 +35,21 @@ void __cdecl LoadSuperShadowCharTextures(SonicCharObj2* sco2) {
 	else
 		Shadow_Texlist = LoadCharTextures("TERIOSTEX");
 
+	//ugly way to fix Sonic eyes texture when transforming to super, thanks to the awful GBIX Texture system.
+	if (TwoPlayerMode || CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2)
+	{
+		char OtherPlayer = sco2->base.PlayerNum == 0 ? 1 : 0;
+		if (MainCharObj2[OtherPlayer] && MainCharObj2[OtherPlayer]->CharID2 == Characters_Sonic)
+		{
+			SonicCharObj2* co2SH = (SonicCharObj2*)MainCharacter[OtherPlayer]->Data2.Character;
+
+			if (AltCostume[OtherPlayer] != 0)
+				co2SH->TextureList = LoadCharTextures("SONIC1TEX");
+			else
+				co2SH->TextureList = LoadCharTextures("sonictex");
+		}
+	}
+
 	return;
 }
 

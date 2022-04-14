@@ -13,6 +13,7 @@ bool isFlyAllowed = true;
 bool unTransform = true;
 
 bool AlwaysSuperShadow = false;
+bool AllowSuperAttacks = true;
 
 static const Buttons ButtonsList[]
 {
@@ -31,6 +32,7 @@ void ReadConfig(const char* path) {
 	isPhysics = config->getBool("Gameplay", "isPhysics", true);
 	isFlyAllowed = config->getBool("Gameplay", "isFly", true);
 	unTransform = config->getBool("Gameplay", "unTransform", true);
+	AllowSuperAttacks = config->getBool("Gameplay", "AllowSuperAttacks", true);
 
 	TransformButton = ButtonsList[config->getInt("Controls", "TransformButton", 0)];
 	FlightButton = ButtonsList[config->getInt("Controls", "FlightButton", 1)];

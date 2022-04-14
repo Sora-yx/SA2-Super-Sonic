@@ -64,5 +64,8 @@ void ResetWindCutter(char pnum)
 
 void init_SonicWindHack()
 {
+	if (!AllowSuperAttacks)
+		return;
+
 	WriteCall((void*)0x75AF85, SetSonicWindTexture);
 }

@@ -170,7 +170,8 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 	EntityData1* player = MainCharObj1[playerID];
 
-	if (!player || AlwaysSuperSonic || !unTransform)
+	if (!player || AlwaysSuperSonic && MainCharObj2[playerID]->CharID2 == Characters_Sonic 
+		|| AlwaysSuperShadow && MainCharObj2[playerID]->CharID2 == Characters_Shadow || !unTransform)
 		return false;
 
 	if (player->NextAction != 0 || player->Status & Status_DoNextAction)
@@ -509,7 +510,11 @@ void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
 void SuperSonic_RunCustomAction(EntityData1* data1, SonicCharObj2* SonicCO2, CharObj2Base* co2)
 {
 	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2);
-	ChaosControl_Management(co2);
+
+	if (AllowSuperAttacks) {
+		ChaosControl_Management(co2);
+		Check_SonicWind(co2);
+	}
 }
 
 void Sonic_Main_r(ObjectMaster* obj)
@@ -523,7 +528,6 @@ void Sonic_Main_r(ObjectMaster* obj)
 
 		SuperSonic_PlayVictoryAnimation(data1, co2);
 		SuperSonicFly_MainManagement(data1, co2, data2);
-		Check_SonicWind(co2);
 	}
 
 	ObjectFunc(origin, Sonic_Main_t->Target());

@@ -13,6 +13,7 @@ extern bool isPhysics;
 extern bool isFlyAllowed;
 extern bool unTransform;
 extern bool AlwaysSuperShadow;
+extern bool AllowSuperAttacks;
 extern AnimationInfo SuperSonicAnimationList_r[];
 extern AnimationInfo SuperShadowAnimationList_r[];
 
