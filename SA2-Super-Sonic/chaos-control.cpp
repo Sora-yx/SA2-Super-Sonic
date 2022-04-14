@@ -1,6 +1,6 @@
 #include "pch.h"
 
-const int chaosControlCDTimer = 600;
+const int chaosControlCDTimer = 5400; //1:30
 int chaosControlCD[2] = { 0, 0 };
 bool isChaosControlEnabled[2] = { false, false };
 const int chaosControlDuration = 1200;
@@ -38,7 +38,7 @@ void __cdecl Sonic2PTimeStopMan_Load_r(CharObj2Base* co2)
 		{
 			obj->Data2.Undefined = objData;
 			objData->PlayerNum = pnum;
-			objData->CharID = co2->CharID;
+			objData->CharID = 0;
 			objData->Costume = 1;
 			objData->ActionWindowItems[0] = 9882;
 			objData->ActionWindowItems[1] = 7;
@@ -89,14 +89,21 @@ void Check_ChaosControlCD(CharObj2Base* co2)
 
 	char pnum = co2->PlayerNum;
 
-	if (chaosControlCD[pnum] < chaosControlCDTimer)
+	if (RingCount[pnum] >= 60 && chaosControlCD[pnum] == chaosControlCDTimer)
+	{
+		SendTimedMessage("CHAOS CONTROL READY!", 120);
+		chaosControlCD[pnum]++;
+		return;
+	}
+	else if (chaosControlCD[pnum] < chaosControlCDTimer)
 	{
 		chaosControlCD[pnum]++;
 	}
 	else {
 
-		if (!isChaosControlEnabled[0] && !isChaosControlEnabled[1] && Controllers[pnum].press & Buttons_B)
+		if (RingCount[pnum] >= 60 && !isChaosControlEnabled[0] && !isChaosControlEnabled[1] && Controllers[pnum].on & Buttons_Y && Controllers[pnum].press & Buttons_X)
 		{
+			MainCharObj1[pnum]->Status &= ~Status_Ball;
 			chaosControlCD[pnum] = 0;
 			isChaosControlEnabled[pnum] = true;
 			Sonic2PTimeStopMan_Load_r(co2);
@@ -207,7 +214,7 @@ void __cdecl Sonic2PTimeStopMan_r(ObjectMaster* a1)
 	co2 = a1->Data2.Character;
 	v2 = (unsigned __int8)co2->CharID; //this is actually player num in this scenario
 	
-	if (!TwoPlayerMode && !isSuper[v2])
+	if (!TwoPlayerMode && (!isSuper[v2] || chaosControlTimer >= chaosControlDuration))
 	{
 		a1->MainSub = DeleteObject_;
 		return;

@@ -170,7 +170,7 @@ DataPointer(int, dword_1DEB6A4, 0x1DEB6A4);
 
 DataArray(float, flt_25F02A0, 0x25F02A0, 5);
 FunctionPointer(void, Sonic_CallBack, (NJS_OBJECT* mdl), 0x71EAA0);
-DataPointer(WORD, animate_AuraThing, 0x170ACEE);
+DataPointer(uint8_t, animate_AuraThing, 0x170ACEE);
 
 FunctionPointer(double, FloatCalcResult, (float a1, float a2, float a3), 0x447520);
 

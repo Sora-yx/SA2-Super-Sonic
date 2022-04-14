@@ -8,7 +8,6 @@ void njCnkMotion(NJS_OBJECT* obj, NJS_MOTION* mot, float frame)
 	DrawObjMotion(obj);
 }
 
-
 const char* ModelFormatStrings[]{
 	"collision",
 	"chunk",
@@ -76,4 +75,39 @@ bool __cdecl IsIngame()
 		return false;
 
 	return true;
+}
+
+//just so I don't have to type "HelperFunctions.X"
+void DisplayDebugStringFormatted(Int loc, const char* Format, ...) {
+	return HelperFunctionsGlobal.DisplayDebugStringFormatted(loc, Format);
+}
+
+void SetDebugFontColor(int color) {
+	return HelperFunctionsGlobal.SetDebugFontColor(color);
+}
+
+void SetDebugFontScale(float size) {
+	return HelperFunctionsGlobal.SetDebugFontSize(size);
+}
+
+int DebugMessageTimer = 0;
+std::string debugText = "";
+
+void DisplayTimed_Message_OnFrames()
+{
+	if (DebugMessageTimer && debugText != "")
+	{
+		SetDebugFontScale(25);
+		int DebugRightPos = (int)((float)HorizontalResolution / 25);
+		SetDebugFontColor(0xFFBFBFBF);
+		DisplayDebugStringFormatted(NJM_LOCATION(DebugRightPos - strlen(debugText.c_str()), 6), debugText.c_str());
+		SetDebugFontColor(0xFFBFBFBF);
+		DebugMessageTimer--;
+	}
+}
+
+void SendTimedMessage(std::string msg, int timer)
+{
+	DebugMessageTimer = timer;
+	debugText = msg;
 }

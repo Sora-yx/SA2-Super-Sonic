@@ -350,23 +350,25 @@ void __cdecl HomingDashAura_Display_r(ObjectMaster* a1)
 }
 
 
-int superAuraArray[12] = { 16393, 16388, 16394, 16389, 16395, 16390, 16396, 16391, 16397, 16392, 16398, 16387 };
+char superAuraArray[6] = { 3, 4, 5, 6, 7, 8 };
+char superAuraArrayShadow[6] = { 9, 10, 11, 12, 13, 14 };
 char auraCount = 0;
 
-void DisplaySuperAura() {
+void DisplaySuperAura(char character) {
 
 	*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSONEFFTEX_TEXLIST;
 
 
 	if (GameState == GameStates_Pause)
 		return;
-	
+
+	//animate Aura using a loop doesn't work for some reason
 	if (auraCount == LengthOfArray(superAuraArray) - 1)
 		auraCount = 0;
 	else
 		auraCount++;
 
-	animate_AuraThing = superAuraArray[auraCount]; //animate Aura
+	animate_AuraThing = character == Characters_Sonic ? superAuraArray[auraCount] : superAuraArrayShadow[auraCount];
 }
 
 void SuperAura_r(ObjectMaster* obj) {
@@ -408,7 +410,7 @@ void SuperAura_r(ObjectMaster* obj) {
 	njScale(CURRENT_MATRIX, data->Scale.x, data->Scale.y, data->Scale.z);
 
 
-	DisplaySuperAura();
+	DisplaySuperAura(co2->base.CharID2);
 
 	njPushMatrix(CURRENT_MATRIX);
 	njTranslate(CURRENT_MATRIX, 0.0, -3.0, 0.0);
@@ -437,6 +439,5 @@ void init_AuraHack() {
 	DoJumpAura_t = new Trampoline((int)0x756AE0, (int)0x756AE5, DoJumpAuraASM);
 	DoHomingAura_t = new Trampoline((int)0x7566C0, (int)0x7566C5, DoHomingAuraASM);
 	HomingDashAura_Display_t = new Trampoline((int)0x757040, (int)0x757045, HomingDashAura_Display_r);
-
 	return;
 }

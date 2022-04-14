@@ -42,7 +42,7 @@ void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 		Sonic_Texlist = LoadCharTextures("SONICTEX");
 
 	//ugly way to fix Shadow eyes texture when transforming to super, thanks to the awful GBIX Texture system.
-	if (TwoPlayerMode)
+	if (TwoPlayerMode || CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2)
 	{
 		char OtherPlayer = sco2->base.PlayerNum == 0 ? 1 : 0;
 		if (MainCharObj2[OtherPlayer] && MainCharObj2[OtherPlayer]->CharID2 == Characters_Shadow)
@@ -133,6 +133,7 @@ void unSuper(unsigned char player) {
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
 	ResetChaosControl(player);
+	ResetWindCutter(player);
 	DeleteSSJiggle(co2S);
 	initJiggleSuperSonic(co2S);
 	data->Status = 0;
@@ -223,6 +224,7 @@ void SuperSonic_ManagerDelete(ObjectMaster* obj)
 	unSuper(pnum);
 	isSuper[pnum] = false;
 	ResetChaosControl(pnum);
+	ResetWindCutter(pnum);
 	ReleaseMDLFile(SuperSonicMdl);
 	Delete_SSAnim();
 }
@@ -232,7 +234,6 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	EntityData1* data = obj->Data1.Entity;
 	EntityData1* player = MainCharObj1[data->Index];
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
-
 
 	if (sonicCO2->base.CharID2 != Characters_Sonic)
 	{
@@ -522,6 +523,7 @@ void Sonic_Main_r(ObjectMaster* obj)
 
 		SuperSonic_PlayVictoryAnimation(data1, co2);
 		SuperSonicFly_MainManagement(data1, co2, data2);
+		Check_SonicWind(co2);
 	}
 
 	ObjectFunc(origin, Sonic_Main_t->Target());
@@ -547,6 +549,7 @@ void init_SuperSonic() {
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
 	init_AfterImages();
 	initChaosControl_Hack();
+	init_SonicWindHack();
 
 	return;
 }

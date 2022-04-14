@@ -5,3 +5,5 @@ void DoNextAction_r(int playerNum, char action, int unknown);
 bool __cdecl IsIngame();
 ModelInfo* LoadMDL(const char* name, ModelFormat format);
 void FreeMDL(ModelInfo* pointer);
+void DisplayTimed_Message_OnFrames();
+void SendTimedMessage(std::string msg, int timer);

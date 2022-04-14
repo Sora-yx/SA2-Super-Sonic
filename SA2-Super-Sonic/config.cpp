@@ -1,6 +1,7 @@
 #include "pch.h"
 
 Buttons TransformButton = Buttons_B;
+Buttons UntransformButton = Buttons_B;
 Buttons FlightButton = Buttons_Y;
 bool RemoveLimitations = false;
 bool AlwaysSuperSonic = false;
@@ -20,13 +21,13 @@ static const Buttons ButtonsList[]
 	Buttons_X,
 };
 
-
 void ReadConfig(const char* path) {
 
 	const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
 
 	RemoveLimitations = config->getBool("Gameplay", "RemoveLimitations", false);
 	AlwaysSuperSonic = config->getBool("Gameplay", "AlwaysSuperSonic", false);
+	AlwaysSuperShadow = config->getBool("Gameplay", "AlwaysSuperShadow", false);
 	isPhysics = config->getBool("Gameplay", "isPhysics", true);
 	isFlyAllowed = config->getBool("Gameplay", "isFly", true);
 	unTransform = config->getBool("Gameplay", "unTransform", true);
@@ -40,6 +41,6 @@ void ReadConfig(const char* path) {
 	SuperMusicVersion = config->getInt("Audio", "SuperMusicVersion", SA2LiveAndLearn);
 	delete config;
 
-	if (AlwaysSuperSonic)
+	if (AlwaysSuperSonic || AlwaysSuperShadow)
 		RemoveLimitations = true;
 }

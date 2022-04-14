@@ -88,6 +88,7 @@ void unSuperShadow(unsigned char player) {
 		co2->PhysData = PhysicsArray[Characters_Shadow];
 
 	ResetChaosControl(player);
+	ResetWindCutter(player);
 	DeleteSSHJiggle(co2S);
 	initJiggleSuperShadow(co2S);
 	data->Status = 0;
@@ -128,6 +129,7 @@ void SuperShadow_ManagerDelete(ObjectMaster* obj)
 	unSuperShadow(pnum);
 	isSuper[pnum] = false;
 	ResetChaosControl(pnum);
+	ResetWindCutter(pnum);
 	ReleaseMDLFile(SuperShadowMdl);
 	Delete_SSHAnim();
 }
@@ -146,7 +148,7 @@ void SuperShadow_Manager(ObjectMaster* obj)
 	}
 
 	//if player dies, remove transformation and reset manager action.
-	if (GameState == GameStates_LoadFinished && !AlwaysSuperSonic && data->Action > playerInputCheck) {
+	if (GameState == GameStates_LoadFinished && !AlwaysSuperShadow && data->Action > playerInputCheck) {
 
 		unSuperShadow(data->Index);
 		data->Action = playerInputCheck;
@@ -157,7 +159,7 @@ void SuperShadow_Manager(ObjectMaster* obj)
 		return;
 	}
 
-	if ((CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2) && data->Index == 1 && AlwaysSuperSonic)
+	if ((CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2) && data->Index == 1 && AlwaysSuperShadow)
 	{
 		return;
 	}
