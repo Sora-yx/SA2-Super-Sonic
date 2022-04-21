@@ -7,3 +7,5 @@ ModelInfo* LoadMDL(const char* name, ModelFormat format);
 void FreeMDL(ModelInfo* pointer);
 void DisplayTimed_Message_OnFrames();
 void SendTimedMessage(std::string msg, int timer);
+AnimationIndex* getCharAnim_r();
+int getNumber_r();

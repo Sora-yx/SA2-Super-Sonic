@@ -48,7 +48,6 @@ void __cdecl SuperShadowPhysics_Load(ObjectMaster* obj)
 	}
 }
 
-
 void Load_SuperShadowPhysics(EntityData1* data) {
 
 	ObjectMaster* physics = LoadObject(2, "SuperShadow_Physics", SuperShadowPhysics_Load, LoadObj_Data1 | LoadObj_UnknownB);

@@ -111,3 +111,43 @@ void SendTimedMessage(std::string msg, int timer)
 	DebugMessageTimer = timer;
 	debugText = msg;
 }
+
+typedef AnimationIndex* (CALLBACK* anim) (void);
+
+AnimationIndex* getCharAnim_r()
+{
+	HMODULE SA2Anim = GetModuleHandle(L"SA2-Anim-Break");
+
+	if (!SA2Anim)
+		return nullptr;
+
+	anim Obj = (anim)GetProcAddress(SA2Anim, "GetCharacterAnim_r");
+
+	if (Obj)
+	{
+		AnimationIndex* Result = Obj();
+		return Result;
+	}
+
+	return nullptr;
+}
+
+typedef int (*padd) (void);
+
+int getNumber_r()
+{
+	HMODULE SA2Anim = GetModuleHandle(L"SA2-Anim-Break");
+
+	if (!SA2Anim)
+		return 0;
+
+	padd Obj = (padd) GetProcAddress(SA2Anim, "getCharAnimSize");
+
+	if (Obj)
+	{
+		int iResult = Obj();
+		return iResult;
+	}
+
+	return 0;
+}

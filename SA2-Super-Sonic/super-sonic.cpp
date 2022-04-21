@@ -366,7 +366,12 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 			curAnim = 30;
 		}
 
-		Motion = CharacterAnimations[sonicCO2->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
+		AnimationIndex* CharAnim = getCharAnim_r();
+
+		if (!CharAnim)
+			Motion = CharacterAnimations[sonicCO2->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
+		else
+			Motion = CharAnim[sonicCO2->base.AnimInfo.Animations[curAnim].AnimNum].Animation;
 	}
 
 	if (curAnim == 30)
