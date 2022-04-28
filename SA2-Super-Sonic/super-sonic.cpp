@@ -549,6 +549,8 @@ void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj
 		SuperSonic_RunCustomAction(data1, SonicCO2, co2);
 	}
 
+	 co2->CurrentSurfaceFlags;
+
 	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
 	original(data1, data2, co2, SonicCO2);
 }

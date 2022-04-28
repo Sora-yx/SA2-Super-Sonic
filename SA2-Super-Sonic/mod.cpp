@@ -28,6 +28,7 @@ extern "C" {
 		init_PhysicsHack();
 		init_AuraHack();
 		init_SuperShadow();
+		init_WaterHack();
 
 		SA2Anim = GetModuleHandle(L"SA2-Anim-Break");
 		SA1Char = GetModuleHandle(L"SA2-SA1-Chars");

@@ -165,3 +165,4 @@ bool isSA1Char(uint8_t charID)
 	PrintDebug("SA1 Char Anim: Failed to get character");
 	return false;
 }
+

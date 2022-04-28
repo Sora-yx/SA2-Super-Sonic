@@ -255,3 +255,27 @@ static inline void sub_42F770(float* a1)
 		call sub_42F770Ptr
 	}
 }
+
+//void __usercall LoadSplashEffect(int a1@<ebx>)
+static const void* const Smallsplash_ptr = (void*)0x6ED630;
+static inline void LoadSplashEffect(int a1)
+{
+	__asm
+	{
+		mov ebx, a1
+		call Smallsplash_ptr
+	}
+}
+
+//void __usercall LoadSplashEffect(int a1@<ebx>)
+static const void* const sub_476CC0_ptr = (void*)0x476CC0;
+static inline void sub_476CC0(int pnum, NJS_VECTOR* pos)
+{
+	__asm
+	{
+		mov edi, pos
+		mov eax, pnum
+		call sub_476CC0_ptr
+	}
+}
+

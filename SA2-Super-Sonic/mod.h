@@ -94,3 +94,4 @@ void init_PhysicsHack();
 NJS_TEXLIST* getSonicTexlist();
 NJS_TEXLIST* getShadowTexlist();
 void init_SuperShadow();
+void init_WaterHack();

@@ -161,7 +161,7 @@ void SS_Moving(EntityData1* data1, CharObj2Base* co2)
 		}
 	}
 
-	if (!Action_Held[pnum])
+	if (!Action_Held[pnum] || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
 	{
 		return;
 	}
@@ -256,9 +256,9 @@ void SS_Descending(EntityData1* data1, CharObj2Base* co2)
 		return;
 	}
 
-	if (!Action_Held[co2->PlayerNum])
+	if (!Action_Held[co2->PlayerNum] || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
 	{
-		data1->Action = (char)SSFly::Moving;
+		SS_SetFlyNextAction(data1, co2, (char)SSFly::Moving, ssBeginDash);
 		data1->Status &= ~Status_Attack;
 	}
 
