@@ -104,5 +104,8 @@
     <ClCompile Include="wind-cutter.cpp">
       <Filter>Source Files\Abilities</Filter>
     </ClCompile>
+    <ClCompile Include="water.cpp">
+      <Filter>Source Files\Abilities</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

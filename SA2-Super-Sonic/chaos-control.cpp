@@ -1,6 +1,6 @@
 #include "pch.h"
 
-const int chaosControlCDTimer = 3600; //1:00
+const int chaosControlCDTimer = 600; //1:00
 int chaosControlCD[2] = { 0, 0 };
 bool isChaosControlEnabled[2] = { false, false };
 const int chaosControlDuration = 1200;
@@ -89,7 +89,7 @@ void Check_ChaosControlCD(CharObj2Base* co2)
 
 	char pnum = co2->PlayerNum;
 
-	if (RingCount[pnum] >= 60 && chaosControlCD[pnum] == chaosControlCDTimer)
+	if (chaosControlCD[pnum] == chaosControlCDTimer)
 	{
 		SendTimedMessage("CHAOS CONTROL READY!", 120);
 		chaosControlCD[pnum]++;
@@ -101,7 +101,7 @@ void Check_ChaosControlCD(CharObj2Base* co2)
 	}
 	else {
 
-		if (RingCount[pnum] >= 60 && !isChaosControlEnabled[0] && !isChaosControlEnabled[1] && Controllers[pnum].on & Buttons_Y && Controllers[pnum].press & Buttons_X)
+		if (!isChaosControlEnabled[0] && !isChaosControlEnabled[1] && Controllers[pnum].on & Buttons_Y && Controllers[pnum].press & Buttons_X)
 		{
 			MainCharObj1[pnum]->Status &= ~Status_Ball;
 			chaosControlCD[pnum] = 0;

@@ -9,3 +9,4 @@ void DisplayTimed_Message_OnFrames();
 void SendTimedMessage(std::string msg, int timer);
 AnimationIndex* getCharAnim_r();
 int getNumber_r();
+bool isSA1Char(uint8_t charID);

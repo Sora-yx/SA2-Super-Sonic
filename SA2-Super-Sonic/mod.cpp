@@ -4,6 +4,8 @@
 HelperFunctions HelperFunctionsGlobal;
 const char* error = "[SA2 Super Sonic]: WARNING: Your version of the Mod Loader is old, the mod won't work properly.\nPlease update your Mod Loader for the best experience.";
 time_t t;
+HMODULE SA2Anim = NULL;
+HMODULE SA1Char = NULL;
 
 extern "C" {
 
@@ -26,6 +28,9 @@ extern "C" {
 		init_PhysicsHack();
 		init_AuraHack();
 		init_SuperShadow();
+
+		SA2Anim = GetModuleHandle(L"SA2-Anim-Break");
+		SA1Char = GetModuleHandle(L"SA2-SA1-Chars");
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame() {

@@ -18,9 +18,8 @@ const char* ModelFormatStrings[]{
 ModelInfo* LoadMDL(const char* name, ModelFormat format) {
 	std::string fullPath;
 
-	if (format == ModelFormat_Chunk) {
-		fullPath = "resource\\gd_PC\\Models\\";
-	}
+	fullPath = "resource\\gd_PC\\Models\\";
+	
 
 	fullPath += name;
 
@@ -116,8 +115,6 @@ typedef AnimationIndex* (CALLBACK* anim) (void);
 
 AnimationIndex* getCharAnim_r()
 {
-	HMODULE SA2Anim = GetModuleHandle(L"SA2-Anim-Break");
-
 	if (!SA2Anim)
 		return nullptr;
 
@@ -136,8 +133,6 @@ typedef int (*padd) (void);
 
 int getNumber_r()
 {
-	HMODULE SA2Anim = GetModuleHandle(L"SA2-Anim-Break");
-
 	if (!SA2Anim)
 		return 0;
 
@@ -150,4 +145,23 @@ int getNumber_r()
 	}
 
 	return 0;
+}
+
+typedef bool (*isChar) (uint8_t charID);
+
+bool isSA1Char(uint8_t charID)
+{
+	if (!SA1Char)
+		return false;
+
+	isChar Obj = (isChar)GetProcAddress(SA1Char, "isSA1Char");
+
+	if (Obj)
+	{
+		bool iResult = Obj(charID);
+		return iResult;
+	}
+
+	PrintDebug("SA1 Char Anim: Failed to get character");
+	return false;
 }

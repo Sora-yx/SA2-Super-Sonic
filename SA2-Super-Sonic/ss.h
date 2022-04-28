@@ -45,3 +45,7 @@ void Load_SuperShadowPhysics(EntityData1* data);
 void unSuperShadow(unsigned char player);
 void Check_SonicWind(CharObj2Base* co2);
 void init_SonicWindHack();
+void LoadWaterTextures(char charID);
+void LoadWaterMDL();
+void FreeWaterMDL();
+void Load_SSWaterTask(char pid);

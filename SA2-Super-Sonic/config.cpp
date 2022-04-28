@@ -14,6 +14,8 @@ bool unTransform = true;
 
 bool AlwaysSuperShadow = false;
 bool AllowSuperAttacks = true;
+bool LastStory = false;
+bool isJiggle = false;
 
 static const Buttons ButtonsList[]
 {
@@ -39,6 +41,7 @@ void ReadConfig(const char* path) {
 
 	superAuraState = config->getInt("Appearance", "superAuraState", 2);
 	isUpgrade = config->getBool("Appearance", "isUpgrade", true);
+	isJiggle = config->getBool("Appearance", "isJiggle", true);
 
 	SuperMusicVersion = config->getInt("Audio", "SuperMusicVersion", SA2LiveAndLearn);
 	delete config;

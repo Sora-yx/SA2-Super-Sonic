@@ -161,6 +161,7 @@ void unSuper(unsigned char player) {
 	else {
 		njReleaseTexture(Sonic_Texlist);
 		Sonic_Texlist = nullptr;
+		FreeWaterMDL();
 	}
 
 	return;
@@ -285,6 +286,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 		if (++data->Timer == 100 || AlwaysSuperSonic)
 		{
+			Load_SSWaterTask(playerID);
 			LoadSuperAura(playerID);
 			ControllerEnabled[playerID] = 1;
 			DoNextAction_r(playerID, 15, 0);
@@ -321,6 +323,8 @@ void LoadSuperSonicManager(char playNum) {
 		{
 			SuperSonicMdl = LoadMDLFile((char*)"SSONICMDL.PRS");
 			Load_NewSuperSonicAnim();
+			LoadWaterMDL();
+			LoadWaterTextures(id2);
 			superSonicManagerPtr->Data1.Entity->Index = playNum;
 		}
 	}
@@ -376,9 +380,9 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
 	if (curAnim == 30)
 	{
-		if (isSonic)
+		if (isSonic && !isSA1Char(Characters_SuperSonic))
 			texlist = &SSEff_Texlist;
-		else
+		else if (!isSonic && !isSA1Char(Characters_SuperShadow))
 			texlist = &SSHEff_Texlist;
 	}
 

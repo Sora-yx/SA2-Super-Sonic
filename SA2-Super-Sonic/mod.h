@@ -14,11 +14,15 @@ extern bool isFlyAllowed;
 extern bool unTransform;
 extern bool AlwaysSuperShadow;
 extern bool AllowSuperAttacks;
+extern bool isJiggle;
+
 extern AnimationInfo SuperSonicAnimationList_r[];
 extern AnimationInfo SuperShadowAnimationList_r[];
 
 extern HelperFunctions HelperFunctionsGlobal;
 
+extern HMODULE SA2Anim;
+extern HMODULE SA1Char;
 
 #define CURRENT_MATRIX _nj_current_matrix_ptr_
 

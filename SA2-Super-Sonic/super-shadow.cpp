@@ -131,6 +131,7 @@ void unSuperShadow(unsigned char player) {
 	else {
 		njReleaseTexture(Shadow_Texlist);
 		Shadow_Texlist = nullptr;
+		FreeWaterMDL();
 	}
 
 	return;
@@ -205,6 +206,7 @@ void SuperShadow_Manager(ObjectMaster* obj)
 
 		if (++data->Timer == 100 || AlwaysSuperShadow)
 		{
+			Load_SSWaterTask(playerID);
 			LoadSuperAura(playerID);
 			ControllerEnabled[playerID] = 1;
 			DoNextAction_r(playerID, 15, 0);
@@ -241,6 +243,8 @@ void LoadSuperShadowManager(char playNum) {
 		{
 			SuperShadowMdl = LoadMDLFile((char*)"sshadowmdl.prs");
 			Load_NewSuperShadowAnim();
+			LoadWaterMDL();
+			LoadWaterTextures(id2);
 			superShadowManagerPtr->Data1.Entity->Index = playNum;
 		}
 	}

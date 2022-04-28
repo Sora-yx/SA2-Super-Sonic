@@ -1,7 +1,7 @@
 #include "pch.h"
 
 int windCutterCD[2] = { 0, 0 };
-const int windCutterTimer = 2400;  //40 seconds
+const int windCutterTimer = 400;  //40 seconds
 bool iswindCutter[2] = { false, false };
 
 void Check_SonicWind(CharObj2Base* co2)
@@ -11,7 +11,7 @@ void Check_SonicWind(CharObj2Base* co2)
 	if (CurrentLevel != LevelIDs_SonicVsShadow1 && CurrentLevel != LevelIDs_SonicVsShadow2)
 		return;
 
-	if (RingCount[pnum] >= 40 && windCutterCD[pnum] == windCutterTimer)
+	if (windCutterCD[pnum] == windCutterTimer)
 	{
 		if (MainCharacter[pnum] && MainCharObj2[pnum]->CharID2 == Characters_Sonic)
 			SendTimedMessage("SONIC WIND READY!", 120);
@@ -26,7 +26,7 @@ void Check_SonicWind(CharObj2Base* co2)
 	{
 		windCutterCD[pnum]++;
 	}
-	else if (RingCount[pnum] >= 40 && Controllers[pnum].on & Buttons_Y && Controllers[pnum].press & Buttons_B)
+	else if (Controllers[pnum].on & Buttons_Y && Controllers[pnum].press & Buttons_B)
 	{
 		iswindCutter[pnum] = true;
 		Sonic2PWindCutterMan_Load(co2);

@@ -37,6 +37,9 @@ void ResetSSJiggle(SonicCharObj2* sonicCO2)
 
 void __cdecl initJiggleSuperSonic(SonicCharObj2* sonicCO2) {
 
+	if (!isJiggle)
+		return;
+
 	int modelNumber = isSuper[sonicCO2->base.PlayerNum] == true ? 21 : 349;
 
 	JiggleInfo* jiggleMDL = LoadJiggle(CharacterModels[modelNumber].Model->child);
@@ -86,6 +89,9 @@ void DeleteSSHJiggle(SonicCharObj2* sonicCO2) {
 }
 
 void __cdecl initJiggleSuperShadow(SonicCharObj2* sonicCO2) {
+
+	if (!isJiggle)
+		return;
 
 	int modelNumber = isSuper[sonicCO2->base.PlayerNum] == true ? 86 : 376;
 
