@@ -31,10 +31,21 @@ static NJS_TEXLIST waterTexList[8] = {
 	&watertexid7, 2
 };
 
-//some levels don't have a water collision, it's just a part of the background and don't act like water
+
+int FakeWaterLevelArray[6] = { LevelIDs_MetalHarbor, LevelIDs_MetalHarbor2P, LevelIDs_WeaponsBed, LevelIDs_WeaponsBed2P,
+LevelIDs_GreenForest, LevelIDs_GreenHill 
+};
+
+//some levels don't have a water collision, it's just a part of the background and don't really act like water
 bool isFakeWaterLevel()
 {
-	return CurrentLevel == LevelIDs_GreenForest || CurrentLevel == LevelIDs_MetalHarbor || CurrentLevel == LevelIDs_GreenHill;
+	for (int i = 0; i < LengthOfArray(FakeWaterLevelArray); i++) {
+
+		if (CurrentLevel == FakeWaterLevelArray[i])
+			return true;
+	}
+
+	return false;
 }
 
 DataPointer(float, MH_WaterPosY, 0xEF68B8);
@@ -80,28 +91,6 @@ bool isPlayerOnWater(CharObj2Base* co2, EntityData1* player)
 }
 
 
-NJS_OBJECT* DynCol_AddFromObject(ObjectMaster* obj, NJS_OBJECT* object, NJS_VECTOR* position, Angle rotY, int flags)
-{
-	NJS_OBJECT* dynobj = GetFreeDyncolObjectEntry();
-
-	if (dynobj)
-	{
-		memcpy(dynobj, object, sizeof(NJS_OBJECT));
-
-		dynobj->evalflags &= 0xFFFFFFFC;
-
-		dynobj->ang[1] = rotY;
-		dynobj->pos[0] = position->x;
-		dynobj->pos[1] = position->y;
-		dynobj->pos[2] = position->z;
-
-		DynCol_Add((SurfaceFlags)flags, obj, dynobj);
-		obj->EntityData2 = (UnknownData2*)dynobj;
-	}
-
-	return dynobj;
-}
-
 void __cdecl SS_Water_Display(ObjectMaster* obj)
 {
 	float XScale;
@@ -115,7 +104,7 @@ void __cdecl SS_Water_Display(ObjectMaster* obj)
 	EntityData1* playerData = MainCharObj1[pnum];
 	CharObj2Base* co2 = MainCharObj2[pnum];
 
-	if ((data->Action >= 2))
+	if ((data->Action >= 2) && co2->Speed.x > 6.0f)
 	{
 		njSetTexture(&waterTexList[((unsigned __int8)data->Timer >> 1) & 6]);
 
@@ -290,7 +279,9 @@ void DoBigSplashEffect(NJS_VECTOR* a1, int a2)
 	v7 = 1.0f;
 	v8 = 1.27f;
 	v2(a1, 0, v7, v8);
-	Play3DSound_Pos(28673, a1, 0, 0, 0);
+
+	if (!isFakeWaterLevel())
+		Play3DSound_Pos(28673, a1, 0, 0, 0);
 }
 
 
@@ -329,7 +320,8 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 
 			sub_6ED400(&playerPos, &Velo, result, flt_1666F30, 12);
 			data->Timer = 0;
-			Play3DSound_Pos(28672, &playerData->Position, 0, 0, 0);
+			if (!isFakeWaterLevel())
+				Play3DSound_Pos(28672, &playerData->Position, 0, 0, 0);
 		}
 
 

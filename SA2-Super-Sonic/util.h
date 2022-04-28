@@ -10,3 +10,5 @@ void SendTimedMessage(std::string msg, int timer);
 AnimationIndex* getCharAnim_r();
 int getNumber_r();
 bool isSA1Char(uint8_t charID);
+
+NJS_OBJECT* DynCol_AddFromObject(ObjectMaster* obj, NJS_OBJECT* object, NJS_VECTOR* position, Angle rotY, int flags);

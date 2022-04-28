@@ -279,3 +279,28 @@ static inline void sub_476CC0(int pnum, NJS_VECTOR* pos)
 	}
 }
 
+static const void* const spinDashAura_ptr = (void*)0x7562A0;
+static inline void DoSpinDashAura(ObjectMaster* a1)
+{
+	__asm
+	{
+		mov edi, [a1]
+		call spinDashAura_ptr
+	}
+}
+
+//ObjectMaster* __usercall LoadSonEffObj@<eax>(void(__cdecl* a1)(ObjectMaster*)@<edi>)
+static const void* const SonEff_ptr = (void*)0x755EA0;
+static inline ObjectMaster* LoadSonEffObj(void(__cdecl* a1)(ObjectMaster*))
+{
+	ObjectMaster* result;
+
+	__asm
+	{
+		mov edi, [a1]
+		call SonEff_ptr
+		mov result, eax
+	}
+
+	return result;
+}

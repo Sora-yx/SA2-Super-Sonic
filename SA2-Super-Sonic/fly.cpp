@@ -344,6 +344,36 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 	return;
 }
 
+int BoostUseTimer = 800;
+int boostReload = 1000;
+
+FunctionPointer(void, LoadHomingAura, (char pnum), 0x7577E0);
+FunctionPointer(void, DoHomingAura, (char pnum), 0x756930);
+
+void SuperSonic_BoostCheck(CharObj2Base* co2, char pNum)
+{
+	if (boostReload < 1000)
+	{
+		boostReload++;
+	}
+	
+	if (boostReload >= 1000) {
+
+		if (Controllers[pNum].on & Buttons_X)
+		{
+			co2->Speed.x = co2->PhysData.SpeedCapH;
+			BoostUseTimer--;
+
+			if (BoostUseTimer <= 0)
+			{
+				boostReload = 0;
+				BoostUseTimer = 800;
+			}
+		}
+	}
+}
+
+
 void SuperSonicFly_MainActions(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 {
 	switch ((SSFly)data1->Action)
@@ -351,20 +381,23 @@ void SuperSonicFly_MainActions(EntityData1* data1, CharObj2Base* co2, EntityData
 	case SSFly::Standing:
 	case SSFly::Moving:
 		SuperSonic_CommonPhysics(co2, data1, data2);
-		return;
+		break;
 	case SSFly::AscendingIntro:
 		SuperSonic_CommonPhysicsV(co2, data1, data2, 4.0f, 0.1f);
-		return;
+		break;
 	case SSFly::DescendingIntro:
 		SuperSonic_CommonPhysicsV(co2, data1, data2, -4.0f, 0.1f);
-		return;
+		break;
 	case SSFly::Ascending:
 		SuperSonic_CommonPhysicsV(co2, data1, data2, 2.0f, 0.4f);
-		return;
+		break;
 	case SSFly::Descending:
 		SuperSonic_CommonPhysicsV(co2, data1, data2, -2.0f, 0.4f);
-		return;
+		break;
 	}
+
+	SuperSonic_BoostCheck(co2, co2->PlayerNum);
+
 }
 
 void SuperSonicFly_MainManagement(EntityData1* data1, CharObj2Base* co2, EntityData2* data2) {

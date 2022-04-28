@@ -166,3 +166,26 @@ bool isSA1Char(uint8_t charID)
 	return false;
 }
 
+
+
+NJS_OBJECT* DynCol_AddFromObject(ObjectMaster* obj, NJS_OBJECT* object, NJS_VECTOR* position, Angle rotY, int flags)
+{
+	NJS_OBJECT* dynobj = GetFreeDyncolObjectEntry();
+
+	if (dynobj)
+	{
+		memcpy(dynobj, object, sizeof(NJS_OBJECT));
+
+		dynobj->evalflags &= 0xFFFFFFFC;
+
+		dynobj->ang[1] = rotY;
+		dynobj->pos[0] = position->x;
+		dynobj->pos[1] = position->y;
+		dynobj->pos[2] = position->z;
+
+		DynCol_Add((SurfaceFlags)flags, obj, dynobj);
+		obj->EntityData2 = (UnknownData2*)dynobj;
+	}
+
+	return dynobj;
+}

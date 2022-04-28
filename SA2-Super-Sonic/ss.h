@@ -50,3 +50,4 @@ void LoadWaterMDL();
 void FreeWaterMDL();
 void Load_SSWaterTask(char pid);
 bool isPlayerOnWater(CharObj2Base* co2, EntityData1* player);
+
