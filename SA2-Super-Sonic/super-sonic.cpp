@@ -324,7 +324,6 @@ void LoadSuperSonicManager(char playNum) {
 			SuperSonicMdl = LoadMDLFile((char*)"SSONICMDL.PRS");
 			Load_NewSuperSonicAnim();
 			LoadWaterMDL();
-			LoadWaterTextures(id2);
 			superSonicManagerPtr->Data1.Entity->Index = playNum;
 		}
 	}
@@ -500,6 +499,7 @@ void LoadSonic_r(int playerNum) {
 	if (CurrentLevel != LevelIDs_FinalHazard) {
 		LoadSuperSonicManager(playerNum);
 		LoadSSEff_Textures();
+		LoadWaterTextures(playerNum);
 	}
 }
 

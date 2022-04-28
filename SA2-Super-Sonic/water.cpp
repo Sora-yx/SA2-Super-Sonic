@@ -18,14 +18,14 @@ extern NJS_TEXLIST SSEff_Texlist;
 extern NJS_TEXLIST SSHEff_Texlist;
 
 static NJS_TEXLIST waterTexList[8] = {
-	&watertexid0, 0,
-	&watertexid1, 0,
-	&watertexid2, 0,
-	&watertexid3, 0,
-	&watertexid4, 0,
-	&watertexid5, 0,
-	&watertexid6, 0,
-	&watertexid7, 0
+	&watertexid0, 2,
+	&watertexid1, 2,
+	&watertexid2, 2,
+	&watertexid3, 2,
+	&watertexid4, 2,
+	&watertexid5, 2,
+	&watertexid6, 2,
+	&watertexid7, 2
 };
 
 void __cdecl SS_Water_Display(ObjectMaster* obj)
@@ -43,7 +43,7 @@ void __cdecl SS_Water_Display(ObjectMaster* obj)
 
 	if ((data->Action >= 2))
 	{
-		njSetTexture(&waterTexList[((unsigned __int8)data->Timer >> 1) & 7]);
+		njSetTexture(&waterTexList[((unsigned __int8)data->Timer >> 1) & 6]);
 		njPushMatrix(CURRENT_MATRIX);
 		njTranslateV(0, &playerData->Position);
 
@@ -150,12 +150,13 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 		return;
 
 	EntityData1* player = MainCharObj1[pnum];
+	float spd;
 
 	switch (data->Action)
 	{
 	case 0:
 
-		obj->DisplaySub = SS_Water_Display;
+		obj->DisplaySub_Delayed1 = SS_Water_Display;
 		obj->field_4C = gridCol->getmodel();
 		obj->DeleteSub = DeleteFunc_DynCol;
 		DynCol_AddFromObject(obj, (NJS_OBJECT*)obj->field_4C, &data->Position, data->Rotation.y, SurfaceFlag_Solid | SurfaceFlag_Dynamic);
@@ -172,6 +173,9 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 	case 2:
 	{
 		UpdateWaterEffectPos(obj, player);
+
+		spd = fabs(MainCharObj2[pnum]->Speed.x);
+		data->Scale.x = sqrt(spd) * 0.40000001;
 
 		if (data->Timer >= SHRT_MAX)
 			data->Timer = 0;
@@ -198,10 +202,10 @@ void Load_SSWaterTask(char pid)
 }
 
 
-void LoadWaterTextures(char charID)
-{
+void LoadWaterTextures(char charID) {
 
 	char count = 0;
+
 	if (charID == Characters_Sonic) {
 
 		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {

@@ -244,7 +244,6 @@ void LoadSuperShadowManager(char playNum) {
 			SuperShadowMdl = LoadMDLFile((char*)"sshadowmdl.prs");
 			Load_NewSuperShadowAnim();
 			LoadWaterMDL();
-			LoadWaterTextures(id2);
 			superShadowManagerPtr->Data1.Entity->Index = playNum;
 		}
 	}
@@ -258,6 +257,7 @@ void LoadShadow_r(int playerNum) {
 	if (CurrentLevel != LevelIDs_FinalHazard) {
 		LoadSuperShadowManager(playerNum);
 		LoadSSEff_Textures();
+		LoadWaterTextures(playerNum);
 	}
 }
 
