@@ -8,6 +8,7 @@ Trampoline* DoJumpAura_t;
 Trampoline* DoHomingAura_t;
 Trampoline* HomingDashAura_Display_t;
 
+ModelInfo* SADXSuperAuraModel[3];
 
 bool isNotSuperSonic(CharObj2Base* co2)
 {
@@ -349,7 +350,6 @@ void __cdecl HomingDashAura_Display_r(ObjectMaster* a1)
 	}
 }
 
-
 char superAuraArray[6] = { 3, 4, 5, 6, 7, 8 };
 char superAuraArrayShadow[6] = { 9, 10, 11, 12, 13, 14 };
 char auraCount = 0;
@@ -358,15 +358,14 @@ void DisplaySuperAura(char character) {
 
 	*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSONEFFTEX_TEXLIST;
 
+	if (GameState != GameStates_Pause) {
 
-	if (GameState == GameStates_Pause)
-		return;
-
-	//animate Aura using a loop doesn't work for some reason
-	if (auraCount == LengthOfArray(superAuraArray) - 1)
-		auraCount = 0;
-	else
-		auraCount++;
+		//animate Aura using a loop doesn't work for some reason
+		if (auraCount == LengthOfArray(superAuraArray) - 1)
+			auraCount = 0;
+		else
+			auraCount++;
+	}
 
 	animate_AuraThing = character == Characters_Sonic ? superAuraArray[auraCount] : superAuraArrayShadow[auraCount];
 }
@@ -417,19 +416,145 @@ void SuperAura_r(ObjectMaster* obj) {
 	sub_42D340();
 	ProcessChunkModelsWithCallback((NJS_OBJECT*)0x170B47C, ProcessChunkModel);// Draw Aura
 	njPopMatrix(2u);
-
-
 }
+
+static NJS_TEXNAME SADXAuratexid0 = { (char*)"S1sonic01", 0, 0 };
+static NJS_TEXNAME SADXAuratexid1 = { (char*)"S1sonic02", 0, 0 };
+static NJS_TEXNAME SADXAuratexid2 = { (char*)"S1sonic03", 0, 0 };
+static NJS_TEXNAME SADXAuratexid3 = { (char*)"S1sonic04", 0, 0 };
+static NJS_TEXNAME SADXAuratexid4 = { (char*)"S1sonic05", 0, 0 };
+static NJS_TEXNAME SADXAuratexid5 = { (char*)"S1sonic06", 0, 0 };
+static NJS_TEXNAME SADXAuratexid6 = { (char*)"S1sonic07", 0, 0 };
+static NJS_TEXNAME SADXAuratexid7 = { (char*)"S1sonic08", 0, 0 };
+
+
+static NJS_TEXLIST SADXSuperAuraTexList[8] = {
+	&SADXAuratexid0, 1,
+	&SADXAuratexid1, 1,
+	&SADXAuratexid2, 1,
+	&SADXAuratexid3, 1,
+	&SADXAuratexid4, 1,
+	&SADXAuratexid5, 1,
+	&SADXAuratexid6, 1,
+	&SADXAuratexid7, 1
+};
+
+static NJS_TEXNAME SADXAuratexid8 = { (char*)"S2sonic01", 0, 0 };
+static NJS_TEXNAME SADXAuratexid9 = { (char*)"S2sonic02", 0, 0 };
+static NJS_TEXNAME SADXAuratexid10 = { (char*)"S2sonic03", 0, 0 };
+static NJS_TEXNAME SADXAuratexid11 = { (char*)"S2sonic04", 0, 0 };
+static NJS_TEXNAME SADXAuratexid12 = { (char*)"S2sonic05", 0, 0 };
+static NJS_TEXNAME SADXAuratexid13 = { (char*)"S2sonic06", 0, 0 };
+static NJS_TEXNAME SADXAuratexid14 = { (char*)"S2sonic07", 0, 0 };
+static NJS_TEXNAME SADXAuratexid15 = { (char*)"S2sonic08", 0, 0 };
+
+static NJS_TEXLIST SADXSuperAuraTexList2[8] = {
+	&SADXAuratexid8, 1,
+	&SADXAuratexid9, 1,
+	&SADXAuratexid10, 1,
+	&SADXAuratexid11, 1,
+	&SADXAuratexid12, 1,
+	&SADXAuratexid13, 1,
+	&SADXAuratexid14, 1,
+	&SADXAuratexid15, 1
+};
+
+int timerSuperAura = 0;
+void SADX_SuperAura(ObjectMaster* obj) {
+
+	SonicCharObj2* Sco2 = (SonicCharObj2*)obj->Data2.Undefined;
+	CharObj2Base* co2 = &Sco2->base;
+	EntityData1* data = obj->Data1.Entity;
+	EntityData1* playerData = MainCharObj1[co2->PlayerNum];
+
+	if (co2->AnimInfo.Current == 54 || co2->AnimInfo.Next == 54 || !isSuper[co2->PlayerNum])
+	{
+		obj->DisplaySub_Delayed4 = nullptr;
+		return;
+	}
+
+	if (superAuraState == 1)
+	{
+		if (co2->Speed.x >= -5.0 && co2->Speed.x < 5.0f && co2->Speed.y >= -6.0f && co2->Speed.y < 6.0)
+			return;
+	}
+
+	if (GameState != GameStates_Pause) {
+		timerSuperAura++;
+	}
+
+	njSetTexture(&SADXSuperAuraTexList[timerSuperAura & 7]);
+	njControl3D_Backup();
+	njControl3D_Add(NJD_CONTROL_3D_CONSTANT_MATERIAL);
+	SetMaterial(1.0, 1.0, 1.0, 1.0);
+	njPushMatrix(CURRENT_MATRIX);
+	njTranslateV(0, &playerData->Collision->CollisionArray->center);
+
+	njRotateZ_(CURRENT_MATRIX, (unsigned __int16)playerData->Rotation.z);
+	njRotateX_(CURRENT_MATRIX, (unsigned __int16)playerData->Rotation.x);
+	njRotateY_(CURRENT_MATRIX, (unsigned __int16)-(playerData->Rotation.y));
+
+	njScale(0, -1.0, 1.0, 1.0);
+
+	if (co2->Speed.x <= 13.0)
+	{
+		if (co2->Speed.x <= 7.0)
+		{
+			DrawObject(SADXSuperAuraModel[0]->getmodel());
+		}
+		else
+		{
+			njSetTexture(&SADXSuperAuraTexList[((unsigned __int8)timerSuperAura >> 1) & 7]);
+			DrawObject(SADXSuperAuraModel[1]->getmodel());
+		}
+	}
+	else
+	{
+		njSetTexture(&SADXSuperAuraTexList2[((unsigned __int8)timerSuperAura >> 1) & 7]);
+		DrawObject(SADXSuperAuraModel[2]->getmodel());
+	}
+
+	njPopMatrix(1u);
+	ResetMaterial();
+	njControl3D_Restore();
+}
+
 
 void LoadSuperAura(char pID)
 {
 	if (!superAuraState)
 		return;
 
-	MainCharacter[pID]->DisplaySub_Delayed4 = SuperAura_r;
+	MainCharacter[pID]->DisplaySub_Delayed4 = SADXAura ? SADX_SuperAura : SuperAura_r;
 	return;
 }
 
+void LoadSADXAuraTextures(char charID) {
+
+	if (!SADXAura)
+	{
+		return;
+	}
+
+	timerSuperAura = 0;
+
+	if (charID == Characters_Sonic) {
+
+		for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraTexList); i++) {
+
+			SADXSuperAuraTexList[i].textures[0] = SSEff_Texlist.textures[i + 17];
+			SADXSuperAuraTexList2[i].textures[0] = SSEff_Texlist.textures[i + 25];
+		}
+	}
+	else
+	{
+		for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraTexList); i++) {
+
+			SADXSuperAuraTexList[i].textures[0] = SSHEff_Texlist.textures[i + 17];
+			SADXSuperAuraTexList2[i].textures[0] = SSHEff_Texlist.textures[i + 25];
+		}
+	}
+}
 
 //Serie of hack to make every aura display a yellow texture when Super Sonic. (Using Shadow texlist)
 void init_AuraHack() {
@@ -439,5 +564,12 @@ void init_AuraHack() {
 	DoJumpAura_t = new Trampoline((int)0x756AE0, (int)0x756AE5, DoJumpAuraASM);
 	DoHomingAura_t = new Trampoline((int)0x7566C0, (int)0x7566C5, DoHomingAuraASM);
 	HomingDashAura_Display_t = new Trampoline((int)0x757040, (int)0x757045, HomingDashAura_Display_r);
+
+	if (SADXAura)
+	{
+		SADXSuperAuraModel[0] = LoadMDL("SADXAura0", ModelFormat_Chunk);
+		SADXSuperAuraModel[1] = LoadMDL("SADXAura1", ModelFormat_Chunk);
+		SADXSuperAuraModel[2] = LoadMDL("SADXAura2", ModelFormat_Chunk);
+	}
 	return;
 }

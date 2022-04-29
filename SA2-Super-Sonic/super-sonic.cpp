@@ -8,7 +8,7 @@ Trampoline* Sonic_runsActions_t;
 
 bool isSuper[2] = { false, false };
 
-NJS_TEXNAME SSEffTex[17];
+NJS_TEXNAME SSEffTex[33];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
 
 NJS_TEXLIST* Sonic_Texlist = nullptr;
@@ -500,6 +500,7 @@ void LoadSonic_r(int playerNum) {
 		LoadSuperSonicManager(playerNum);
 		LoadSSEff_Textures();
 		LoadWaterTextures(playerNum);
+		LoadSADXAuraTextures(playerNum);
 	}
 }
 

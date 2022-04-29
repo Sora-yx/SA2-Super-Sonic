@@ -7,6 +7,7 @@ bool RemoveLimitations = false;
 bool AlwaysSuperSonic = false;
 int SuperMusicVersion = SA2LiveAndLearn;
 int superAuraState = 1;
+bool SADXAura = false;
 bool isUpgrade = true;
 bool isPhysics = true;
 bool isFlyAllowed = true;
@@ -40,6 +41,7 @@ void ReadConfig(const char* path) {
 	FlightButton = ButtonsList[config->getInt("Controls", "FlightButton", 1)];
 
 	superAuraState = config->getInt("Appearance", "superAuraState", 2);
+	SADXAura = config->getBool("Appearance", "SADXAura", true);
 	isUpgrade = config->getBool("Appearance", "isUpgrade", true);
 	isJiggle = config->getBool("Appearance", "isJiggle", true);
 

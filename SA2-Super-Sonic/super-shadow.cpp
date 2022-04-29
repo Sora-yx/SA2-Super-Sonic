@@ -4,11 +4,10 @@
 NJS_TEXLIST* Shadow_Texlist = nullptr;
 ModelIndex* SuperShadowMdl;
 Trampoline* LoadShadow_t = nullptr;
-extern NJS_TEXLIST SSEff_Texlist;
 
 extern std::string currentSuperMusic;
 
-NJS_TEXNAME SSHEffTex[17];
+NJS_TEXNAME SSHEffTex[33];
 NJS_TEXLIST SSHEff_Texlist = { arrayptrandlength(SSHEffTex) };
 
 NJS_TEXLIST* getShadowTexlist()
@@ -258,6 +257,7 @@ void LoadShadow_r(int playerNum) {
 		LoadSuperShadowManager(playerNum);
 		LoadSSEff_Textures();
 		LoadWaterTextures(playerNum);
+		LoadSADXAuraTextures(playerNum);
 	}
 }
 

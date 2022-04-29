@@ -17,9 +17,6 @@ static NJS_TEXNAME watertexid5 = { (char*)"ss_waterl11", 0, 0 };
 static NJS_TEXNAME watertexid6 = { (char*)"ss_waterl13", 0, 0 };
 static NJS_TEXNAME watertexid7 = { (char*)"ss_waterl15", 0, 0 };
 
-extern NJS_TEXLIST SSEff_Texlist;
-extern NJS_TEXLIST SSHEff_Texlist;
-
 static NJS_TEXLIST waterTexList[8] = {
 	&watertexid0, 2,
 	&watertexid1, 2,
@@ -30,7 +27,6 @@ static NJS_TEXLIST waterTexList[8] = {
 	&watertexid6, 2,
 	&watertexid7, 2
 };
-
 
 int FakeWaterLevelArray[6] = { LevelIDs_MetalHarbor, LevelIDs_MetalHarbor2P, LevelIDs_WeaponsBed, LevelIDs_WeaponsBed2P,
 LevelIDs_GreenForest, LevelIDs_GreenHill 
@@ -203,57 +199,6 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 	}
 }
 
-void Load_SSWaterTask(char pid)
-{
-	ObjectMaster* water = LoadObject(2, "SS_Water_Eff", SS_Water_Main, LoadObj_Data1 | LoadObj_Data2);
-	water->Data1.Entity->Index = pid;
-	return;
-}
-
-void LoadWaterTextures(char charID) {
-
-	if (isFakeWaterLevel())
-	{
-		LoadSplashEffect(charID);
-	}
-
-	char count = 0;
-
-	if (charID == Characters_Sonic) {
-
-		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {
-
-			waterTexList[i].textures[0] = SSEff_Texlist.textures[1 + count];
-			count += 2;
-		}
-	}
-	else
-	{
-		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {
-
-			waterTexList[i].textures[0] = SSHEff_Texlist.textures[1 + count];
-			count += 2;
-		}
-	}
-}
-
-void LoadWaterMDL()
-{
-	WaterMdl[0] = LoadMDL("WaterMDL0", ModelFormat_Chunk);
-	WaterMdl[1] = LoadMDL("WaterMDL1", ModelFormat_Chunk);
-	gridCol = LoadMDL("gridCol", ModelFormat_Basic);
-	return;
-}
-
-void FreeWaterMDL()
-{
-	for (uint8_t i = 0; i < LengthOfArray(WaterMdl); i++)
-	{
-		FreeMDL(WaterMdl[i]);
-	}
-
-	FreeMDL(gridCol);
-}
 
 using ExecFuncPtr = void(__cdecl*)(NJS_VECTOR*, Rotation*, float, float);
 DataPointer(ExecFuncPtr, ExecFunc_ptr_, 0x1A5A2B0);
@@ -267,7 +212,7 @@ void DoBigSplashEffect(NJS_VECTOR* a1, int a2)
 	float v7;
 	float v8;
 
-	if (!ExecFunc_ptr)
+	if (!ExecFunc_ptr_)
 		return;
 
 	v2 = ExecFunc_ptr_;
@@ -354,8 +299,60 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 	origin(a1);
 }
 
+void Load_SSWaterTask(char pid)
+{
+	ObjectMaster* water = LoadObject(2, "SS_Water_Eff", SS_Water_Main, LoadObj_Data1 | LoadObj_Data2);
+	water->Data1.Entity->Index = pid;
+	return;
+}
+
+void LoadWaterTextures(char charID) {
+
+	if (isFakeWaterLevel())
+	{
+		LoadSplashEffect(charID);
+	}
+
+	char count = 0;
+
+	if (charID == Characters_Sonic) {
+
+		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {
+
+			waterTexList[i].textures[0] = SSEff_Texlist.textures[1 + count];
+			count += 2;
+		}
+	}
+	else
+	{
+		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {
+
+			waterTexList[i].textures[0] = SSHEff_Texlist.textures[1 + count];
+			count += 2;
+		}
+	}
+}
+
+void LoadWaterMDL()
+{
+	WaterMdl[0] = LoadMDL("WaterMDL0", ModelFormat_Chunk);
+	WaterMdl[1] = LoadMDL("WaterMDL1", ModelFormat_Chunk);
+	gridCol = LoadMDL("gridCol", ModelFormat_Basic);
+	return;
+}
+
+
+void FreeWaterMDL()
+{
+	for (uint8_t i = 0; i < LengthOfArray(WaterMdl); i++)
+	{
+		FreeMDL(WaterMdl[i]);
+	}
+
+	FreeMDL(gridCol);
+}
+
 void init_WaterHack()
 {
 	SplashEffect_t = new Trampoline((int)0x6ED6E0, (int)0x6ED6E6, SplashEffect_r);
-	WriteData<5>((int*)0x495218, 0x90);
 }
