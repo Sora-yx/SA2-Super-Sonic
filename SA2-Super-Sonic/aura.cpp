@@ -484,8 +484,9 @@ void SADX_SuperAura(ObjectMaster* obj) {
 	}
 
 	njSetTexture(&SADXSuperAuraTexList[timerSuperAura & 7]);
-	njControl3D_Backup();
-	njControl3D_Add(NJD_CONTROL_3D_CONSTANT_MATERIAL);
+	
+	SaveControl3D();
+	OnControl3D(NJD_CONTROL_3D_CONSTANT_MATERIAL);
 	SetMaterial(1.0, 1.0, 1.0, 1.0);
 	njPushMatrix(CURRENT_MATRIX);
 	njTranslateV(0, &playerData->Collision->CollisionArray->center);
@@ -496,7 +497,7 @@ void SADX_SuperAura(ObjectMaster* obj) {
 
 	njScale(0, -1.0, 1.0, 1.0);
 
-	if (co2->Speed.x <= 13.0)
+	if (!isBoosting(co2->PlayerNum))
 	{
 		if (co2->Speed.x <= 7.0)
 		{
@@ -508,7 +509,7 @@ void SADX_SuperAura(ObjectMaster* obj) {
 			DrawObject(SADXSuperAuraModel[1]->getmodel());
 		}
 	}
-	else
+	else 
 	{
 		njSetTexture(&SADXSuperAuraTexList2[((unsigned __int8)timerSuperAura >> 1) & 7]);
 		DrawObject(SADXSuperAuraModel[2]->getmodel());
@@ -516,7 +517,7 @@ void SADX_SuperAura(ObjectMaster* obj) {
 
 	njPopMatrix(1u);
 	ResetMaterial();
-	njControl3D_Restore();
+	LoadControl3D();
 }
 
 

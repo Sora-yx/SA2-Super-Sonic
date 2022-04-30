@@ -6,6 +6,7 @@ Trampoline* Sonic_Display_t;
 Trampoline* LoadSonic_t;
 Trampoline* Sonic_runsActions_t;
 
+
 bool isSuper[2] = { false, false };
 
 NJS_TEXNAME SSEffTex[33];
@@ -171,7 +172,7 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 	EntityData1* player = MainCharObj1[playerID];
 
-	if (!player || AlwaysSuperSonic && MainCharObj2[playerID]->CharID2 == Characters_Sonic 
+	if (!player || AlwaysSuperSonic && MainCharObj2[playerID]->CharID2 == Characters_Sonic
 		|| AlwaysSuperShadow && MainCharObj2[playerID]->CharID2 == Characters_Shadow || !unTransform)
 		return false;
 
@@ -550,7 +551,7 @@ void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj
 		SuperSonic_RunCustomAction(data1, SonicCO2, co2);
 	}
 
-	 co2->CurrentSurfaceFlags;
+	co2->CurrentSurfaceFlags;
 
 	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
 	original(data1, data2, co2, SonicCO2);

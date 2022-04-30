@@ -58,7 +58,7 @@ float getWaterposY(char pnum)
 	case LevelIDs_MetalHarbor2P:
 		return MH_WaterPosY + 5.0f;
 	case LevelIDs_GreenForest:
-		return -1356.91f;
+		return -975.0f;
 	case LevelIDs_GreenHill:
 		break;
 	}
@@ -85,7 +85,6 @@ bool isPlayerOnWater(CharObj2Base* co2, EntityData1* player)
 
 	return false;
 }
-
 
 void __cdecl SS_Water_Display(ObjectMaster* obj)
 {
@@ -170,6 +169,7 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 	case 1:
 
 		if (isPlayerOnWater(co2, MainCharObj1[pnum])) {
+			data->Status |= 0x100u;
 			player->Position.y += 1.0f;
 			data->Action++;
 		}
@@ -188,7 +188,7 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 		data->Timer++;
 
 		if (!isPlayerOnWater(MainCharObj2[pnum], MainCharObj1[pnum]) || player->Action == Action_Jump) {
-			data->Position = { 0, -10000, 0 };
+			data->Status &= 0xFEFFu;
 			data->Action = 1;
 			data->Timer = 0;
 			return;
@@ -205,7 +205,7 @@ DataPointer(ExecFuncPtr, ExecFunc_ptr_, 0x1A5A2B0);
 
 void DoBigSplashEffect(NJS_VECTOR* a1, int a2)
 {
-	void(__cdecl * v2)(NJS_VECTOR*, Rotation*, float, float);
+	void(__cdecl * splashPointer)(NJS_VECTOR*, Rotation*, float, float);
 	CharObj2Base* co2;
 	BOOL spd;
 	double v6;
@@ -215,7 +215,7 @@ void DoBigSplashEffect(NJS_VECTOR* a1, int a2)
 	if (!ExecFunc_ptr_)
 		return;
 
-	v2 = ExecFunc_ptr_;
+	splashPointer = ExecFunc_ptr_;
 
 	co2 = MainCharObj2[a2];
 	v6 = 1.0;
@@ -223,7 +223,7 @@ void DoBigSplashEffect(NJS_VECTOR* a1, int a2)
 
 	v7 = 1.0f;
 	v8 = 1.27f;
-	v2(a1, 0, v7, v8);
+	splashPointer(a1, 0, v7, v8);
 
 	if (!isFakeWaterLevel())
 		Play3DSound_Pos(28673, a1, 0, 0, 0);
@@ -269,8 +269,7 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 				Play3DSound_Pos(28672, &playerData->Position, 0, 0, 0);
 		}
 
-
-		if (TimeTotal % 60 * 2 == 0) {
+		if (co2->Speed.x > 8.0f && TimeTotal % 50 == 0) {
 
 			NJS_VECTOR pos = playerData->Position;
 

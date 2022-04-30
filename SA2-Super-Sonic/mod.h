@@ -4,6 +4,7 @@ void ReadConfig(const char* path);
 
 extern Buttons TransformButton;
 extern Buttons FlightButton;
+extern Buttons boostBtn;
 extern bool RemoveLimitations;
 extern bool AlwaysSuperSonic;
 extern int SuperMusicVersion;
@@ -16,6 +17,7 @@ extern bool AlwaysSuperShadow;
 extern bool AllowSuperAttacks;
 extern bool isJiggle;
 extern bool SADXAura;
+extern bool isBoostAllowed;
 extern AnimationInfo SuperSonicAnimationList_r[];
 extern AnimationInfo SuperShadowAnimationList_r[];
 
@@ -98,3 +100,4 @@ NJS_TEXLIST* getSonicTexlist();
 NJS_TEXLIST* getShadowTexlist();
 void init_SuperShadow();
 void init_WaterHack();
+bool isBoosting(char pnum);

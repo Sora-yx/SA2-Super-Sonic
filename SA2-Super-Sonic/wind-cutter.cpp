@@ -8,7 +8,7 @@ void Check_SonicWind(CharObj2Base* co2)
 {
 	char pnum = co2->PlayerNum;
 
-	if (CurrentLevel != LevelIDs_SonicVsShadow1 && CurrentLevel != LevelIDs_SonicVsShadow2)
+	if (CurrentLevel != LevelIDs_SonicVsShadow2)
 		return;
 
 	if (windCutterCD[pnum] == windCutterTimer)

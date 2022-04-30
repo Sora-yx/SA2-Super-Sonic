@@ -12,11 +12,14 @@ bool isUpgrade = true;
 bool isPhysics = true;
 bool isFlyAllowed = true;
 bool unTransform = true;
+bool isBoostAllowed = true;
 
 bool AlwaysSuperShadow = false;
 bool AllowSuperAttacks = true;
 bool LastStory = false;
 bool isJiggle = false;
+
+Buttons boostBtn = Buttons_B;
 
 static const Buttons ButtonsList[]
 {
@@ -39,6 +42,7 @@ void ReadConfig(const char* path) {
 
 	TransformButton = ButtonsList[config->getInt("Controls", "TransformButton", 0)];
 	FlightButton = ButtonsList[config->getInt("Controls", "FlightButton", 1)];
+	boostBtn = ButtonsList[config->getInt("Controls", "BoostButton", 0)];
 
 	superAuraState = config->getInt("Appearance", "superAuraState", 2);
 	SADXAura = config->getBool("Appearance", "SADXAura", true);

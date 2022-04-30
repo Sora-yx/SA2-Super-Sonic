@@ -10,6 +10,32 @@ enum class SSFly {
 	Descending,
 };
 
+const int boostTimerC = 600;
+const int boostReloadC = 1000;
+
+int BoostUseTimer = boostTimerC;
+int boostReload = boostReloadC;
+const float spdCap = 20.0f;
+
+
+bool isBoosting(char pnum)
+{
+	return BoostUseTimer > 0 && BoostUseTimer < boostTimerC && Controllers[pnum].on & boostBtn;
+}
+
+Buttons DescendButton()
+{
+	if (!isBoostAllowed || boostBtn != Buttons_B && boostBtn != Buttons_X) {
+		return (Buttons)1026;
+	}
+
+	if (boostBtn == Buttons_B)
+		return Buttons_X;
+	else
+		return Buttons_B;
+}
+
+
 bool isFlyMode[2] = { false, false };
 
 void SS_SetFlyNextAction(EntityData1* data1, CharObj2Base* co2, char action, __int16 anim) {
@@ -35,6 +61,72 @@ void SuperSonic_CommonPhysicsV(CharObj2Base* co2, EntityData1* data1, EntityData
 
 }
 
+void SuperSonic_BoostCheck(EntityData1* data, CharObj2Base* co2, char pNum)
+{
+	if (Controllers[pNum].on & boostBtn)
+	{
+		if (co2->Speed.x < spdCap)
+			co2->Speed.x += 0.0100f;
+
+		BoostUseTimer--;
+
+		if (BoostUseTimer <= 0)
+		{
+			if (co2->Speed.x > 7.0f)
+				co2->Speed.x -= 5.0f;
+
+			boostReload = 0;
+			BoostUseTimer = boostTimerC;
+			data->Action--;
+		}
+	}
+	else
+	{
+		data->Action--;
+	}
+}
+
+void SS_BoostTask(ObjectMaster* obj)
+{
+	EntityData1* data = obj->Data1.Entity;
+	CharObj2Base* co2 = MainCharObj2[data->Index];
+
+	if (!isFlyMode[data->Index])
+	{
+		DeleteObject_(obj);
+		return;
+	}
+
+	if (boostReload < boostReloadC)
+	{
+		boostReload++;
+
+		if (boostReload == boostReloadC - 1)
+			SendTimedMessage("BOOST READY!", 120);
+	}
+	else {
+
+		switch (data->Action)
+		{
+		case 0:
+
+			if (Controllers[data->Index].press & boostBtn)
+			{
+				if (co2->Speed.x < spdCap - 5.0f)
+					co2->Speed.x += 5.0f;
+
+				data->Action++;
+			}
+
+			break;
+		case 1:
+			SuperSonic_BoostCheck(data, co2, data->Index);
+			break;
+
+		}
+	}
+}
+
 void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 
 	if (isFlyMode[pID] || co2->AnimInfo.Current == 30)
@@ -58,6 +150,8 @@ void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 
 		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, (__int16)ssBeginDash2);
 		isFlyMode[pID] = true;
+		ObjectMaster* boost = LoadObject(2, "boostTask", SS_BoostTask, LoadObj_Data1);
+		boost->Data1.Entity->Index = co2->PlayerNum;
 		return;
 	}
 }
@@ -124,7 +218,7 @@ void SS_Standing(EntityData1* data1, CharObj2Base* co2)
 		co2->Speed.y = spdY;
 		return;
 	}
-	if (!Action_Held[pnum])
+	if ((Controllers[pnum].on & DescendButton()) == 0)
 	{
 		return;
 	}
@@ -161,7 +255,7 @@ void SS_Moving(EntityData1* data1, CharObj2Base* co2)
 		}
 	}
 
-	if (!Action_Held[pnum] || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
+	if (( (Controllers[pnum].on & DescendButton()) == 0) || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
 	{
 		return;
 	}
@@ -208,7 +302,7 @@ void SS_DescendingIntro(EntityData1* data1, CharObj2Base* co2)
 		return;
 	}
 
-	bool isHeldBtn = Action_Held[pnum] == 0;
+	bool isHeldBtn = (Controllers[pnum].on & DescendButton()) == 0;
 
 	if (isHeldBtn)
 	{
@@ -256,7 +350,7 @@ void SS_Descending(EntityData1* data1, CharObj2Base* co2)
 		return;
 	}
 
-	if (!Action_Held[co2->PlayerNum] || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
+	if (( (Controllers[co2->PlayerNum].on & DescendButton()) == 0) || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
 	{
 		SS_SetFlyNextAction(data1, co2, (char)SSFly::Moving, ssBeginDash);
 		data1->Status &= ~Status_Attack;
@@ -344,35 +438,6 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 	return;
 }
 
-int BoostUseTimer = 800;
-int boostReload = 1000;
-
-FunctionPointer(void, LoadHomingAura, (char pnum), 0x7577E0);
-FunctionPointer(void, DoHomingAura, (char pnum), 0x756930);
-
-void SuperSonic_BoostCheck(CharObj2Base* co2, char pNum)
-{
-	if (boostReload < 1000)
-	{
-		boostReload++;
-	}
-	
-	if (boostReload >= 1000) {
-
-		if (Controllers[pNum].on & Buttons_X)
-		{
-			co2->Speed.x = co2->PhysData.SpeedCapH;
-			BoostUseTimer--;
-
-			if (BoostUseTimer <= 0)
-			{
-				boostReload = 0;
-				BoostUseTimer = 800;
-			}
-		}
-	}
-}
-
 
 void SuperSonicFly_MainActions(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 {
@@ -395,9 +460,6 @@ void SuperSonicFly_MainActions(EntityData1* data1, CharObj2Base* co2, EntityData
 		SuperSonic_CommonPhysicsV(co2, data1, data2, -2.0f, 0.4f);
 		break;
 	}
-
-	SuperSonic_BoostCheck(co2, co2->PlayerNum);
-
 }
 
 void SuperSonicFly_MainManagement(EntityData1* data1, CharObj2Base* co2, EntityData2* data2) {

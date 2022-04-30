@@ -107,8 +107,10 @@ void DisplayTimed_Message_OnFrames()
 
 void SendTimedMessage(std::string msg, int timer)
 {
-	DebugMessageTimer = timer;
-	debugText = msg;
+	if (GameState == GameStates_Ingame && !TimerStopped) {
+		DebugMessageTimer = timer;
+		debugText = msg;
+	}
 }
 
 typedef AnimationIndex* (CALLBACK* anim) (void);
