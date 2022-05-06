@@ -189,8 +189,15 @@ void SuperShadow_Manager(ObjectMaster* obj)
 		break;
 	case playerInputCheck:
 
-		if (CheckTransform_Input(playerID, player) || AlwaysSuperShadow)
-			data->Action++;
+		if (isLastStoryBeaten()) {
+			if (CheckTransform_Input(playerID, player) || AlwaysSuperShadow)
+				data->Action++;
+		}
+		else
+		{
+			DeleteObject_(obj);
+			return;
+		}
 
 		break;
 	case superSonicTransfo:

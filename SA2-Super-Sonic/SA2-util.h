@@ -304,3 +304,5 @@ static inline ObjectMaster* LoadSonEffObj(void(__cdecl* a1)(ObjectMaster*))
 
 	return result;
 }
+
+DataPointer(char, ShowHud, 0x0174AFCC);

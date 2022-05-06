@@ -6,7 +6,6 @@ Trampoline* Sonic_Display_t;
 Trampoline* LoadSonic_t;
 Trampoline* Sonic_runsActions_t;
 
-
 bool isSuper[2] = { false, false };
 
 NJS_TEXNAME SSEffTex[33];
@@ -14,7 +13,7 @@ NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
 
 NJS_TEXLIST* Sonic_Texlist = nullptr;
 
-ModelIndex* SuperSonicMdl;
+ModelIndex* SuperSonicMdl = nullptr;
 extern std::string currentSuperMusic;
 extern NJS_TEXLIST SSHEff_Texlist;
 
@@ -216,7 +215,6 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 		}
 	}
 
-
 	return false;
 }
 
@@ -271,8 +269,15 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		break;
 	case playerInputCheck:
 
-		if (CheckTransform_Input(playerID, player) || AlwaysSuperSonic)
-			data->Action++;
+		if (isLastStoryBeaten()) {
+			if (CheckTransform_Input(playerID, player) || AlwaysSuperSonic)
+				data->Action++;
+		}
+		else
+		{
+			DeleteObject_(obj);
+			return;
+		}
 
 		break;
 	case superSonicTransfo:
@@ -551,7 +556,6 @@ void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj
 		SuperSonic_RunCustomAction(data1, SonicCO2, co2);
 	}
 
-	co2->CurrentSurfaceFlags;
 
 	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
 	original(data1, data2, co2, SonicCO2);

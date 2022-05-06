@@ -23,7 +23,6 @@ static NJS_MATRIX SSH_LeftHandMatrice;
 static NJS_MATRIX SSH_LeftFootMatrice;
 static NJS_MATRIX SSH_RightFootMatrice;
 
-
 DataArray(float, flt_1A51ADC, 0x1A51ADC, 12); 
 DataArray(float, flt_1A51994, 0x1A51994, 12);
 DataArray(float, flt_1A51930, 0x1A51930, 12);

@@ -61,6 +61,8 @@ float getWaterposY(char pnum)
 		return -975.0f;
 	case LevelIDs_GreenHill:
 		break;
+	case LevelIDs_WeaponsBed:
+		return -325.0f;
 	}
 
 	return MainCharObj1[pnum]->Position.y;

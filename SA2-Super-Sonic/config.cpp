@@ -28,6 +28,14 @@ static const Buttons ButtonsList[]
 	Buttons_X,
 };
 
+bool isLastStoryBeaten()
+{
+	if (!LastStory)
+		return true;
+
+	return SomeStoryUnlocksOrSomething[2];
+}
+
 void ReadConfig(const char* path) {
 
 	const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
@@ -39,6 +47,7 @@ void ReadConfig(const char* path) {
 	isFlyAllowed = config->getBool("Gameplay", "isFly", true);
 	unTransform = config->getBool("Gameplay", "unTransform", true);
 	AllowSuperAttacks = config->getBool("Gameplay", "AllowSuperAttacks", true);
+	LastStory = config->getBool("Gameplay", "LastStory", false);
 
 	TransformButton = ButtonsList[config->getInt("Controls", "TransformButton", 0)];
 	FlightButton = ButtonsList[config->getInt("Controls", "FlightButton", 1)];
@@ -52,6 +61,7 @@ void ReadConfig(const char* path) {
 	SuperMusicVersion = config->getInt("Audio", "SuperMusicVersion", SA2LiveAndLearn);
 	delete config;
 
+	LastStory = LastStory;
 	if (AlwaysSuperSonic || AlwaysSuperShadow)
 		RemoveLimitations = true;
 }

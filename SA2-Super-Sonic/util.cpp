@@ -107,7 +107,7 @@ void DisplayTimed_Message_OnFrames()
 
 void SendTimedMessage(std::string msg, int timer)
 {
-	if (GameState == GameStates_Ingame && !TimerStopped) {
+	if (GameState == GameStates_Ingame && !TimerStopped && ShowHud) {
 		DebugMessageTimer = timer;
 		debugText = msg;
 	}

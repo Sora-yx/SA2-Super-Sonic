@@ -18,6 +18,7 @@ extern bool AllowSuperAttacks;
 extern bool isJiggle;
 extern bool SADXAura;
 extern bool isBoostAllowed;
+extern bool LastStory;
 extern AnimationInfo SuperSonicAnimationList_r[];
 extern AnimationInfo SuperShadowAnimationList_r[];
 
@@ -101,3 +102,4 @@ NJS_TEXLIST* getShadowTexlist();
 void init_SuperShadow();
 void init_WaterHack();
 bool isBoosting(char pnum);
+bool isLastStoryBeaten();
