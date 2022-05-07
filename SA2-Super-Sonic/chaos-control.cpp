@@ -1,6 +1,6 @@
 #include "pch.h"
 
-const int chaosControlCDTimer = 600; //1:00
+const int chaosControlCDTimer = 3600; //1:00
 int chaosControlCD[2] = { 0, 0 };
 bool isChaosControlEnabled[2] = { false, false };
 const int chaosControlDuration = 1200;

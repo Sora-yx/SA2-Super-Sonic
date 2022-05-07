@@ -1,7 +1,7 @@
 #include "pch.h"
 
 int windCutterCD[2] = { 0, 0 };
-const int windCutterTimer = 400;  //40 seconds
+const int windCutterTimer = 2400;  //40 seconds
 bool iswindCutter[2] = { false, false };
 
 void Check_SonicWind(CharObj2Base* co2)

@@ -2,7 +2,6 @@
 #include "UsercallFunctionHandler.h"
 
 //Allow to hover on water with the SA1 effect!
-
 Trampoline* SplashEffect_t = nullptr;
 ObjectMaster* waterColTask = nullptr;
 
@@ -17,7 +16,6 @@ static NJS_TEXNAME watertexid4[2] = { { (char*)"ss_waterl09", 0, 0},  (char*)"ss
 static NJS_TEXNAME watertexid5[2] = { { (char*)"ss_waterl11", 0, 0},  (char*)"ss_waterl12", 0, 0 };
 static NJS_TEXNAME watertexid6[2] = { { (char*)"ss_waterl13", 0, 0},  (char*)"ss_waterl14", 0, 0 };
 static NJS_TEXNAME watertexid7[2] = { { (char*)"ss_waterl15", 0, 0},  (char*)"ss_waterl16", 0, 0 };
-
 
 static NJS_TEXLIST waterTexList[8] = {
 	watertexid0, 2,
