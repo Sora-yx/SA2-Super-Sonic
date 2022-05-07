@@ -168,16 +168,8 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 	if (!co2)
 		return;
 
-
 	if (((co2->Upgrades & Upgrades_SuperSonic) == 0) || co2->Powerups & Powerups_Dead)
 	{
-		if (AlwaysSuperSonic && co2->CharID2 == Characters_Sonic || AlwaysSuperShadow && co2->CharID2 == Characters_Shadow) {
-			data->Status &= 0xFEFFu;
-			data->Action = 1;
-			data->Timer = 0;
-			return;
-		}
-
 		DeleteObject_(obj);
 		return;
 	}
