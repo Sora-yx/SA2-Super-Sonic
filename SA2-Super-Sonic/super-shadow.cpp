@@ -131,6 +131,7 @@ void unSuperShadow(unsigned char player) {
 		njReleaseTexture(Shadow_Texlist);
 		Shadow_Texlist = nullptr;
 		FreeWaterMDL();
+		Free_AuraModels();
 	}
 
 	return;

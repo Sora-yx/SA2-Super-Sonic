@@ -9,24 +9,25 @@ ObjectMaster* waterColTask = nullptr;
 static ModelInfo* WaterMdl[2] = { nullptr, nullptr }; //water effect model
 static ModelInfo* gridCol = nullptr; //used to make Sonic able to float on water
 
-static NJS_TEXNAME watertexid0 = { (char*)"ss_waterl01", 0, 0 };
-static NJS_TEXNAME watertexid1 = { (char*)"ss_waterl03", 0, 0 };
-static NJS_TEXNAME watertexid2 = { (char*)"ss_waterl05", 0, 0 };
-static NJS_TEXNAME watertexid3 = { (char*)"ss_waterl07", 0, 0 };
-static NJS_TEXNAME watertexid4 = { (char*)"ss_waterl09", 0, 0 };
-static NJS_TEXNAME watertexid5 = { (char*)"ss_waterl11", 0, 0 };
-static NJS_TEXNAME watertexid6 = { (char*)"ss_waterl13", 0, 0 };
-static NJS_TEXNAME watertexid7 = { (char*)"ss_waterl15", 0, 0 };
+static NJS_TEXNAME watertexid0[2] = { { (char*)"ss_waterl01", 0, 0 }, (char*)"ss_waterl02", 0, 0 };
+static NJS_TEXNAME watertexid1[2] = { { (char*)"ss_waterl03", 0, 0 }, (char*)"ss_waterl04", 0, 0 };
+static NJS_TEXNAME watertexid2[2] = { { (char*)"ss_waterl05", 0, 0}, (char*)"ss_waterl06", 0, 0 };
+static NJS_TEXNAME watertexid3[2] = { { (char*)"ss_waterl07", 0, 0},  (char*)"ss_waterl08", 0, 0 };
+static NJS_TEXNAME watertexid4[2] = { { (char*)"ss_waterl09", 0, 0},  (char*)"ss_waterl10", 0, 0 };
+static NJS_TEXNAME watertexid5[2] = { { (char*)"ss_waterl11", 0, 0},  (char*)"ss_waterl12", 0, 0 };
+static NJS_TEXNAME watertexid6[2] = { { (char*)"ss_waterl13", 0, 0},  (char*)"ss_waterl14", 0, 0 };
+static NJS_TEXNAME watertexid7[2] = { { (char*)"ss_waterl15", 0, 0},  (char*)"ss_waterl16", 0, 0 };
+
 
 static NJS_TEXLIST waterTexList[8] = {
-	&watertexid0, 2,
-	&watertexid1, 2,
-	&watertexid2, 2,
-	&watertexid3, 2,
-	&watertexid4, 2,
-	&watertexid5, 2,
-	&watertexid6, 2,
-	&watertexid7, 2
+	watertexid0, 2,
+	watertexid1, 2,
+	watertexid2, 2,
+	watertexid3, 2,
+	watertexid4, 2,
+	watertexid5, 2,
+	watertexid6, 2,
+	watertexid7, 2
 };
 
 int FakeWaterLevelArray[5] = { LevelIDs_MetalHarbor, LevelIDs_MetalHarbor2P, LevelIDs_WeaponsBed, LevelIDs_WeaponsBed2P,
@@ -103,6 +104,7 @@ void __cdecl SS_Water_Delete(ObjectMaster* obj)
 
 void __cdecl SS_Water_Display(ObjectMaster* obj)
 {
+
 	float XScale;
 	float XScalea;
 	float YScale;
@@ -116,7 +118,7 @@ void __cdecl SS_Water_Display(ObjectMaster* obj)
 
 	if ((data->Action >= 2) && co2->Speed.x > 6.0f)
 	{
-		njSetTexture(&waterTexList[((unsigned __int8)data->Timer >> 1) & 6]);
+		njSetTexture(&waterTexList[((unsigned __int8)data->Timer >> 1) & 7]);
 
 		njPushMatrix(CURRENT_MATRIX);
 		njTranslateV(0, &playerData->Position);
@@ -354,13 +356,16 @@ void LoadWaterTextures(char charID) {
 	}
 
 	char count = 0;
+	char count2 = 2;
 
 	if (charID == Characters_Sonic) {
 
 		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {
 
 			waterTexList[i].textures[0] = SSEff_Texlist.textures[1 + count];
+			waterTexList[i].textures[1] = SSEff_Texlist.textures[count2];
 			count += 2;
+			count2 += 2;
 		}
 	}
 	else
@@ -368,7 +373,9 @@ void LoadWaterTextures(char charID) {
 		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {
 
 			waterTexList[i].textures[0] = SSHEff_Texlist.textures[1 + count];
+			waterTexList[i].textures[1] = SSHEff_Texlist.textures[count2];
 			count += 2;
+			count2 += 2;
 		}
 	}
 }

@@ -162,6 +162,7 @@ void unSuper(unsigned char player) {
 		njReleaseTexture(Sonic_Texlist);
 		Sonic_Texlist = nullptr;
 		FreeWaterMDL();
+		Free_AuraModels();
 	}
 
 	return;
@@ -386,6 +387,7 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
 	if (curAnim == 30)
 	{
+
 		if (isSonic && !isSA1Char(Characters_SuperSonic))
 			texlist = &SSEff_Texlist;
 		else if (!isSonic && !isSA1Char(Characters_SuperShadow))

@@ -557,6 +557,14 @@ void LoadSADXAuraTextures(char charID) {
 	}
 }
 
+void Free_AuraModels()
+{
+	for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraModel); i++)
+	{
+		FreeMDL(SADXSuperAuraModel[i]);
+	}
+}
+
 //Serie of hack to make every aura display a yellow texture when Super Sonic. (Using Shadow texlist)
 void init_AuraHack() {
 
