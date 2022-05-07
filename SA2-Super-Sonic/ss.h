@@ -52,3 +52,4 @@ void Load_SSWaterTask(char pid);
 bool isPlayerOnWater(CharObj2Base* co2, EntityData1* player);
 
 void LoadSADXAuraTextures(char charID);
+void __cdecl Create_SS_WaterTask(char charID, char pnum);

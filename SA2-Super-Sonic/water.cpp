@@ -4,6 +4,7 @@
 //Allow to hover on water with the SA1 effect!
 
 Trampoline* SplashEffect_t = nullptr;
+ObjectMaster* waterColTask = nullptr;
 
 static ModelInfo* WaterMdl[2] = { nullptr, nullptr }; //water effect model
 static ModelInfo* gridCol = nullptr; //used to make Sonic able to float on water
@@ -28,14 +29,14 @@ static NJS_TEXLIST waterTexList[8] = {
 	&watertexid7, 2
 };
 
-int FakeWaterLevelArray[6] = { LevelIDs_MetalHarbor, LevelIDs_MetalHarbor2P, LevelIDs_WeaponsBed, LevelIDs_WeaponsBed2P,
-LevelIDs_GreenForest, LevelIDs_GreenHill 
+int FakeWaterLevelArray[5] = { LevelIDs_MetalHarbor, LevelIDs_MetalHarbor2P, LevelIDs_WeaponsBed, LevelIDs_WeaponsBed2P,
+	LevelIDs_SonicVsShadow1
 };
 
 //some levels don't have a water collision, it's just a part of the background and don't really act like water
 bool isFakeWaterLevel()
 {
-	for (int i = 0; i < LengthOfArray(FakeWaterLevelArray); i++) {
+	for (uint8_t i = 0; i < LengthOfArray(FakeWaterLevelArray); i++) {
 
 		if (CurrentLevel == FakeWaterLevelArray[i])
 			return true;
@@ -45,6 +46,7 @@ bool isFakeWaterLevel()
 }
 
 DataPointer(float, MH_WaterPosY, 0xEF68B8);
+float GF_WaterPosY = 0.0f;
 
 //we check if character is on water with hardcoded position instead
 float getWaterposY(char pnum)
@@ -52,17 +54,18 @@ float getWaterposY(char pnum)
 	if (!MainCharObj1[pnum])
 		return 0.0f;
 
+	float posZ = MainCharObj1[pnum]->Position.z;
+
 	switch (CurrentLevel)
 	{
 	case LevelIDs_MetalHarbor:
 	case LevelIDs_MetalHarbor2P:
 		return MH_WaterPosY + 5.0f;
-	case LevelIDs_GreenForest:
-		return -975.0f;
-	case LevelIDs_GreenHill:
-		break;
 	case LevelIDs_WeaponsBed:
+	case LevelIDs_WeaponsBed2P:
 		return -325.0f;
+	case LevelIDs_SonicVsShadow1:
+		return -56.0f;
 	}
 
 	return MainCharObj1[pnum]->Position.y;
@@ -86,6 +89,16 @@ bool isPlayerOnWater(CharObj2Base* co2, EntityData1* player)
 		return true;
 
 	return false;
+}
+
+
+void __cdecl SS_Water_Delete(ObjectMaster* obj)
+{
+	if (waterColTask) {
+		waterColTask = nullptr;
+	}
+
+	DeleteFunc_DynCol(obj);
 }
 
 void __cdecl SS_Water_Display(ObjectMaster* obj)
@@ -115,7 +128,7 @@ void __cdecl SS_Water_Display(ObjectMaster* obj)
 		if (data->Scale.x != 0.0)   // draw water effect
 		{
 			njPushMatrix(0);
-			XScale = data->Scale.x * -1.0;
+			XScale = data->Scale.x * -1.0f;
 			njScale(0, XScale, data->Scale.x, data->Scale.x);
 			DrawObject(WaterMdl[0]->getmodel());
 			DrawObject(WaterMdl[1]->getmodel());
@@ -124,9 +137,9 @@ void __cdecl SS_Water_Display(ObjectMaster* obj)
 		if (data->Scale.y != 0.0)
 		{
 			njPushMatrix(CURRENT_MATRIX);
-			ZScale = data->Scale.y * 1.3;
-			YScale = data->Scale.y * 0.80000001;
-			XScalea = data->Scale.y * -0.80000001;
+			ZScale = data->Scale.y * 1.3f;
+			YScale = data->Scale.y * 0.80000001f;
+			XScalea = data->Scale.y * -0.80000001f;
 			njScale(0, XScalea, YScale, ZScale);
 			DrawObject(WaterMdl[0]->getmodel());
 			DrawObject(WaterMdl[1]->getmodel());
@@ -152,11 +165,23 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 
 	CharObj2Base* co2 = MainCharObj2[pnum];
 
-	if (co2 && (co2->Upgrades & Upgrades_SuperSonic) == 0)
+	if (!co2)
+		return;
+
+
+	if (((co2->Upgrades & Upgrades_SuperSonic) == 0) || co2->Powerups & Powerups_Dead)
 	{
+		if (AlwaysSuperSonic && co2->CharID2 == Characters_Sonic || AlwaysSuperShadow && co2->CharID2 == Characters_Shadow) {
+			data->Status &= 0xFEFFu;
+			data->Action = 1;
+			data->Timer = 0;
+			return;
+		}
+
 		DeleteObject_(obj);
 		return;
 	}
+
 
 	switch (data->Action)
 	{
@@ -164,7 +189,7 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 
 		obj->DisplaySub_Delayed1 = SS_Water_Display;
 		obj->field_4C = gridCol->getmodel();
-		obj->DeleteSub = DeleteFunc_DynCol;
+		obj->DeleteSub = SS_Water_Delete;
 		DynCol_AddFromObject(obj, (NJS_OBJECT*)obj->field_4C, &data->Position, data->Rotation.y, SurfaceFlag_Solid | SurfaceFlag_Dynamic);
 		data->Action++;
 		break;
@@ -182,7 +207,7 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 		UpdateWaterColPos(obj, player);
 
 		spd = fabs(co2->Speed.x);
-		data->Scale.x = sqrt(spd) * 0.40000001;
+		data->Scale.x = sqrt(spd) * 0.40000001f;
 
 		if (data->Timer >= SHRT_MAX)
 			data->Timer = 0;
@@ -244,25 +269,25 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 	CharObj2Base* co2 = MainCharObj2[pNum];
 	EntityData2* playerData2 = MainCharData2[pNum];
 
-	if (co2->Upgrades & Upgrades_SuperSonic && isPlayerOnWater(co2, playerData))
+	if (co2 && co2->Upgrades & Upgrades_SuperSonic && isPlayerOnWater(co2, playerData))
 	{
 		if (data->Timer > 12u && co2->Speed.x > 3.0f)
 		{
 			NJS_VECTOR Velo = playerData2->Velocity;
 			NJS_VECTOR playerPos = playerData->Position;
-			
+
 			if (!isFakeWaterLevel())
 				playerPos.y = co2->SurfaceInfo.TopSurfaceDist;
 			else
 				playerPos.y -= 2.0f;
 
-			Velo.x *= 0.300000011920929;
-			Velo.y = data->Scale.y * 0.1500000059604645;
-			Velo.z *= 0.300000011920929;
-			float result = 0.300000011920929 * data->Scale.y + 1.399999976158142;
-			if (Velo.y > 0.25)
+			Velo.x *= 0.300000011920929f;
+			Velo.y = data->Scale.y * 0.1500000059604645f;
+			Velo.z *= 0.300000011920929f;
+			float result = 0.300000011920929f * data->Scale.y + 1.399999976158142f;
+			if (Velo.y > 0.25f)
 			{
-				Velo.y = 0.25;
+				Velo.y = 0.25f;
 			}
 
 			sub_6ED400(&playerPos, &Velo, result, flt_1666F30, 12);
@@ -302,10 +327,24 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 
 void Load_SSWaterTask(char pid)
 {
-	ObjectMaster* water = LoadObject(2, "SS_Water_Eff", SS_Water_Main, LoadObj_Data1 | LoadObj_Data2);
-	water->Data1.Entity->Index = pid;
+	if (!waterColTask) {
+		waterColTask = LoadObject(2, "SS_Water_Eff", SS_Water_Main, LoadObj_Data1 | LoadObj_Data2);
+		waterColTask->Data1.Entity->Index = pid;
+	}
 	return;
 }
+
+void __cdecl Create_SS_WaterTask(char charID, char pnum)
+{
+	if (charID == Characters_Shadow && AlwaysSuperShadow || charID == Characters_Sonic && AlwaysSuperSonic)
+	{
+		if (!waterColTask)
+		{
+			Load_SSWaterTask(pnum);
+		}
+	}
+}
+
 
 void LoadWaterTextures(char charID) {
 
@@ -333,6 +372,8 @@ void LoadWaterTextures(char charID) {
 		}
 	}
 }
+
+
 
 void LoadWaterMDL()
 {

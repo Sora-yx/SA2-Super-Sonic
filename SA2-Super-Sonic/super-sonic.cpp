@@ -230,13 +230,18 @@ void SuperSonic_ManagerDelete(ObjectMaster* obj)
 	Delete_SSAnim();
 }
 
+
 void SuperSonic_Manager(ObjectMaster* obj)
 {
 	EntityData1* data = obj->Data1.Entity;
 	EntityData1* player = MainCharObj1[data->Index];
+
+	if (!player)
+		return;
+
 	SonicCharObj2* sonicCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
 
-	if (sonicCO2->base.CharID2 != Characters_Sonic)
+	if (sonicCO2->base.CharID2 != Characters_Sonic || (player->field_2 == 3 && data->Index == 1))
 	{
 		DeleteObject_(obj);
 		return;
@@ -250,14 +255,10 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		return;
 	}
 
-	if (!player || !IsIngame() || GameMode == GameMode_Event) {
+	if (!player || !IsIngame() || GameMode == GameMode_Event || miniEventPtr->MainSub != nullptr) {
 		return;
 	}
 
-	if ((CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2) && data->Index == 1 && AlwaysSuperSonic)
-	{
-		return;
-	}
 
 	unsigned char playerID = data->Index;
 
@@ -306,6 +307,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 			data->Action = playerInputCheck;
 		}
 
+		Create_SS_WaterTask(sonicCO2->base.CharID2, playerID);
 		SubRings(playerID, data);
 
 		break;
@@ -503,10 +505,13 @@ void LoadSonic_r(int playerNum) {
 	original(playerNum);
 
 	if (CurrentLevel != LevelIDs_FinalHazard) {
-		LoadSuperSonicManager(playerNum);
-		LoadSSEff_Textures();
-		LoadWaterTextures(playerNum);
-		LoadSADXAuraTextures(playerNum);
+		if (MainCharObj1[playerNum] && MainCharObj1[playerNum]->field_2 != 3) {
+
+			LoadSuperSonicManager(playerNum);
+			LoadSSEff_Textures();
+			LoadWaterTextures(playerNum);
+			LoadSADXAuraTextures(playerNum);
+		}
 	}
 }
 

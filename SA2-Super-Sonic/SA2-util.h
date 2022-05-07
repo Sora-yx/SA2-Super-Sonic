@@ -306,3 +306,4 @@ static inline ObjectMaster* LoadSonEffObj(void(__cdecl* a1)(ObjectMaster*))
 }
 
 DataPointer(char, ShowHud, 0x0174AFCC);
+DataPointer(ObjectMaster*, miniEventPtr, 0x19456A8);

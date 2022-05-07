@@ -153,10 +153,13 @@ void SuperShadow_Manager(ObjectMaster* obj)
 {
 	EntityData1* data = obj->Data1.Entity;
 	EntityData1* player = MainCharObj1[data->Index];
+
+	if (!player)
+		return;
+
 	SonicCharObj2* shadowCO2 = (SonicCharObj2*)MainCharacter[data->Index]->Data2.Character;
 
-
-	if (shadowCO2->base.CharID2 != Characters_Shadow)
+	if (shadowCO2->base.CharID2 != Characters_Shadow || (player->field_2 == 3 && data->Index == 1))
 	{
 		DeleteObject_(obj);
 		return;
@@ -170,12 +173,7 @@ void SuperShadow_Manager(ObjectMaster* obj)
 		return;
 	}
 
-	if (!player || !IsIngame() || GameMode == GameMode_Event) {
-		return;
-	}
-
-	if ((CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2) && data->Index == 1 && AlwaysSuperShadow)
-	{
+	if (!player || !IsIngame() || GameMode == GameMode_Event || miniEventPtr->MainSub != nullptr) {
 		return;
 	}
 
@@ -240,6 +238,7 @@ void SuperShadow_Manager(ObjectMaster* obj)
 
 void LoadSuperShadowManager(char playNum) {
 
+
 	int id2 = MainCharObj2[playNum]->CharID2;
 
 	if (id2 == Characters_Shadow) {
@@ -261,10 +260,12 @@ void LoadShadow_r(int playerNum) {
 	original(playerNum);
 
 	if (CurrentLevel != LevelIDs_FinalHazard) {
-		LoadSuperShadowManager(playerNum);
-		LoadSSEff_Textures();
-		LoadWaterTextures(playerNum);
-		LoadSADXAuraTextures(playerNum);
+		if (MainCharObj1[playerNum] && MainCharObj1[playerNum]->field_2 != 3) {
+			LoadSuperShadowManager(playerNum);
+			LoadSSEff_Textures();
+			LoadWaterTextures(playerNum);
+			LoadSADXAuraTextures(playerNum);
+		}
 	}
 }
 

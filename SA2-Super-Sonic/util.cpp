@@ -191,3 +191,10 @@ NJS_OBJECT* DynCol_AddFromObject(ObjectMaster* obj, NJS_OBJECT* object, NJS_VECT
 
 	return dynobj;
 }
+
+bool isBossLevel()
+{
+	return CurrentLevel >= LevelIDs_BigFoot && CurrentLevel <= LevelIDs_EggGolemE ||
+		CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_TailsVsEggman1
+		|| CurrentLevel == LevelIDs_TailsVsEggman2 || CurrentLevel == LevelIDs_KnucklesVsRouge || CurrentLevel == LevelIDs_SonicVsShadow2;
+}
