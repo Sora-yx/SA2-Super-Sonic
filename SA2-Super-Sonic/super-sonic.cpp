@@ -259,7 +259,6 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		return;
 	}
 
-
 	unsigned char playerID = data->Index;
 
 	switch (data->Action)
