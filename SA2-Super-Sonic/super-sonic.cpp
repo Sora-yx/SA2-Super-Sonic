@@ -255,7 +255,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		return;
 	}
 
-	if (!player || !IsIngame() || GameMode == GameMode_Event || miniEventPtr->MainSub != nullptr) {
+	if (!player || !IsIngame() || GameMode == GameMode_Event || miniEventPtr && miniEventPtr->MainSub != nullptr) {
 		return;
 	}
 
