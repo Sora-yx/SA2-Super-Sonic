@@ -17,10 +17,11 @@ int BoostUseTimer = boostTimerC;
 int boostReload = boostReloadC;
 const float spdCap = 20.0f;
 
+bool isFlyMode[2] = { false, false };
 
 bool isBoosting(char pnum)
 {
-	return BoostUseTimer > 0 && BoostUseTimer < boostTimerC && Controllers[pnum].on & boostBtn;
+	return isFlyMode[pnum] && BoostUseTimer > 0 && BoostUseTimer < boostTimerC && Controllers[pnum].on & boostBtn;
 }
 
 Buttons DescendButton()
@@ -35,8 +36,6 @@ Buttons DescendButton()
 		return Buttons_B;
 }
 
-
-bool isFlyMode[2] = { false, false };
 
 void SS_SetFlyNextAction(EntityData1* data1, CharObj2Base* co2, char action, __int16 anim) {
 	data1->Action = action;
