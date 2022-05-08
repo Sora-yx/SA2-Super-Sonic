@@ -283,12 +283,9 @@ static void __declspec(naked) DoHomingAuraASM()
 {
 	__asm
 	{
-		push edi // obj
-
-		// Call your __cdecl function here:
+		push edi 
 		call DoHomingAura_r
-
-		pop edi // obj
+		pop edi
 		retn
 	}
 }
@@ -582,7 +579,6 @@ void init_AuraHack() {
 		SADXSuperAuraModel[1] = LoadMDL("SADXAura1", ModelFormat_Chunk);
 		SADXSuperAuraModel[2] = LoadMDL("SADXAura2", ModelFormat_Chunk);
 	}
-
 
 	return;
 }

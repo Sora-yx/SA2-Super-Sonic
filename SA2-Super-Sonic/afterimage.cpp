@@ -31,15 +31,14 @@ static void __declspec(naked) SonicDisplayAfterImageASM()
 {
 	__asm
 	{
-		push[esp + 08h] // a3
-		push[esp + 08h] // data
-		push esi // a1
+		push[esp + 08h] 
+		push[esp + 08h]
+		push esi 
 
 		call SonicDisplayAfterImage_r
-
-		pop esi // a1
-		add esp, 4 // data
-		add esp, 4 // a3
+		pop esi 
+		add esp, 4 
+		add esp, 4 
 		retn
 	}
 }
