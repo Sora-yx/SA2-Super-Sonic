@@ -130,8 +130,6 @@ void unSuperShadow(unsigned char player) {
 	else {
 		njReleaseTexture(Shadow_Texlist);
 		Shadow_Texlist = nullptr;
-		FreeWaterMDL();
-		Free_AuraModels();
 	}
 
 	return;
@@ -249,7 +247,6 @@ void LoadSuperShadowManager(char playNum) {
 		{
 			SuperShadowMdl = LoadMDLFile((char*)"sshadowmdl.prs");
 			Load_NewSuperShadowAnim();
-			LoadWaterMDL();
 			superShadowManagerPtr->Data1.Entity->Index = playNum;
 		}
 	}

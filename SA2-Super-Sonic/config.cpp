@@ -51,7 +51,7 @@ void ReadConfig(const char* path) {
 
 	TransformButton = ButtonsList[config->getInt("Controls", "TransformButton", 0)];
 	FlightButton = ButtonsList[config->getInt("Controls", "FlightButton", 1)];
-	boostBtn = ButtonsList[config->getInt("Controls", "BoostButton", 0)];
+	boostBtn = ButtonsList[config->getInt("Controls", "boostBtn", 0)];
 
 	superAuraState = config->getInt("Appearance", "superAuraState", 2);
 	SADXAura = config->getBool("Appearance", "SADXAura", true);
@@ -61,7 +61,6 @@ void ReadConfig(const char* path) {
 	SuperMusicVersion = config->getInt("Audio", "SuperMusicVersion", SA2LiveAndLearn);
 	delete config;
 
-	LastStory = LastStory;
 	if (AlwaysSuperSonic || AlwaysSuperShadow)
 		RemoveLimitations = true;
 }

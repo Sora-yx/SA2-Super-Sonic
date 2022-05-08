@@ -161,8 +161,6 @@ void unSuper(unsigned char player) {
 	else {
 		njReleaseTexture(Sonic_Texlist);
 		Sonic_Texlist = nullptr;
-		FreeWaterMDL();
-		Free_AuraModels();
 	}
 
 	return;
@@ -307,7 +305,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 			data->Action = playerInputCheck;
 		}
 
-		Create_SS_WaterTask(sonicCO2->base.CharID2, playerID);
+		Reload_SS_WaterTask(sonicCO2->base.CharID2, playerID);
 		SubRings(playerID, data);
 
 		break;
@@ -331,7 +329,6 @@ void LoadSuperSonicManager(char playNum) {
 		{
 			SuperSonicMdl = LoadMDLFile((char*)"SSONICMDL.PRS");
 			Load_NewSuperSonicAnim();
-			LoadWaterMDL();
 			superSonicManagerPtr->Data1.Entity->Index = playNum;
 		}
 	}

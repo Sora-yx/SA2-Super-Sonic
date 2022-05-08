@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <fstream>
+#include "ss.h"
 
 HelperFunctions HelperFunctionsGlobal;
 const char* error = "[SA2 Super Sonic]: WARNING: Your version of the Mod Loader is old, the mod won't work properly.\nPlease update your Mod Loader for the best experience.";
@@ -37,6 +38,12 @@ extern "C" {
 	__declspec(dllexport) void __cdecl OnFrame() {
 
 		DisplayTimed_Message_OnFrames();
+	}
+
+	__declspec(dllexport) void __cdecl OnExit()
+	{
+		FreeWaterMDL();
+		Free_AuraModels();
 	}
 
 

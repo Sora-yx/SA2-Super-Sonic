@@ -326,14 +326,11 @@ void Load_SSWaterTask(char pid)
 	return;
 }
 
-void __cdecl Create_SS_WaterTask(char charID, char pnum)
+void __cdecl Reload_SS_WaterTask(char charID, char pnum)
 {
-	if (charID == Characters_Shadow && AlwaysSuperShadow || charID == Characters_Sonic && AlwaysSuperSonic)
+	if (!waterColTask)
 	{
-		if (!waterColTask)
-		{
-			Load_SSWaterTask(pnum);
-		}
+		Load_SSWaterTask(pnum);
 	}
 }
 
@@ -371,7 +368,6 @@ void LoadWaterTextures(char charID) {
 }
 
 
-
 void LoadWaterMDL()
 {
 	WaterMdl[0] = LoadMDL("WaterMDL0", ModelFormat_Chunk);
@@ -379,7 +375,6 @@ void LoadWaterMDL()
 	gridCol = LoadMDL("gridCol", ModelFormat_Basic);
 	return;
 }
-
 
 void FreeWaterMDL()
 {
@@ -394,4 +389,5 @@ void FreeWaterMDL()
 void init_WaterHack()
 {
 	SplashEffect_t = new Trampoline((int)0x6ED6E0, (int)0x6ED6E6, SplashEffect_r);
+	LoadWaterMDL();
 }

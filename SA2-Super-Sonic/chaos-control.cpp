@@ -13,6 +13,7 @@ Trampoline* seagull_t = nullptr;
 Trampoline* mhcont_t = nullptr;
 Trampoline* mhcont0_t = nullptr;
 Trampoline* mhMissile_t = nullptr;
+Trampoline* CE_Truck_t = nullptr;
 
 void __cdecl Sonic2PTimeStopMan_Load_r(CharObj2Base* co2)
 {
@@ -206,6 +207,15 @@ void __cdecl mhmissile_r(ObjectMaster* a1)
 	original(a1);
 }
 
+void __cdecl CETruck_r(ObjectMaster* a1)
+{
+	if (TimeStopped != 0)
+		return;
+
+	auto original = reinterpret_cast<decltype(mhmissile_r)*>(CE_Truck_t->Target());
+	original(a1);
+}
+
 void __cdecl Sonic2PTimeStopMan_r(ObjectMaster* a1)
 {
 	CharObj2Base* co2;
@@ -262,6 +272,7 @@ void initChaosControl_Hack()
 	mhcont_t = new Trampoline((int)0x6F9120, (int)0x6F9125, mhcont_r);
 	mhcont0_t = new Trampoline((int)0x6F86E0, (int)0x6F86E5, mhcont0_r);
 	mhMissile_t = new Trampoline((int)0x6F4260, (int)0x6F4266, mhmissile_r);
+	CE_Truck_t = new Trampoline((int)0x5E5030, (int)0x5E5036, CETruck_r);
 
 	WriteCall((void*)0x724A2A, RenderNumberASM);
 	Sonic2PTimeStopMan_t = new Trampoline((int)Sonic2PTimeStopMan, (int)Sonic2PTimeStopMan + 0x7, Sonic2PTimeStopMan_r);

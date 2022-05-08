@@ -580,5 +580,7 @@ void init_AuraHack() {
 		SADXSuperAuraModel[1] = LoadMDL("SADXAura1", ModelFormat_Chunk);
 		SADXSuperAuraModel[2] = LoadMDL("SADXAura2", ModelFormat_Chunk);
 	}
+
+
 	return;
 }
