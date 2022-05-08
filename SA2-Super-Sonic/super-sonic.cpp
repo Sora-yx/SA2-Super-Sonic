@@ -11,7 +11,8 @@ bool isSuper[2] = { false, false };
 NJS_TEXNAME SSEffTex[33];
 NJS_TEXLIST SSEff_Texlist = { arrayptrandlength(SSEffTex) };
 
-NJS_TEXLIST* Sonic_Texlist = nullptr;
+NJS_TEXLIST* Sonic_TexlistPtr = nullptr;
+
 
 ModelIndex* SuperSonicMdl = nullptr;
 extern std::string currentSuperMusic;
@@ -19,7 +20,7 @@ extern NJS_TEXLIST SSHEff_Texlist;
 
 NJS_TEXLIST* getSonicTexlist()
 {
-	return Sonic_Texlist;
+	return Sonic_TexlistPtr;
 }
 
 //add super sonic model to sonic model pointer
@@ -37,9 +38,9 @@ void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
 
 	//used for upgrade textures.
 	if (AltCostume[sco2->base.PlayerNum] != 0)
-		Sonic_Texlist = LoadCharTextures("SONIC1TEX");
+		Sonic_TexlistPtr = LoadCharTextures("SONIC1TEX");
 	else
-		Sonic_Texlist = LoadCharTextures("SONICTEX");
+		Sonic_TexlistPtr = LoadCharTextures("SONICTEX");
 
 	//ugly way to fix Shadow eyes texture when transforming to super, thanks to the awful GBIX Texture system.
 	if (TwoPlayerMode || CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2)
@@ -134,7 +135,6 @@ void unSuper(unsigned char player) {
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
 	ResetChaosControl(player);
-	ResetWindCutter(player);
 	DeleteSSJiggle(co2S);
 	initJiggleSuperSonic(co2S);
 	data->Status = 0;
@@ -160,8 +160,8 @@ void unSuper(unsigned char player) {
 		RestoreMusic();
 	}
 	else {
-		njReleaseTexture(Sonic_Texlist);
-		Sonic_Texlist = nullptr;
+		njReleaseTexture(Sonic_TexlistPtr);
+		Sonic_TexlistPtr = nullptr;
 	}
 
 	return;
@@ -225,7 +225,6 @@ void SuperSonic_ManagerDelete(ObjectMaster* obj)
 	unSuper(pnum);
 	isSuper[pnum] = false;
 	ResetChaosControl(pnum);
-	ResetWindCutter(pnum);
 	ReleaseMDLFile(SuperSonicMdl);
 	Delete_SSAnim();
 }
@@ -533,7 +532,6 @@ void SuperSonic_RunCustomAction(EntityData1* data1, SonicCharObj2* SonicCO2, Cha
 
 	if (AllowSuperAttacks) {
 		ChaosControl_Management(co2);
-		Check_SonicWind(co2);
 	}
 }
 
@@ -574,7 +572,6 @@ void init_SuperSonic() {
 	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
 	init_AfterImages();
 	initChaosControl_Hack();
-	init_SonicWindHack();
 
 	return;
 }

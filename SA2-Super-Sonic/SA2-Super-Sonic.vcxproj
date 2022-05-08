@@ -192,7 +192,6 @@
     <ClCompile Include="upgrades.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="water.cpp" />
-    <ClCompile Include="wind-cutter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

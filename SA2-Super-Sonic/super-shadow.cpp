@@ -102,7 +102,6 @@ void unSuperShadow(unsigned char player) {
 		co2->PhysData = PhysicsArray[Characters_Shadow];
 
 	ResetChaosControl(player);
-	ResetWindCutter(player);
 	DeleteSSHJiggle(co2S);
 	initJiggleSuperShadow(co2S);
 	data->Status = 0;
@@ -143,7 +142,6 @@ void SuperShadow_ManagerDelete(ObjectMaster* obj)
 	unSuperShadow(pnum);
 	isSuper[pnum] = false;
 	ResetChaosControl(pnum);
-	ResetWindCutter(pnum);
 	ReleaseMDLFile(SuperShadowMdl);
 	Delete_SSHAnim();
 }

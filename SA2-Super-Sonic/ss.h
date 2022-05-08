@@ -21,7 +21,6 @@ void SuperSonic_DisableFly(EntityData1* data1, CharObj2Base* co2);
 void ChaosControl_Management(CharObj2Base* co2);
 void ResetChaosControl(char pnum);
 void initChaosControl_Hack();
-void ResetWindCutter(char pnum);
 
 void DeleteSSHJiggle(SonicCharObj2* sonicCO2);
 void __cdecl initJiggleSuperShadow(SonicCharObj2* sonicCO2);
@@ -43,8 +42,6 @@ void SuperShadow_Callback_r(NJS_OBJECT* mdl);
 
 void Load_SuperShadowPhysics(EntityData1* data);
 void unSuperShadow(unsigned char player);
-void Check_SonicWind(CharObj2Base* co2);
-void init_SonicWindHack();
 void LoadWaterTextures(char charID);
 void LoadWaterMDL();
 void FreeWaterMDL();
