@@ -38,7 +38,7 @@ void __cdecl LoadSuperShadowCharTextures(SonicCharObj2* sco2) {
 	if (TwoPlayerMode || CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_SonicVsShadow2)
 	{
 		char OtherPlayer = sco2->base.PlayerNum == 0 ? 1 : 0;
-		if (MainCharObj2[OtherPlayer] && MainCharObj2[OtherPlayer]->CharID2 == Characters_Sonic)
+		if (MainCharObj2[OtherPlayer] && MainCharObj2[OtherPlayer]->CharID2 == Characters_Sonic && !isSuper[OtherPlayer])
 		{
 			SonicCharObj2* co2SH = (SonicCharObj2*)MainCharacter[OtherPlayer]->Data2.Character;
 

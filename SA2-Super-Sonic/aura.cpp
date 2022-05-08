@@ -459,15 +459,17 @@ static NJS_TEXLIST SADXSuperAuraTexList2[8] = {
 	&SADXAuratexid15, 1
 };
 
-int timerSuperAura = 0;
+int timerSuperAura[2] = { 0, 0 };
+
 void SADX_SuperAura(ObjectMaster* obj) {
 
 	SonicCharObj2* Sco2 = (SonicCharObj2*)obj->Data2.Undefined;
 	CharObj2Base* co2 = &Sco2->base;
 	EntityData1* data = obj->Data1.Entity;
 	EntityData1* playerData = MainCharObj1[co2->PlayerNum];
+	char pnum = co2->PlayerNum;
 
-	if (co2->AnimInfo.Current == 54 || co2->AnimInfo.Next == 54 || !isSuper[co2->PlayerNum])
+	if (co2->AnimInfo.Current == 54 || co2->AnimInfo.Next == 54 || !isSuper[pnum])
 	{
 		obj->DisplaySub_Delayed4 = nullptr;
 		return;
@@ -480,10 +482,10 @@ void SADX_SuperAura(ObjectMaster* obj) {
 	}
 
 	if (GameState != GameStates_Pause) {
-		timerSuperAura++;
+		timerSuperAura[pnum]++;
 	}
 
-	njSetTexture(&SADXSuperAuraTexList[timerSuperAura & 7]);
+	njSetTexture(&SADXSuperAuraTexList[timerSuperAura[pnum] & 7]);
 	
 	SaveControl3D();
 	OnControl3D(NJD_CONTROL_3D_CONSTANT_MATERIAL);
@@ -505,13 +507,13 @@ void SADX_SuperAura(ObjectMaster* obj) {
 		}
 		else
 		{
-			njSetTexture(&SADXSuperAuraTexList[((unsigned __int8)timerSuperAura >> 1) & 7]);
+			njSetTexture(&SADXSuperAuraTexList[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7]);
 			DrawObject(SADXSuperAuraModel[1]->getmodel());
 		}
 	}
 	else 
 	{
-		njSetTexture(&SADXSuperAuraTexList2[((unsigned __int8)timerSuperAura >> 1) & 7]);
+		njSetTexture(&SADXSuperAuraTexList2[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7]);
 		DrawObject(SADXSuperAuraModel[2]->getmodel());
 	}
 
@@ -537,7 +539,7 @@ void LoadSADXAuraTextures(char charID) {
 		return;
 	}
 
-	timerSuperAura = 0;
+	timerSuperAura[charID] = 0;
 
 	if (charID == Characters_Sonic) {
 
