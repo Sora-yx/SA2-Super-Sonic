@@ -262,6 +262,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 	unsigned char playerID = data->Index;
 
+
 	switch (data->Action)
 	{
 	case superSonicInit:
@@ -282,6 +283,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 		break;
 	case superSonicTransfo:
+		data->Scale.y = ControllerEnabled[playerID];
 		TransfoSuperSonic(player, playerID, sonicCO2);
 		data->Action++;
 		break;
@@ -295,7 +297,7 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		{
 			Load_SSWaterTask(playerID);
 			LoadSuperAura(playerID);
-			ControllerEnabled[playerID] = 1;
+			ControllerEnabled[playerID] = data->Scale.y;
 			DoNextAction_r(playerID, 15, 0);
 			data->Action++;
 			data->Timer = 0;
