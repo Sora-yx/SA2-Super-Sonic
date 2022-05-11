@@ -104,7 +104,10 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 
 void SubRings(unsigned char player, EntityData1* data) {
 
-	if (RemoveLimitations || AlwaysSuperSonic || MainCharObj2[player]->CharID != Characters_Sonic || !isSuper[player] || TimerStopped != 0)
+	char charID = MainCharObj2[player]->CharID2;
+
+	if (RemoveLimitations || charID == Characters_Sonic && AlwaysSuperSonic 
+		|| charID == Characters_Shadow && AlwaysSuperShadow || !isSuper[player] || TimerStopped != 0)
 		return;
 
 	if (FrameCountIngame % 60 == 0 && RingCount[player] > 0) {
@@ -529,7 +532,7 @@ void SuperSonic_RunCustomAction(EntityData1* data1, SonicCharObj2* SonicCO2, Cha
 {
 	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2);
 
-	if (AllowSuperAttacks) {
+	if (AllowSuperAttacks && !TwoPlayerMode) {
 		ChaosControl_Management(co2);
 	}
 }
