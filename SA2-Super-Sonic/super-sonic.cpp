@@ -128,10 +128,11 @@ void unSuper(unsigned char player) {
 
 	EntityData1* data = MainCharObj1[player];
 	CharObj2Base* co2 = MainCharObj2[player];
-	SonicCharObj2* co2S = (SonicCharObj2*)MainCharacter[player]->Data2.Character;
 
 	if (!data || !isSuper[player])
 		return;
+
+	SonicCharObj2* co2S = (SonicCharObj2*)MainCharacter[player]->Data2.Character;
 
 	if (co2->CharID == Characters_Sonic)
 		co2->PhysData = PhysicsArray[Characters_Sonic];
