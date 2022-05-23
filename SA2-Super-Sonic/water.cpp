@@ -168,7 +168,7 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 	if (!co2)
 		return;
 
-	if (((co2->Upgrades & Upgrades_SuperSonic) == 0) || co2->Powerups & Powerups_Dead)
+	if (((co2->Upgrades & Upgrades_SuperSonic) == 0) || co2->Powerups & Powerups_Dead || co2->UnderwaterTime > 0)
 	{
 		DeleteObject_(obj);
 		return;
@@ -319,9 +319,11 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 
 void Load_SSWaterTask(char pid)
 {
-	if (!waterColTask) {
-		waterColTask = LoadObject(2, "SS_Water_Eff", SS_Water_Main, LoadObj_Data1 | LoadObj_Data2);
-		waterColTask->Data1.Entity->Index = pid;
+	if (MainCharObj2[pid]) {
+		if (!waterColTask && MainCharObj2[pid]->UnderwaterTime == 0) {
+			waterColTask = LoadObject(2, "SS_Water_Eff", SS_Water_Main, LoadObj_Data1 | LoadObj_Data2);
+			waterColTask->Data1.Entity->Index = pid;
+		}
 	}
 	return;
 }
@@ -333,7 +335,6 @@ void __cdecl Reload_SS_WaterTask(char charID, char pnum)
 		Load_SSWaterTask(pnum);
 	}
 }
-
 
 void LoadWaterTextures(char charID) {
 
