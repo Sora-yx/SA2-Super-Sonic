@@ -456,6 +456,29 @@ static NJS_TEXLIST SADXSuperAuraTexList2[8] = {
 	&SADXAuratexid15, 1
 };
 
+static NJS_TEXLIST SADXShadowSuperAuraTexList[8] = {
+	&SADXAuratexid0, 1,
+	&SADXAuratexid1, 1,
+	&SADXAuratexid2, 1,
+	&SADXAuratexid3, 1,
+	&SADXAuratexid4, 1,
+	&SADXAuratexid5, 1,
+	&SADXAuratexid6, 1,
+	&SADXAuratexid7, 1
+};
+
+
+static NJS_TEXLIST SADXShadowSuperAuraTexList2[8] = {
+	&SADXAuratexid8, 1,
+	&SADXAuratexid9, 1,
+	&SADXAuratexid10, 1,
+	&SADXAuratexid11, 1,
+	&SADXAuratexid12, 1,
+	&SADXAuratexid13, 1,
+	&SADXAuratexid14, 1,
+	&SADXAuratexid15, 1
+};
+
 int timerSuperAura[2] = { 0, 0 };
 
 void SADX_SuperAura(ObjectMaster* obj) {
@@ -463,8 +486,14 @@ void SADX_SuperAura(ObjectMaster* obj) {
 	SonicCharObj2* Sco2 = (SonicCharObj2*)obj->Data2.Undefined;
 	CharObj2Base* co2 = &Sco2->base;
 	EntityData1* data = obj->Data1.Entity;
+
+	if (!co2)
+		return;
+
 	EntityData1* playerData = MainCharObj1[co2->PlayerNum];
 	char pnum = co2->PlayerNum;
+
+	bool isShadow = co2->CharID2 == Characters_Shadow;
 
 	if (co2->AnimInfo.Current == 54 || co2->AnimInfo.Next == 54 || !isSuper[pnum])
 	{
@@ -482,7 +511,7 @@ void SADX_SuperAura(ObjectMaster* obj) {
 		timerSuperAura[pnum]++;
 	}
 
-	njSetTexture(&SADXSuperAuraTexList[timerSuperAura[pnum] & 7]);
+	njSetTexture(isShadow ? &SADXShadowSuperAuraTexList[timerSuperAura[pnum] & 7] : &SADXSuperAuraTexList[timerSuperAura[pnum] & 7]);
 	
 	SaveControl3D();
 	OnControl3D(NJD_CONTROL_3D_CONSTANT_MATERIAL);
@@ -504,13 +533,13 @@ void SADX_SuperAura(ObjectMaster* obj) {
 		}
 		else
 		{
-			njSetTexture(&SADXSuperAuraTexList[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7]);
+			njSetTexture(isShadow ? &SADXShadowSuperAuraTexList[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7] : &SADXSuperAuraTexList[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7]);
 			DrawObject(SADXSuperAuraModel[1]->getmodel());
 		}
 	}
 	else 
 	{
-		njSetTexture(&SADXSuperAuraTexList2[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7]);
+		njSetTexture(isShadow ? &SADXShadowSuperAuraTexList2[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7] : &SADXSuperAuraTexList2[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7]);
 		DrawObject(SADXSuperAuraModel[2]->getmodel());
 	}
 
@@ -529,29 +558,33 @@ void LoadSuperAura(char pID)
 	return;
 }
 
-void LoadSADXAuraTextures(char charID) {
+void LoadSADXAuraTextures(char pnum) {
 
 	if (!SADXAura)
 	{
 		return;
 	}
 
-	timerSuperAura[charID] = 0;
+	timerSuperAura[pnum] = 0;
 
-	if (charID == Characters_Sonic) {
+	CharObj2Base* co2 = MainCharObj2[pnum];
 
-		for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraTexList); i++) {
+	if (co2) {
+		if (co2->CharID2 == Characters_Sonic) {
 
-			SADXSuperAuraTexList[i].textures[0] = SSEff_Texlist.textures[i + 17];
-			SADXSuperAuraTexList2[i].textures[0] = SSEff_Texlist.textures[i + 25];
+			for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraTexList); i++) {
+
+				SADXSuperAuraTexList[i].textures[0] = SSEff_Texlist.textures[i + 17];
+				SADXSuperAuraTexList2[i].textures[0] = SSEff_Texlist.textures[i + 25];
+			}
 		}
-	}
-	else
-	{
-		for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraTexList); i++) {
+		else
+		{
+			for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraTexList); i++) {
 
-			SADXSuperAuraTexList[i].textures[0] = SSHEff_Texlist.textures[i + 17];
-			SADXSuperAuraTexList2[i].textures[0] = SSHEff_Texlist.textures[i + 25];
+				SADXShadowSuperAuraTexList[i].textures[0] = SSHEff_Texlist.textures[i + 17];
+				SADXShadowSuperAuraTexList2[i].textures[0] = SSHEff_Texlist.textures[i + 25];
+			}
 		}
 	}
 }
