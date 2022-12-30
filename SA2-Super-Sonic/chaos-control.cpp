@@ -131,7 +131,7 @@ void ChaosControl_ManageDuration(CharObj2Base* co2)
 		ResetChaosControl(co2->PlayerNum);
 
 		if (!TwoPlayerMode)
-			ReleaseCamera(CameraData->currentCameraSlot, 0);
+			ReleaseCamera(CameraData[0].currentCameraSlot, 0);
 
 		return;
 	}
@@ -166,7 +166,7 @@ void __cdecl sub_724A50_r(ObjectMaster* a1)
 void ChaosControl_FixCamPose(ObjectMaster* obj)
 {
 	if (!TwoPlayerMode)
-		ReleaseCamera(CameraData->currentCameraSlot, 0);
+		ReleaseCamera(CameraData[0].currentCameraSlot, 0);
 
 	DeleteObject_(obj);
 }

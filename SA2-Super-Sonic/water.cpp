@@ -309,7 +309,7 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 		veloY = MainCharData2[pNum]->Velocity.y;
 		++data->Timer;
 		data->Scale.y = fabs(veloY);
-		data->Scale.x = co2->AnimInfo.field_10;
+		data->Scale.x = co2->AnimInfo.nframe;
 		return;
 	}
 

@@ -366,7 +366,7 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 	int curAnim = sonicCO2->base.AnimInfo.Current;
 	NJS_OBJECT* SonicModel = CharacterModels[sonicCO2->base.AnimInfo.Animations[curAnim].ModelNum].Model;
 
-	if (sonicCO2->base.AnimInfo.AnimationFrame == 2)
+	if (sonicCO2->base.AnimInfo.mtnmode == 2)
 	{
 		Motion = sonicCO2->base.AnimInfo.Motion;
 	}
@@ -399,7 +399,7 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 	if (AltCostume[sonicCO2->base.PlayerNum] == 0)
 		njSetTexture(texlist);
 
-	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.field_10); //Draw Sonic animated
+	njCnkMotion(SonicModel, Motion, sonicCO2->base.AnimInfo.nframe); //Draw Sonic animated
 
 	if (isSonic)
 		ResetSSJiggle(sonicCO2);
