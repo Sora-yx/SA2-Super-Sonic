@@ -279,6 +279,20 @@ static inline void DoSpinDashAura(ObjectMaster* a1)
 	}
 }
 
+
+static const void* const CharacterThrowObj_ptr = (void*)0x475600;
+static inline void CharacterThrowObject(EntityData1* a1, CharObj2Base* a2)
+{
+	__asm
+	{
+		push[a2]
+		mov eax, a1
+		call CharacterThrowObj_ptr
+		add esp, 4
+	}
+}
+
+
 //ObjectMaster* __usercall LoadSonEffObj@<eax>(void(__cdecl* a1)(ObjectMaster*)@<edi>)
 static const void* const SonEff_ptr = (void*)0x755EA0;
 static inline ObjectMaster* LoadSonEffObj(void(__cdecl* a1)(ObjectMaster*))

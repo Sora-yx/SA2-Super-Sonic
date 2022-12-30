@@ -99,6 +99,7 @@ void unSuperShadow(unsigned char player) {
 	if (co2->CharID == Characters_Shadow)
 		co2->PhysData = PhysicsArray[Characters_Shadow];
 
+	CharacterThrowObject(data, co2);
 	ResetChaosControl(player);
 	DeleteSSHJiggle(co2S);
 	initJiggleSuperShadow(co2S);

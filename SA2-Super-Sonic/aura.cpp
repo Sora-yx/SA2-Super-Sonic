@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Trampoline.h"
 
 //serie of hacks to display a yellow aura when using Super Sonic, done by using shadow texlist.
 //Also add the super aura from Finalhazard fight
@@ -22,15 +23,18 @@ bool isNotSuperSonic(CharObj2Base* co2)
 	return false;
 }
 
+
 void DoSpinDashAura_r(ObjectMaster* obj)
 {
-	NJS_VECTOR a1;
-	double v2;
-	double v3;
-	float* v4;
-	double v5;
 
-	int v7;
+	NJS_VECTOR a1;
+	double v2; // st7
+	double v3; // st7
+	float* v4; // ebx
+	double v5; // st7
+	CharObj2Base* co2; // eax
+	int v7; // ecx
+
 	auto aura = (auraStruct*)obj->Data2.Undefined;
 
 	if (!aura || !MainCharObj1[aura->charID])
@@ -68,7 +72,7 @@ void DoSpinDashAura_r(ObjectMaster* obj)
 	v7 = aura->charID;
 	*(float*)&aura->idk3[1] = flt_B18F54;
 	aura->idk3[0] = 1;
-	auto co2 = MainCharObj2[v7];
+	co2 = MainCharObj2[v7];
 	char charID2 = co2->CharID2;
 
 	if (CharacterModels[19].Model)
@@ -89,6 +93,22 @@ void DoSpinDashAura_r(ObjectMaster* obj)
 
 	return;
 }
+
+static void __declspec(naked) DoSpinDashAuraASM()
+{
+	__asm
+	{
+		push edi // obj
+
+		// Call your __cdecl function here:
+		call DoSpinDashAura_r
+
+		pop edi // obj
+		retn
+	}
+}
+
+
 
 void DoJumpAura_r(ObjectMaster* obj)
 {
@@ -205,17 +225,13 @@ void DoHomingAura_r(ObjectMaster* obj)
 
 void __cdecl HomingDashAura_Display_r(ObjectMaster* a1)
 {
-	CharObj2Base* v2;
-	char charID2;
 	int v4; // edx
 	void** v5; // eax
-
-	char charID2Again; // cl
 	void** v8; // ecx
 	int v10; // eax
 	NJS_OBJECT* auraMdl;
 
-	auto aura = (auraStruct*)a1->Data2.Undefined;
+	auraStruct* aura = (auraStruct*)a1->Data2.Undefined;
 
 	if (!aura)
 		return;
@@ -224,13 +240,13 @@ void __cdecl HomingDashAura_Display_r(ObjectMaster* a1)
 
 	if (isNotSuperSonic(co2))
 	{
-		HomingDashAura_Display_t.Original(a1);
+		return HomingDashAura_Display_t.Original(a1);
 	}
+
+	char charID2 = co2->CharID2;
 
 	if (aura->idk == 2)
 	{
-		v2 = MainCharObj2[aura->charID];
-		charID2 = v2->CharID2;
 		v4 = *(__int16*)(&aura->charID + 1);
 
 		v5 = &off_A0B1C8 + 2 * v4;
@@ -238,9 +254,6 @@ void __cdecl HomingDashAura_Display_r(ObjectMaster* a1)
 	}
 	else
 	{
-		co2 = MainCharObj2[aura->charID];
-		charID2Again = co2->CharID2;
-
 		v10 = *(__int16*)(&aura->charID + 1);
 		v8 = &off_A0B128 + 2 * v10;
 		*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)v8;
@@ -266,9 +279,11 @@ char superAuraArrayShadow[6] = { 9, 10, 11, 12, 13, 14 };
 char auraCount = 0;
 
 void DisplaySuperAura(char character) {
+
 	*(DWORD*)(*(DWORD*)Has_texlist_batadvPlayerChara_in_it.gap0 + 32) = (DWORD)&SSONEFFTEX_TEXLIST;
 
 	if (GameState != GameStates_Pause) {
+
 		//animate Aura using a loop doesn't work for some reason
 		if (auraCount == LengthOfArray(superAuraArray) - 1)
 			auraCount = 0;
@@ -280,6 +295,7 @@ void DisplaySuperAura(char character) {
 }
 
 void SuperAura_r(ObjectMaster* obj) {
+
 	SonicCharObj2* co2 = (SonicCharObj2*)obj->Data2.Undefined;
 	EntityData1* data = obj->Data1.Entity;
 	NJS_OBJECT* v24;
@@ -314,7 +330,7 @@ void SuperAura_r(ObjectMaster* obj) {
 	DisplaySuperAura(co2->base.CharID2);
 
 	njPushMatrix(CURRENT_MATRIX);
-	njTranslate(CURRENT_MATRIX, 0.0, -3.0, 0.0);
+	njTranslate(CURRENT_MATRIX, 0.0f, -3.0f, 0.0f);
 	sub_42D340();
 	ProcessChunkModelsWithCallback((NJS_OBJECT*)0x170B47C, ProcessChunkModel);// Draw Aura
 	njPopMatrix(2u);
@@ -328,6 +344,7 @@ static NJS_TEXNAME SADXAuratexid4 = { (char*)"S1sonic05", 0, 0 };
 static NJS_TEXNAME SADXAuratexid5 = { (char*)"S1sonic06", 0, 0 };
 static NJS_TEXNAME SADXAuratexid6 = { (char*)"S1sonic07", 0, 0 };
 static NJS_TEXNAME SADXAuratexid7 = { (char*)"S1sonic08", 0, 0 };
+
 
 static NJS_TEXLIST SADXSuperAuraTexList[8] = {
 	&SADXAuratexid0, 1,
@@ -371,6 +388,7 @@ static NJS_TEXLIST SADXShadowSuperAuraTexList[8] = {
 	&SADXAuratexid7, 1
 };
 
+
 static NJS_TEXLIST SADXShadowSuperAuraTexList2[8] = {
 	&SADXAuratexid8, 1,
 	&SADXAuratexid9, 1,
@@ -385,6 +403,7 @@ static NJS_TEXLIST SADXShadowSuperAuraTexList2[8] = {
 int timerSuperAura[2] = { 0, 0 };
 
 void SADX_SuperAura(ObjectMaster* obj) {
+
 	SonicCharObj2* Sco2 = (SonicCharObj2*)obj->Data2.Undefined;
 	CharObj2Base* co2 = &Sco2->base;
 	EntityData1* data = obj->Data1.Entity;
@@ -450,6 +469,7 @@ void SADX_SuperAura(ObjectMaster* obj) {
 	LoadControl3D();
 }
 
+
 void LoadSuperAura(char pID)
 {
 	if (!superAuraState)
@@ -460,6 +480,7 @@ void LoadSuperAura(char pID)
 }
 
 void LoadSADXAuraTextures(char pnum) {
+
 	if (!SADXAura)
 	{
 		return;
@@ -471,7 +492,9 @@ void LoadSADXAuraTextures(char pnum) {
 
 	if (co2) {
 		if (co2->CharID2 == Characters_Sonic) {
+
 			for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraTexList); i++) {
+
 				SADXSuperAuraTexList[i].textures[0] = SSEff_Texlist.textures[i + 17];
 				SADXSuperAuraTexList2[i].textures[0] = SSEff_Texlist.textures[i + 25];
 			}
@@ -479,6 +502,7 @@ void LoadSADXAuraTextures(char pnum) {
 		else
 		{
 			for (uint8_t i = 0; i < LengthOfArray(SADXSuperAuraTexList); i++) {
+
 				SADXShadowSuperAuraTexList[i].textures[0] = SSHEff_Texlist.textures[i + 17];
 				SADXShadowSuperAuraTexList2[i].textures[0] = SSHEff_Texlist.textures[i + 25];
 			}
@@ -496,6 +520,7 @@ void Free_AuraModels()
 
 //Serie of hack to make every aura display a yellow texture when Super Sonic. (Using Shadow texlist)
 void init_AuraHack() {
+
 	//regular sonic aura
 	DoSpinDashAura_t.Hook(DoSpinDashAura_r);
 	DoJumpAura_t.Hook(DoJumpAura_r);

@@ -133,6 +133,7 @@ void unSuper(unsigned char player) {
 	if (co2->CharID == Characters_Sonic)
 		co2->PhysData = PhysicsArray[Characters_Sonic];
 
+	CharacterThrowObject(data, co2);
 	ResetChaosControl(player);
 	DeleteSSJiggle(co2S);
 	initJiggleSuperSonic(co2S);
