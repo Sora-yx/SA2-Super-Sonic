@@ -9,7 +9,6 @@ HMODULE SA2Anim = NULL;
 HMODULE SA1Char = NULL;
 
 extern "C" {
-
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
 		Sleep(10);
@@ -36,7 +35,6 @@ extern "C" {
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame() {
-
 		DisplayTimed_Message_OnFrames();
 	}
 
@@ -45,8 +43,6 @@ extern "C" {
 		FreeWaterMDL();
 		Free_AuraModels();
 	}
-
-
 
 	__declspec(dllexport) ModInfo SA2ModInfo = { ModLoaderVer };
 }

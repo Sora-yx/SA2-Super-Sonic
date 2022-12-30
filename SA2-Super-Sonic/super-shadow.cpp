@@ -3,7 +3,7 @@
 
 NJS_TEXLIST* Shadow_Texlist = nullptr;
 ModelIndex* SuperShadowMdl;
-Trampoline* LoadShadow_t = nullptr;
+static FunctionHook<void, int> LoadShadow_t(LoadShadow);
 
 extern std::string currentSuperMusic;
 
@@ -23,7 +23,6 @@ void __cdecl SetSuperShadowModels(SonicCharObj2* sco2) {
 }
 
 void __cdecl LoadSuperShadowCharTextures(SonicCharObj2* sco2) {
-
 	njReleaseTexture(sco2->TextureList);
 	sco2->TextureList = 0;
 	sco2->TextureList = LoadCharTextures("SSHADOWTEX");
@@ -52,10 +51,9 @@ void __cdecl LoadSuperShadowCharTextures(SonicCharObj2* sco2) {
 	return;
 }
 
-AnimationInfo ShadowAnimCopy[249];
+AnimationInfo ShadowAnimCopy[249] = { 0 };
 
 void __cdecl TransfoSuperShadow(EntityData1* data, int playerID, SonicCharObj2* sco2) {
-
 	if (SuperMusicVersion != None) {
 		StopMusic();
 		Play_SuperSonicMusic();
@@ -87,7 +85,6 @@ void __cdecl TransfoSuperShadow(EntityData1* data, int playerID, SonicCharObj2* 
 }
 
 void unSuperShadow(unsigned char player) {
-
 	if (AlwaysSuperShadow)
 		return;
 
@@ -118,7 +115,6 @@ void unSuperShadow(unsigned char player) {
 	else
 		co2S->TextureList = LoadCharTextures("TERIOSTEX");
 
-
 	MainCharacter[player]->DisplaySub_Delayed4 = nullptr;
 	isSuper[player] = false;
 
@@ -134,7 +130,6 @@ void unSuperShadow(unsigned char player) {
 
 	return;
 }
-
 
 void SuperShadow_ManagerDelete(ObjectMaster* obj)
 {
@@ -165,7 +160,6 @@ void SuperShadow_Manager(ObjectMaster* obj)
 
 	//if player dies, remove transformation and reset manager action.
 	if (GameState == GameStates_LoadFinished && !AlwaysSuperShadow && data->Action > playerInputCheck) {
-
 		unSuperShadow(data->Index);
 		data->Action = playerInputCheck;
 		return;
@@ -219,7 +213,6 @@ void SuperShadow_Manager(ObjectMaster* obj)
 		break;
 	case superSonicOnFrames:
 		if (CheckUntransform_Input(playerID)) {
-
 			data->Action = playerInputCheck;
 		}
 
@@ -236,8 +229,6 @@ void SuperShadow_Manager(ObjectMaster* obj)
 }
 
 void LoadSuperShadowManager(char playNum) {
-
-
 	int id2 = MainCharObj2[playNum]->CharID2;
 
 	if (id2 == Characters_Shadow) {
@@ -253,9 +244,7 @@ void LoadSuperShadowManager(char playNum) {
 }
 
 void LoadShadow_r(int playerNum) {
-
-	auto original = reinterpret_cast<decltype(LoadShadow_r)*>(LoadShadow_t->Target());
-	original(playerNum);
+	LoadShadow_t.Original(playerNum);
 
 	if (CurrentLevel != LevelIDs_FinalHazard) {
 		if (MainCharObj1[playerNum] && MainCharObj1[playerNum]->field_2 != 3) {
@@ -268,7 +257,6 @@ void LoadShadow_r(int playerNum) {
 }
 
 void init_SuperShadow() {
-
-	LoadShadow_t = new Trampoline((int)LoadShadow, (int)LoadShadow + 0x6, LoadShadow_r);
+	LoadShadow_t.Hook(LoadShadow_r);
 	return;
 }

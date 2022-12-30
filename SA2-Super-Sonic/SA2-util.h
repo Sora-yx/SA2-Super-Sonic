@@ -2,7 +2,6 @@
 
 #define MATRIX_1A51A00 ((NJS_MATRIX_PTR)0x1A51A00) //matrix used for Sonic CallBack
 
-
 DataPointer(float, flt_B18F54, 0xB18F54);
 
 //aura, model stuff
@@ -16,8 +15,6 @@ DataPointer(int, dword_193411C, 0x193411C);
 DataPointer(float, flt_19341C4, 0x19341C4);
 DataPointer(float, flt_19341C8, 0x19341C8);
 DataPointer(int, dword_19341C0, 0x19341C0);
-
-
 
 static const void* const idkPtr = (void*)0x486E50;
 static inline void sub_486E50(char a1)
@@ -56,7 +53,6 @@ static inline void sub_487060(int a1)
 	}
 }
 
-
 static const void* const njScaleExPtr = (void*)0x429740;
 static inline void njScaleEx(NJS_VECTOR* a1)
 {
@@ -88,7 +84,6 @@ static inline void sub_46F1E0(int pID)
 		call sub_46F1E0_ptr
 	}
 }
-
 
 FunctionPointer(void, njReleaseTexture, (NJS_TEXLIST* a1), 0x77F9F0);
 DataPointer(RenderInfo, Has_texlist_batadvPlayerChara_in_it, 0x2670544);
@@ -159,7 +154,6 @@ static inline void njCalcVector_(NJS_VECTOR* transform, NJS_VECTOR* v, NJS_MATRI
 	}
 }
 
-
 DataPointer(NJS_MATRIX, sonic_RightHandMatrix, 0x1A51A3C);
 DataPointer(NJS_MATRIX, sonic_LeftHandMatrix, 0x1A51AA0);
 DataPointer(NJS_MATRIX, sonic_LeftFootMatrix, 0x1A51A6C);
@@ -174,7 +168,6 @@ DataPointer(uint8_t, animate_AuraThing, 0x170ACEE);
 
 FunctionPointer(double, FloatCalcResult, (float a1, float a2, float a3), 0x447520);
 
-
 static const void* const fbossSoundPtr = (void*)0x435630;
 static inline void LoadFinalBossSound(const char* a1, void* address, char a3)
 {
@@ -186,7 +179,6 @@ static inline void LoadFinalBossSound(const char* a1, void* address, char a3)
 		call fbossSoundPtr
 	}
 }
-
 
 //HomingAttackTarget* __usercall sub_721480@<eax>(CharObj2Base* eax0@<eax>, EntityData1* a2, float a3)
 static const void* const sub_721480_ptr = (void*)0x721480;
@@ -229,7 +221,6 @@ static inline void sub_458C30(int a1)
 
 DataPointer(float, HorizontalStretch, 0x01A559E4);
 
-
 static const void* const PoseEffectManPtr = (void*)0x477490;
 static inline void PoseEffectMan_Load_(int a1, int a2)
 {
@@ -244,7 +235,6 @@ static inline void PoseEffectMan_Load_(int a1, int a2)
 
 FunctionPointer(void, LoadChaosControlEffect, (char pnum), 0x758C60);
 ObjectFunc(ChaosControl_Display, 0x724780);
-
 
 static const void* const sub_42F770Ptr = (void*)0x42F770;
 static inline void sub_42F770(float* a1)
@@ -307,3 +297,4 @@ static inline ObjectMaster* LoadSonEffObj(void(__cdecl* a1)(ObjectMaster*))
 
 DataPointer(char, ShowHud, 0x0174AFCC);
 DataPointer(ObjectMaster*, miniEventPtr, 0x19456A8);
+FunctionPointer(void, Sonic_runsActions, (EntityData1* a1, EntityData2* a2, CharObj2Base* a3, SonicCharObj2* a5), 0x719920);

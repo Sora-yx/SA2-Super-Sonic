@@ -23,7 +23,7 @@ static NJS_MATRIX SSH_LeftHandMatrice;
 static NJS_MATRIX SSH_LeftFootMatrice;
 static NJS_MATRIX SSH_RightFootMatrice;
 
-DataArray(float, flt_1A51ADC, 0x1A51ADC, 12); 
+DataArray(float, flt_1A51ADC, 0x1A51ADC, 12);
 DataArray(float, flt_1A51994, 0x1A51994, 12);
 DataArray(float, flt_1A51930, 0x1A51930, 12);
 DataArray(float, flt_1A51900, 0x1A51900, 12);
@@ -49,7 +49,6 @@ void SSH_SetMatrixPosition(NJS_OBJECT* mdl)
 }
 
 void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
-
 	NJS_MATRIX_PTR m = _nj_current_matrix_ptr_;
 	SonicCharObj2* wk = SonicCO2PtrExtern;
 
@@ -151,7 +150,7 @@ void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
 				njCalcVector_(&pt, &pt, m);
 				njCalcVector_(&pt, &wk->leftfoot_vec, MATRIX_1A51A00);
 				sub_42F770(flt_1A51994);
-			} 
+			}
 			else if (mdl == CharacterModels[90].Model
 				|| mdl == CharacterModels[380].Model)
 			{
@@ -173,7 +172,6 @@ void SuperShadow_Callback_r(NJS_OBJECT* mdl) {
 }
 
 void DisplaySuperShadow_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
-
 	if (!sonicCO2 || !isUpgrade || AltCostume[sonicCO2->base.PlayerNum] != 0)
 		return;
 

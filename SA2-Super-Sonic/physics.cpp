@@ -1,8 +1,8 @@
 #include "pch.h"
 
-Trampoline* PResetAngle_t;
-PhysicsData sonicPhysicsCopy;
-PhysicsData superSonicPhysicsCopy;
+static UsercallFuncVoid(PResetAngle_t, (EntityData1* a1, CharObj2Base* a2), (a1, a2), 0x460260, rEAX, rEBX);
+PhysicsData sonicPhysicsCopy = { 0 };
+PhysicsData superSonicPhysicsCopy = { 0 };
 
 //restore sonic's original physics.
 void __cdecl SuperPhysics_Delete(ObjectMaster* obj) {
@@ -12,7 +12,6 @@ void __cdecl SuperPhysics_Delete(ObjectMaster* obj) {
 }
 
 void __cdecl SuperPhysics_Main(ObjectMaster* obj) {
-
 	CharObj2Base* co2 = MainCharObj2[obj->Data1.Entity->Index];
 
 	if (!co2 || !isSuper[obj->Data1.Entity->Index])
@@ -49,9 +48,7 @@ void __cdecl SuperPhysics_Load(ObjectMaster* obj)
 	}
 }
 
-
 void Load_SuperPhysics(EntityData1* data) {
-
 	ObjectMaster* physics = LoadObject(2, "SuperSonic_Physics", SuperPhysics_Load, LoadObj_Data1 | LoadObj_UnknownB);
 
 	if (physics && data)
@@ -62,45 +59,19 @@ void Load_SuperPhysics(EntityData1* data) {
 	return;
 }
 
-static void PResetAngle_Origin(EntityData1* data1, CharObj2Base* data2)
-{
-	auto target = PResetAngle_t->Target();
-
-	__asm
-	{
-		mov ebx, [data2]
-		mov eax, [data1]
-		call target
-	}
-}
-
 void PResetAngle_r(EntityData1* data1, CharObj2Base* co2)
 {
-
 	if (co2->Upgrades & Upgrades_SuperSonic && CurrentLevel != LevelIDs_FinalHazard)
 	{
 		co2->Upgrades &= ~Upgrades_SuperSonic;
-		PResetAngle_Origin(data1, co2);
+		PResetAngle_t.Original(data1, co2);
 		co2->Upgrades |= Upgrades_SuperSonic;
 	}
 	else {
-		PResetAngle_Origin(data1, co2);
-	}
-}
-
-static void __declspec(naked) PResetAngleASM()
-{
-	__asm
-	{
-		push ebx 
-		push eax 
-		call PResetAngle_r
-		pop eax
-		pop ebx 
-		retn
+		PResetAngle_t.Original(data1, co2);
 	}
 }
 
 void init_PhysicsHack() {
-	PResetAngle_t = new Trampoline((int)0x460260, (int)0x460266, PResetAngleASM);
+	PResetAngle_t.Hook(PResetAngle_r);
 }

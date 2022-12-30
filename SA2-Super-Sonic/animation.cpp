@@ -229,7 +229,6 @@ void Delete_SSAnim() {
 }
 
 void Load_NewSuperSonicAnim() {
-
 	if (isSA1Char(Characters_SuperSonic))
 	{
 		SuperSonicAnimationList_r[0].AnimationSpeed = 0.25f;

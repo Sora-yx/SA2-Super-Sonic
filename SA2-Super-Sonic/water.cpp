@@ -2,7 +2,7 @@
 #include "UsercallFunctionHandler.h"
 
 //Allow to hover on water with the SA1 effect!
-Trampoline* SplashEffect_t = nullptr;
+TaskHook SplashEffect_t(0x6ED6E0);
 ObjectMaster* waterColTask = nullptr;
 
 static ModelInfo* WaterMdl[2] = { nullptr, nullptr }; //water effect model
@@ -36,7 +36,6 @@ int FakeWaterLevelArray[5] = { LevelIDs_MetalHarbor, LevelIDs_MetalHarbor2P, Lev
 bool isFakeWaterLevel()
 {
 	for (uint8_t i = 0; i < LengthOfArray(FakeWaterLevelArray); i++) {
-
 		if (CurrentLevel == FakeWaterLevelArray[i])
 			return true;
 	}
@@ -90,7 +89,6 @@ bool isPlayerOnWater(CharObj2Base* co2, EntityData1* player)
 	return false;
 }
 
-
 void __cdecl SS_Water_Delete(ObjectMaster* obj)
 {
 	if (waterColTask) {
@@ -102,7 +100,6 @@ void __cdecl SS_Water_Delete(ObjectMaster* obj)
 
 void __cdecl SS_Water_Display(ObjectMaster* obj)
 {
-
 	float XScale;
 	float XScalea;
 	float YScale;
@@ -150,7 +147,7 @@ void __cdecl SS_Water_Display(ObjectMaster* obj)
 	}
 }
 
-//we create a dynamic collision when the player is on water, so he can hover on it 
+//we create a dynamic collision when the player is on water, so he can hover on it
 void __cdecl SS_Water_Main(ObjectMaster* obj)
 {
 	EntityData1* data = obj->Data1.Entity;
@@ -173,7 +170,6 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 		DeleteObject_(obj);
 		return;
 	}
-
 
 	switch (data->Action)
 	{
@@ -218,7 +214,6 @@ void __cdecl SS_Water_Main(ObjectMaster* obj)
 	}
 }
 
-
 using ExecFuncPtr = void(__cdecl*)(NJS_VECTOR*, Rotation*, float, float);
 DataPointer(ExecFuncPtr, ExecFunc_ptr_, 0x1A5A2B0);
 
@@ -247,7 +242,6 @@ void DoBigSplashEffect(NJS_VECTOR* a1, int a2)
 	if (!isFakeWaterLevel())
 		Play3DSound_Pos(28673, a1, 0, 0, 0);
 }
-
 
 FunctionPointer(void, sub_6ED400, (NJS_VECTOR* a1, NJS_VECTOR* a2, float a3, float a4, int a5), 0x6ED400);
 DataPointer(float, flt_1666F30, 0x1666F30);
@@ -289,7 +283,6 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 		}
 
 		if (co2->Speed.x > 8.0f && TimeTotal % 50 == 0) {
-
 			NJS_VECTOR pos = playerData->Position;
 
 			if (!isFakeWaterLevel())
@@ -313,8 +306,7 @@ void __cdecl SplashEffect_r(ObjectMaster* a1)
 		return;
 	}
 
-	ObjectFunc(origin, SplashEffect_t->Target());
-	origin(a1);
+	SplashEffect_t.Original(a1);
 }
 
 void Load_SSWaterTask(char pid)
@@ -337,7 +329,6 @@ void __cdecl Reload_SS_WaterTask(char charID, char pnum)
 }
 
 void LoadWaterTextures(char charID) {
-
 	if (isFakeWaterLevel())
 	{
 		LoadSplashEffect(charID);
@@ -347,9 +338,7 @@ void LoadWaterTextures(char charID) {
 	char count2 = 2;
 
 	if (charID == Characters_Sonic) {
-
 		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {
-
 			waterTexList[i].textures[0] = SSEff_Texlist.textures[1 + count];
 			waterTexList[i].textures[1] = SSEff_Texlist.textures[count2];
 			count += 2;
@@ -359,7 +348,6 @@ void LoadWaterTextures(char charID) {
 	else
 	{
 		for (uint8_t i = 0; i < LengthOfArray(waterTexList); i++) {
-
 			waterTexList[i].textures[0] = SSHEff_Texlist.textures[1 + count];
 			waterTexList[i].textures[1] = SSHEff_Texlist.textures[count2];
 			count += 2;
@@ -367,7 +355,6 @@ void LoadWaterTextures(char charID) {
 		}
 	}
 }
-
 
 void LoadWaterMDL()
 {
@@ -389,6 +376,6 @@ void FreeWaterMDL()
 
 void init_WaterHack()
 {
-	SplashEffect_t = new Trampoline((int)0x6ED6E0, (int)0x6ED6E6, SplashEffect_r);
+	SplashEffect_t.Hook(SplashEffect_r);
 	LoadWaterMDL();
 }

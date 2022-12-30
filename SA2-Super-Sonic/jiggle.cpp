@@ -34,9 +34,7 @@ void ResetSSJiggle(SonicCharObj2* sonicCO2)
 	CharacterModels[349].Model->child->chunkmodel = jigleSSMDL;
 }
 
-
 void __cdecl initJiggleSuperSonic(SonicCharObj2* sonicCO2) {
-
 	if (!isJiggle)
 		return;
 
@@ -51,7 +49,6 @@ void __cdecl initJiggleSuperSonic(SonicCharObj2* sonicCO2) {
 	sonicCO2->SpineJiggle->Model = 0;
 	return;
 }
-
 
 NJS_CNK_MODEL* jigleSSHMDL = nullptr;
 
@@ -74,7 +71,6 @@ void ResetSSHJiggle(SonicCharObj2* sonicCO2)
 	CharacterModels[376].Model->child->chunkmodel = jigleSSHMDL;
 }
 
-
 void DeleteSSHJiggle(SonicCharObj2* sonicCO2) {
 	JiggleInfo* Jiggle = sonicCO2->SpineJiggle;
 
@@ -89,7 +85,6 @@ void DeleteSSHJiggle(SonicCharObj2* sonicCO2) {
 }
 
 void __cdecl initJiggleSuperShadow(SonicCharObj2* sonicCO2) {
-
 	if (!isJiggle)
 		return;
 
@@ -104,4 +99,3 @@ void __cdecl initJiggleSuperShadow(SonicCharObj2* sonicCO2) {
 	sonicCO2->SpineJiggle->Model = 0;
 	return;
 }
-

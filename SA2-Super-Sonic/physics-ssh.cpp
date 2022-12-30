@@ -11,7 +11,6 @@ void __cdecl SuperShadowPhysics_Delete(ObjectMaster* obj) {
 }
 
 void __cdecl SuperShadowPhysics_Main(ObjectMaster* obj) {
-
 	CharObj2Base* co2 = MainCharObj2[obj->Data1.Entity->Index];
 
 	if (!co2 || !isSuper[obj->Data1.Entity->Index])
@@ -49,7 +48,6 @@ void __cdecl SuperShadowPhysics_Load(ObjectMaster* obj)
 }
 
 void Load_SuperShadowPhysics(EntityData1* data) {
-
 	ObjectMaster* physics = LoadObject(2, "SuperShadow_Physics", SuperShadowPhysics_Load, LoadObj_Data1 | LoadObj_UnknownB);
 
 	if (physics && data)

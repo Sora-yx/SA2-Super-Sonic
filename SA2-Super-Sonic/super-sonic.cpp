@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "ss.h"
 
-Trampoline* Sonic_Main_t;
-Trampoline* Sonic_Display_t;
-Trampoline* LoadSonic_t;
-Trampoline* Sonic_runsActions_t;
+TaskHook Sonic_Main_t(Sonic_Main);
+TaskHook Sonic_Display_t(Sonic_Display);
+static FunctionHook<void, int>LoadSonic_t(LoadSonic);
+static FunctionHook<void, EntityData1*, EntityData2*, CharObj2Base*, SonicCharObj2*> Sonic_runsActions_t(Sonic_runsActions);
 
 bool isSuper[2] = { false, false };
 
@@ -30,7 +30,6 @@ void __cdecl SetSuperSonicModels(SonicCharObj2* sco2) {
 }
 
 void __cdecl LoadSuperSonicCharTextures(SonicCharObj2* sco2) {
-
 	njReleaseTexture(sco2->TextureList);
 	sco2->TextureList = 0;
 	sco2->TextureList = LoadCharTextures("SSONICTEX");
@@ -71,7 +70,6 @@ void __cdecl LoadSSEff_Textures() {
 AnimationInfo SonicAnimCopy[203];
 
 void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* sco2) {
-
 	if (SuperMusicVersion != None) {
 		StopMusic();
 		Play_SuperSonicMusic();
@@ -103,7 +101,6 @@ void __cdecl TransfoSuperSonic(EntityData1* data, int playerID, SonicCharObj2* s
 }
 
 void SubRings(unsigned char player, EntityData1* data) {
-
 	char charID = MainCharObj2[player]->CharID2;
 
 	if (RemoveLimitations || charID == Characters_Sonic && AlwaysSuperSonic
@@ -122,7 +119,6 @@ void SubRings(unsigned char player, EntityData1* data) {
 }
 
 void unSuper(unsigned char player) {
-
 	if (AlwaysSuperSonic)
 		return;
 
@@ -153,7 +149,6 @@ void unSuper(unsigned char player) {
 	else
 		co2S->TextureList = LoadCharTextures("SONICTEX");
 
-
 	MainCharacter[player]->DisplaySub_Delayed4 = nullptr;
 	isSuper[player] = false;
 
@@ -171,7 +166,6 @@ void unSuper(unsigned char player) {
 }
 
 bool CheckUntransform_Input(unsigned char playerID) {
-
 	EntityData1* player = MainCharObj1[playerID];
 
 	if (!player || AlwaysSuperSonic && MainCharObj2[playerID]->CharID2 == Characters_Sonic
@@ -206,9 +200,7 @@ bool CheckTransform_Input(char playerID, EntityData1* player)
 		return false;
 
 	if (RingCount[playerID] >= 50 || RemoveLimitations) {
-
 		if (player->Action == Action_Jump || player->Action == Action_BounceUp && (player->Status & Status_Ball) == 0) {
-
 			if (Controllers[playerID].press & TransformButton)
 			{
 				player->Action = 18;
@@ -232,7 +224,6 @@ void SuperSonic_ManagerDelete(ObjectMaster* obj)
 	Delete_SSAnim();
 }
 
-
 void SuperSonic_Manager(ObjectMaster* obj)
 {
 	EntityData1* data = obj->Data1.Entity;
@@ -251,7 +242,6 @@ void SuperSonic_Manager(ObjectMaster* obj)
 
 	//if player dies, remove transformation and reset manager action.
 	if (GameState == GameStates_LoadFinished && !AlwaysSuperSonic && data->Action > playerInputCheck) {
-
 		unSuper(data->Index);
 		data->Action = playerInputCheck;
 		return;
@@ -262,7 +252,6 @@ void SuperSonic_Manager(ObjectMaster* obj)
 	}
 
 	unsigned char playerID = data->Index;
-
 
 	switch (data->Action)
 	{
@@ -306,7 +295,6 @@ void SuperSonic_Manager(ObjectMaster* obj)
 		break;
 	case superSonicOnFrames:
 		if (CheckUntransform_Input(playerID)) {
-
 			data->Action = playerInputCheck;
 		}
 
@@ -324,7 +312,6 @@ void SuperSonic_Manager(ObjectMaster* obj)
 }
 
 void LoadSuperSonicManager(char playNum) {
-
 	int id2 = MainCharObj2[playNum]->CharID2;
 
 	if (id2 == Characters_Sonic) {
@@ -340,7 +327,6 @@ void LoadSuperSonicManager(char playNum) {
 }
 
 void __cdecl Sonic_HealdObjectStuff(EntityData1* data1, CharObj2Base* co2) {
-
 	*(int*)0x25F02D8 &= 0xFFFFDBFF;
 	*(int*)0x25F02D4 = *(int*)0x1DEB6A0;
 	UpgradeDrawCallback = 0;
@@ -351,7 +337,6 @@ void __cdecl Sonic_HealdObjectStuff(EntityData1* data1, CharObj2Base* co2) {
 }
 
 void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
-
 	NJS_MOTION* Motion;
 
 	NJS_TEXLIST* texlist = sonicCO2->TextureList;
@@ -389,7 +374,6 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 
 	if (curAnim == 30)
 	{
-
 		if (isSonic && !isSA1Char(Characters_SuperSonic))
 			texlist = &SSEff_Texlist;
 		else if (!isSonic && !isSA1Char(Characters_SuperShadow))
@@ -408,17 +392,16 @@ void DrawSonicMotion(EntityData1* data1, SonicCharObj2* sonicCO2) {
 }
 
 void __cdecl DoSpinDashRotationModel() {
-
 	NJS_VECTOR spinDashThing = { 0.0f, -1.0f, 0.0f };
 
 	njTranslateEx(&spinDashThing);
 	NJS_MATRIX_PTR v14 = _nj_current_matrix_ptr_;
-	njTranslate(_nj_current_matrix_ptr_, 0.0, 5.0, 0.0);
+	njTranslate(_nj_current_matrix_ptr_, 0.0f, 5.0f, 0.0f);
 	njRotateZ(v14, 0x2000);
-	njTranslate(v14, 0.0, -5.0, 0.0);
-	spinDashThing.x = 0.69999999;
-	spinDashThing.y = 1.1;
-	spinDashThing.z = 0.80000001;
+	njTranslate(v14, 0.0f, -5.0f, 0.0f);
+	spinDashThing.x = 0.69999999f;
+	spinDashThing.y = 1.1f;
+	spinDashThing.z = 0.80000001f;
 	njScaleEx(&spinDashThing);
 }
 
@@ -433,9 +416,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 		return;
 
 	if (!isSuper[pID] || char2 != Characters_Sonic && char2 != Characters_Shadow) {
-
-		ObjectFunc(origin, Sonic_Display_t->Target());
-		return origin(obj);
+		return Sonic_Display_t.Original(obj);
 	}
 
 	bool isShadow = char2 == Characters_Shadow;
@@ -468,11 +449,9 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	else
 		Set_SSJiggle(sonicCO2);
 
-
 	njRotateZ_r(data1->Rotation.z);
 	njRotateX_r(data1->Rotation.x);
 	njRotateY_r(0x8000 - data1->Rotation.y);
-
 
 	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
 	{
@@ -493,15 +472,11 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	njPopMatrixEx();
 }
 
-
 void LoadSonic_r(int playerNum) {
-
-	auto original = reinterpret_cast<decltype(LoadSonic_r)*>(LoadSonic_t->Target());
-	original(playerNum);
+	LoadSonic_t.Original(playerNum);
 
 	if (CurrentLevel != LevelIDs_FinalHazard) {
 		if (MainCharObj1[playerNum] && MainCharObj1[playerNum]->field_2 != 3) {
-
 			LoadSuperSonicManager(playerNum);
 			LoadSSEff_Textures();
 			LoadWaterTextures(playerNum);
@@ -511,7 +486,6 @@ void LoadSonic_r(int playerNum) {
 }
 
 void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
-
 	if (data1->Action == Action_ObjectControl)
 	{
 		if (TimerStopped != 0 && (co2->AnimInfo.Next == 54 || co2->AnimInfo.Current == 54)) { //Check if the level is finished
@@ -540,13 +514,11 @@ void Sonic_Main_r(ObjectMaster* obj)
 	SonicCharObj2* sco2 = (SonicCharObj2*)obj->Data2.Character;
 
 	if (isSuper[co2->PlayerNum]) {
-
 		SuperSonic_PlayVictoryAnimation(data1, co2);
 		SuperSonicFly_MainManagement(data1, co2, data2);
 	}
 
-	ObjectFunc(origin, Sonic_Main_t->Target());
-	origin(obj);
+	Sonic_Main_t.Original(obj);
 }
 
 void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, SonicCharObj2* SonicCO2)
@@ -555,17 +527,14 @@ void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj
 		SuperSonic_RunCustomAction(data1, SonicCO2, co2);
 	}
 
-	auto original = reinterpret_cast<decltype(Sonic_runsActions_r)*>(Sonic_runsActions_t->Target());
-	original(data1, data2, co2, SonicCO2);
+	Sonic_runsActions_t.Original(data1, data2, co2, SonicCO2);
 }
 
-
 void init_SuperSonic() {
-
-	LoadSonic_t = new Trampoline((int)LoadSonic, (int)LoadSonic + 0x6, LoadSonic_r);
-	Sonic_Display_t = new Trampoline((int)Sonic_Display, (int)Sonic_Display + 0x6, Sonic_Display_r);
-	Sonic_runsActions_t = new Trampoline((int)0x719920, (int)0x719920 + 0x8, Sonic_runsActions_r);
-	Sonic_Main_t = new Trampoline((int)Sonic_Main, (int)Sonic_Main + 0x6, Sonic_Main_r);
+	LoadSonic_t.Hook(LoadSonic_r);
+	Sonic_Display_t.Hook(Sonic_Display_r);
+	Sonic_runsActions_t.Hook(Sonic_runsActions_r);
+	Sonic_Main_t.Hook(Sonic_Main_r);
 	init_AfterImages();
 	initChaosControl_Hack();
 

@@ -3,7 +3,8 @@
 std::string currentSuperMusic;
 std::string lastMusic;
 
-Trampoline* PlayMusic_t;
+static UsercallFuncVoid(PlayMusic_t, (const char* a1), (a1), 0x442CF0, rEDI);
+static UsercallFuncVoid(PlaySongQueue_t, (const char* a1), (a1), 0x443530, rEAX);
 
 std::string SuperSonicMusic_Array[8] = {
 	"none", "sonic2", "sonic3", "s&k",
@@ -11,7 +12,6 @@ std::string SuperSonicMusic_Array[8] = {
 };
 
 std::string GetSuperSonic_Music() {
-
 	if (SuperMusicVersion == Random)
 		return SuperSonicMusic_Array[rand() % 7 + 1];
 
@@ -19,7 +19,6 @@ std::string GetSuperSonic_Music() {
 }
 
 void Play_SuperSonicMusic() {
-
 	if (SuperMusicVersion == None)
 		return;
 
@@ -30,7 +29,6 @@ void Play_SuperSonicMusic() {
 }
 
 bool isSuperMusicPlaying() {
-
 	for (uint8_t i = 0; i < LengthOfArray(SuperSonicMusic_Array); i++)
 	{
 		if (currentSuperMusic == SuperSonicMusic_Array[i] + ".adx")
@@ -43,12 +41,10 @@ bool isSuperMusicPlaying() {
 }
 
 void RestoreMusic() {
-
 	if (SuperMusicVersion == None)
 		return;
 
 	if (isSuperMusicPlaying()) {
-
 		currentSuperMusic = "";
 		StopMusic();
 		PlayMusic(lastMusic.c_str());
@@ -60,60 +56,24 @@ void RestoreMusic() {
 
 void PlaySong_Queue_r(const char* song)
 {
-
-	if ( (isSuper[0] || isSuper[1]) && lastMusic != "rndclear" && IsIngame()) {
+	if ((isSuper[0] || isSuper[1]) && lastMusic != "rndclear" && IsIngame()) {
 		return;
 	}
 
-	if (sub_458970())
-	{
-		strcpy_s(CurrentSongName, 32, song);
-	}
-	else
-	{
-		PlayMusic(song);
-		ResetMusic();
-	}
+	PlaySongQueue_t.Original(song);
 
 	if (!isSuperMusicPlaying()) {
 		lastMusic = song;
 	}
-
-	return;
 }
-
-static void __declspec(naked) PlaySong_QueueASM()
-{
-	__asm
-	{
-		push eax
-		call PlaySong_Queue_r
-		pop eax 
-		retn
-	}
-}
-
-
-void PlayMusic_Origin(const char* song)
-{
-	auto target = PlayMusic_t->Target();
-
-	__asm
-	{
-		mov edi, [song]
-		call target
-	}
-}
-
 
 void PlayMusic_r(const char* song)
 {
-
-	if ( (isSuper[0] || isSuper[1]) && lastMusic != "rndclear" && IsIngame()) {
+	if ((isSuper[0] || isSuper[1]) && lastMusic != "rndclear" && IsIngame()) {
 		return;
 	}
 
-	PlayMusic_Origin(song);
+	PlayMusic_t.Original(song);
 
 	if (!isSuperMusicPlaying()) {
 		lastMusic = song;
@@ -122,23 +82,10 @@ void PlayMusic_r(const char* song)
 	return;
 }
 
-static void __declspec(naked) PlayMusicASM()
-{
-	__asm
-	{
-		push edi
-		call PlayMusic_r
-		pop edi 
-		retn
-	}
-}
-
-
 void init_MusicHack() {
-
 	if (SuperMusicVersion == None)
 		return;
 
-	PlayMusic_t = new Trampoline((int)0x442CF0, (int)0x442CF5, PlayMusicASM);
-	WriteJump((void*)0x443530, PlaySong_QueueASM);
+	PlayMusic_t.Hook(PlayMusic_r);
+	PlaySongQueue_t.Hook(PlaySong_Queue_r);
 }

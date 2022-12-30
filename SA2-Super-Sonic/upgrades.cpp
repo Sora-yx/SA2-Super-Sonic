@@ -44,7 +44,6 @@ void SS_SetMatrixPosition(NJS_OBJECT* mdl)
 }
 
 void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
-
 	NJS_MATRIX_PTR m = _nj_current_matrix_ptr_;
 	SonicCharObj2* wk = SonicCO2PtrExtern;
 
@@ -80,7 +79,6 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
 		{
 			if (mdl == CharacterModels[SSLeftArm].Model)
 			{
-
 				if ((MainCharObj1[wk->base.PlayerNum]->Status & Status_HoldObject) != 0)
 				{
 					njRotateX(m, *((uint32_t*)wk->base.HeldObject->EntityData2 + 12));
@@ -158,7 +156,6 @@ void SuperSonic_Callback_r(NJS_OBJECT* mdl) {
 }
 
 void DisplaySuperSonic_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
-
 	if (!sonicCO2 || !isUpgrade)
 		return;
 
@@ -210,7 +207,7 @@ void DisplaySuperSonic_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 			NJS_OBJECT* BounceChild = CharacterModels[26].Model->child;
 			njTranslateEx((NJS_VECTOR*)BounceChild->pos);
 
-			njRotateZ_r(BounceChild->ang[2]);		
+			njRotateZ_r(BounceChild->ang[2]);
 			njRotateY_r(BounceChild->ang[1]);
 			njRotateX_r(BounceChild->ang[0]);
 

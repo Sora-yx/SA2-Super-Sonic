@@ -21,7 +21,7 @@ bool isFlyMode[2] = { false, false };
 
 bool isBoosting(char pnum)
 {
-	return isFlyMode[pnum] && BoostUseTimer > 0 && BoostUseTimer < boostTimerC && Controllers[pnum].on & boostBtn;
+	return isFlyMode[pnum] && BoostUseTimer > 0 && BoostUseTimer < boostTimerC&& Controllers[pnum].on& boostBtn;
 }
 
 Buttons DescendButton()
@@ -35,7 +35,6 @@ Buttons DescendButton()
 	else
 		return Buttons_B;
 }
-
 
 void SS_SetFlyNextAction(EntityData1* data1, CharObj2Base* co2, char action, __int16 anim) {
 	data1->Action = action;
@@ -57,7 +56,6 @@ void SuperSonic_CommonPhysicsV(CharObj2Base* co2, EntityData1* data1, EntityData
 	co2->Speed.y = FloatCalcResult(co2->Speed.y, A, B);
 	PResetAngle_r(data1, co2);
 	SuperSonic_CommonPhysics(co2, data1, data2);
-
 }
 
 void SuperSonic_BoostCheck(EntityData1* data, CharObj2Base* co2, char pNum)
@@ -104,7 +102,6 @@ void SS_BoostTask(ObjectMaster* obj)
 			SendTimedMessage("BOOST READY!", 120);
 	}
 	else {
-
 		switch (data->Action)
 		{
 		case 0:
@@ -121,13 +118,11 @@ void SS_BoostTask(ObjectMaster* obj)
 		case 1:
 			SuperSonic_BoostCheck(data, co2, data->Index);
 			break;
-
 		}
 	}
 }
 
 void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
-
 	if (isFlyMode[pID] || co2->AnimInfo.Current == 30)
 		return;
 
@@ -158,7 +153,6 @@ void SS_EnableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
 char timerFly = 0;
 
 void SS_DisableFly_CheckInput(EntityData1* data1, CharObj2Base* co2, char pID) {
-
 	if (!isFlyMode[pID])
 		return;
 
@@ -195,8 +189,7 @@ signed int isSuperSonicStanding(CharObj2Base* a1, EntityData1* a2)
 
 void SS_Standing(EntityData1* data1, CharObj2Base* co2)
 {
-
-	float spdY = 0.0;
+	float spdY = 0.0f;
 	char pnum = co2->PlayerNum;
 
 	if ((0.0 != AnalogThings[co2->PlayerNum].magnitude) || (data1->Status & Status_DisableControl))
@@ -207,10 +200,10 @@ void SS_Standing(EntityData1* data1, CharObj2Base* co2)
 
 	if (Jump_Held[pnum])
 	{
-		spdY = 2.7;
+		spdY = 2.7f;
 		SS_SetFlyNextAction(data1, co2, (char)SSFly::AscendingIntro, (__int16)ssBeginAscent);
 		data1->Status |= Status_Attack;
-		if (co2->Speed.y >= 2.7)
+		if (co2->Speed.y >= 2.7f)
 		{
 			VibeThing(0, 15, 0, 4);
 		}
@@ -244,17 +237,17 @@ void SS_Moving(EntityData1* data1, CharObj2Base* co2)
 
 	if (Jump_Held[pnum])
 	{
-		curSpeed = 2.7;
+		curSpeed = 2.7f;
 		SS_SetFlyNextAction(data1, co2, (char)SSFly::Ascending, (__int16)ssBeginDash);
 		data1->Status |= Status_Attack;
-		if (co2->Speed.y >= 2.7)
+		if (co2->Speed.y >= 2.7f)
 		{
 			VibeThing(0, 15, co2->PlayerNum, 4);
 			return;
 		}
 	}
 
-	if (( (Controllers[pnum].on & DescendButton()) == 0) || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
+	if (((Controllers[pnum].on & DescendButton()) == 0) || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
 	{
 		return;
 	}
@@ -268,7 +261,6 @@ void SS_Moving(EntityData1* data1, CharObj2Base* co2)
 
 void SS_AscendingIntro(EntityData1* data1, CharObj2Base* co2)
 {
-
 	char pnum = co2->PlayerNum;
 
 	if ((data1->Status & Status_DisableControl) == 0
@@ -290,7 +282,6 @@ void SS_AscendingIntro(EntityData1* data1, CharObj2Base* co2)
 
 void SS_DescendingIntro(EntityData1* data1, CharObj2Base* co2)
 {
-
 	char pnum = co2->PlayerNum;
 
 	if ((data1->Status & Status_DisableControl) == 0
@@ -314,7 +305,6 @@ void SS_DescendingIntro(EntityData1* data1, CharObj2Base* co2)
 
 void SS_Ascending(EntityData1* data1, CharObj2Base* co2)
 {
-
 	if (isSuperSonicStanding(co2, data1))
 	{
 		data1->Status &= ~Status_Attack;
@@ -342,14 +332,13 @@ void SS_Ascending(EntityData1* data1, CharObj2Base* co2)
 
 void SS_Descending(EntityData1* data1, CharObj2Base* co2)
 {
-
 	if (isSuperSonicStanding(co2, data1))
 	{
 		data1->Status &= ~Status_Attack;
 		return;
 	}
 
-	if (( (Controllers[co2->PlayerNum].on & DescendButton()) == 0) || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
+	if (((Controllers[co2->PlayerNum].on & DescendButton()) == 0) || co2->CurrentSurfaceFlags & SurfaceFlag_Solid)
 	{
 		SS_SetFlyNextAction(data1, co2, (char)SSFly::Moving, ssBeginDash);
 		data1->Status &= ~Status_Attack;
@@ -411,7 +400,6 @@ void SuperSonic_DisableFly(EntityData1* data1, CharObj2Base* co2) {
 }
 
 void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, CharObj2Base* co2) {
-
 	if (!data1 || !isFlyAllowed)
 		return;
 
@@ -423,7 +411,6 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 	}
 
 	if (!isFlyMode[pnum]) {
-
 		if (data1->Action != Action_HomingAttack && data1->Action != Action_Fall || !ControllerEnabled[pnum])
 			return;
 	}
@@ -436,7 +423,6 @@ void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, Ch
 	SuperSonicFly_RunsActions(data1, co2);
 	return;
 }
-
 
 void SuperSonicFly_MainActions(EntityData1* data1, CharObj2Base* co2, EntityData2* data2)
 {
@@ -462,7 +448,6 @@ void SuperSonicFly_MainActions(EntityData1* data1, CharObj2Base* co2, EntityData
 }
 
 void SuperSonicFly_MainManagement(EntityData1* data1, CharObj2Base* co2, EntityData2* data2) {
-
 	if (!isFlyAllowed || !data1 || !isFlyMode[co2->PlayerNum] || TimerStopped != 0)
 		return;
 

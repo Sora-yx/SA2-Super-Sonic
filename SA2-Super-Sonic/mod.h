@@ -31,6 +31,8 @@ extern NJS_TEXLIST SSEff_Texlist;
 extern NJS_TEXLIST SSHEff_Texlist;
 
 #define CURRENT_MATRIX _nj_current_matrix_ptr_
+#define TaskHook static FunctionHook<void, ObjectMaster*>
+constexpr char PMax = 2;
 
 #pragma pack(push, 8)
 union ModelPointers
@@ -40,7 +42,6 @@ union ModelPointers
 	SA2B_Model* sa2b;
 };
 #pragma pack(pop)
-
 
 struct auraStruct {
 	char idk;
@@ -79,7 +80,6 @@ enum SuperSonicAnim {
 };
 
 enum SuperSonicMusic {
-
 	None,
 	Sonic2,
 	Sonic3,
@@ -91,7 +91,7 @@ enum SuperSonicMusic {
 	Random
 };
 
-extern bool isSuper[2];
+extern bool isSuper[PMax];
 
 void init_SuperSonic();
 void init_AuraHack();

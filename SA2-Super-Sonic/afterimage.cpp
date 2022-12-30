@@ -1,21 +1,6 @@
 #include "pch.h"
 
-Trampoline* SonicAfterImage_t;
-
-static const void* const SonicAfterImagePtr = (void*)0x71E460;
-static inline void Sonic_AfterImageOrigin(EntityData1* a1, CharObj2Base* a2, SonicCharObj2* a3)
-{
-	auto target = SonicAfterImage_t->Target();
-
-	__asm
-	{
-		push[a3]
-		push[a2]
-		mov esi, a1
-		call target
-		add esp, 8
-	}
-}
+static UsercallFuncVoid(SonicAfterImage_t, (EntityData1* a1, CharObj2Base* a2, SonicCharObj2* a3), (a1, a2, a3), 0x71E460, rESI, stack4, stack4);
 
 void SonicDisplayAfterImage_r(EntityData1* a1, CharObj2Base* a2, SonicCharObj2* a3)
 {
@@ -24,26 +9,9 @@ void SonicDisplayAfterImage_r(EntityData1* a1, CharObj2Base* a2, SonicCharObj2* 
 		return;
 	}
 
-	return Sonic_AfterImageOrigin(a1, a2, a3);
-}
-
-static void __declspec(naked) SonicDisplayAfterImageASM()
-{
-	__asm
-	{
-		push[esp + 08h] 
-		push[esp + 08h]
-		push esi 
-
-		call SonicDisplayAfterImage_r
-		pop esi 
-		add esp, 4 
-		add esp, 4 
-		retn
-	}
+	return SonicAfterImage_t.Original(a1, a2, a3);
 }
 
 void init_AfterImages() {
-	SonicAfterImage_t = new Trampoline((int)0x71E460, (int)0x71E467, SonicDisplayAfterImageASM);
-	return;
+	SonicAfterImage_t.Hook(SonicDisplayAfterImage_r);
 }

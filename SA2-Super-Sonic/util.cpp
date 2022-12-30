@@ -19,7 +19,6 @@ ModelInfo* LoadMDL(const char* name, ModelFormat format) {
 	std::string fullPath;
 
 	fullPath = "resource\\gd_PC\\Models\\";
-	
 
 	fullPath += name;
 
@@ -138,7 +137,7 @@ int getNumber_r()
 	if (!SA2Anim)
 		return 0;
 
-	padd Obj = (padd) GetProcAddress(SA2Anim, "getCharAnimSize");
+	padd Obj = (padd)GetProcAddress(SA2Anim, "getCharAnimSize");
 
 	if (Obj)
 	{
@@ -167,8 +166,6 @@ bool isSA1Char(uint8_t charID)
 	PrintDebug("SA1 Char Anim: Failed to get character");
 	return false;
 }
-
-
 
 NJS_OBJECT* DynCol_AddFromObject(ObjectMaster* obj, NJS_OBJECT* object, NJS_VECTOR* position, Angle rotY, int flags)
 {
