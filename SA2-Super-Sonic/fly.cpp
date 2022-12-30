@@ -399,13 +399,13 @@ void SuperSonic_DisableFly(EntityData1* data1, CharObj2Base* co2) {
 	return;
 }
 
-void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, CharObj2Base* co2) {
+void SuperSonicFly_ActionsManagement(EntityData1* data1, EntityData2* data2, SonicCharObj2* sCo2, CharObj2Base* co2) {
 	if (!data1 || !isFlyAllowed)
 		return;
 
 	char pnum = co2->PlayerNum;
 
-	if (TimerStopped != 0 && isFlyMode[pnum])
+	if (TimerStopped != 0 && isFlyMode[pnum] || Sonic_CheckNextAction(sCo2, data1, data2, co2))
 	{
 		SuperSonic_DisableFly(data1, co2);
 	}

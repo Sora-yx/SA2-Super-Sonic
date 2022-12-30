@@ -229,11 +229,19 @@ void Delete_SSAnim() {
 }
 
 void Load_NewSuperSonicAnim() {
+
 	if (isSA1Char(Characters_SuperSonic))
 	{
 		SuperSonicAnimationList_r[0].AnimationSpeed = 0.25f;
 		SuperSonicAnimationList_r[0].TransitionSpeed = 0.0625f;
 		SuperSonicAnimationList_r[204] = { 54, 0, 6, 54, 0.5f, 1.0f };
+	}
+	else if (SonkTrick)
+	{
+		SuperSonicAnimationList_r[67] = SuperSonicAnimationList_r[66];
+		SuperSonicAnimationList_r[67].NextAnimation = 68;
+		SuperSonicAnimationList_r[68] = SuperSonicAnimationList_r[66];
+		SuperSonicAnimationList_r[68].NextAnimation = 68;
 	}
 
 	SuperSonicNewAnimList = LoadMTNFile((char*)"ssmotion.prs");

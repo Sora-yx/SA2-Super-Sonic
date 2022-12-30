@@ -7,6 +7,7 @@ const char* error = "[SA2 Super Sonic]: WARNING: Your version of the Mod Loader 
 time_t t;
 HMODULE SA2Anim = NULL;
 HMODULE SA1Char = NULL;
+HMODULE SonkTrick = NULL;
 
 extern "C" {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
@@ -32,6 +33,8 @@ extern "C" {
 
 		SA2Anim = GetModuleHandle(L"SA2-Anim-Break");
 		SA1Char = GetModuleHandle(L"SA2-SA1-Chars");
+		SonkTrick = GetModuleHandle(L"SA2-Sonic-Tricks");
+
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame() {

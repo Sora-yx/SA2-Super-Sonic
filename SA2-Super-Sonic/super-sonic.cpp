@@ -180,7 +180,7 @@ bool CheckUntransform_Input(unsigned char playerID) {
 
 	if (ControllerPointers[playerID]->on & TransformButton)
 	{
-		if (player->Action == Action_HomingAttack) {
+		if (player->Action == Action_HomingAttack || player->Action == Action_Jump) {
 			player->Status &= ~Status_Ball;
 
 			if (MainCharObj2[playerID]->CharID2 == Characters_Sonic)
@@ -498,9 +498,9 @@ void SuperSonic_PlayVictoryAnimation(EntityData1* data1, CharObj2Base* co2) {
 	}
 }
 
-void SuperSonic_RunCustomAction(EntityData1* data1, SonicCharObj2* SonicCO2, CharObj2Base* co2)
+void SuperSonic_RunCustomAction(EntityData1* data1, EntityData2* data2, SonicCharObj2* SonicCO2, CharObj2Base* co2)
 {
-	SuperSonicFly_ActionsManagement(data1, SonicCO2, co2);
+	SuperSonicFly_ActionsManagement(data1, data2, SonicCO2, co2);
 
 	if (AllowSuperAttacks && !TwoPlayerMode) {
 		ChaosControl_Management(co2);
@@ -525,13 +525,14 @@ void Sonic_Main_r(ObjectMaster* obj)
 void __cdecl Sonic_runsActions_r(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, SonicCharObj2* SonicCO2)
 {
 	if (isSuper[co2->PlayerNum]) {
-		SuperSonic_RunCustomAction(data1, SonicCO2, co2);
+		SuperSonic_RunCustomAction(data1, data2, SonicCO2, co2);
 	}
 
 	Sonic_runsActions_t.Original(data1, data2, co2, SonicCO2);
 }
 
 void init_SuperSonic() {
+
 	LoadSonic_t.Hook(LoadSonic_r);
 	Sonic_Display_t.Hook(Sonic_Display_r);
 	Sonic_runsActions_t.Hook(Sonic_runsActions_r);

@@ -7,7 +7,7 @@ void Load_SuperPhysics(EntityData1* data);
 void LoadSuperAura(char pID);
 void DisplaySuperSonic_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2);
 void SuperSonicFly_MainManagement(EntityData1* data1, CharObj2Base* co2, EntityData2* data2);
-void SuperSonicFly_ActionsManagement(EntityData1* data1, SonicCharObj2* sCo2, CharObj2Base* co2);
+void SuperSonicFly_ActionsManagement(EntityData1* data1, EntityData2* data2, SonicCharObj2* sCo2, CharObj2Base* co2);
 
 void DeleteSSJiggle(SonicCharObj2* sonicCO2);
 void __cdecl initJiggleSuperSonic(SonicCharObj2* sonicCO2);

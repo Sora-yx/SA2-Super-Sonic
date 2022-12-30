@@ -26,6 +26,7 @@ extern HelperFunctions HelperFunctionsGlobal;
 
 extern HMODULE SA2Anim;
 extern HMODULE SA1Char;
+extern HMODULE SonkTrick;
 
 extern NJS_TEXLIST SSEff_Texlist;
 extern NJS_TEXLIST SSHEff_Texlist;

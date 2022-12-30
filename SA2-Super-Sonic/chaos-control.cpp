@@ -188,7 +188,7 @@ void __cdecl mhcont0_r(ObjectMaster* a1)
 	if (TimeStopped != 0)
 		return;
 
-	mhcont_t.Original(a1);
+	mhcont0_t.Original(a1);
 }
 
 void __cdecl mhmissile_r(ObjectMaster* a1)
