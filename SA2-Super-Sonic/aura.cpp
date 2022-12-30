@@ -23,16 +23,14 @@ bool isNotSuperSonic(CharObj2Base* co2)
 	return false;
 }
 
-
 void DoSpinDashAura_r(ObjectMaster* obj)
 {
-
 	NJS_VECTOR a1;
-	double v2; // st7
-	double v3; // st7
-	float* v4; // ebx
-	double v5; // st7
-	CharObj2Base* co2; // eax
+	double v2; 
+	double v3; 
+	float* v4; 
+	double v5; 
+	CharObj2Base* co2;
 	int v7; // ecx
 
 	auto aura = (auraStruct*)obj->Data2.Undefined;
@@ -93,22 +91,6 @@ void DoSpinDashAura_r(ObjectMaster* obj)
 
 	return;
 }
-
-static void __declspec(naked) DoSpinDashAuraASM()
-{
-	__asm
-	{
-		push edi // obj
-
-		// Call your __cdecl function here:
-		call DoSpinDashAura_r
-
-		pop edi // obj
-		retn
-	}
-}
-
-
 
 void DoJumpAura_r(ObjectMaster* obj)
 {
