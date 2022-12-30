@@ -171,7 +171,7 @@ void SuperShadow_Manager(ObjectMaster* obj)
 		return;
 	}
 
-	if (!player || !IsIngame() || GameMode == GameMode_Event || miniEventPtr && miniEventPtr->MainSub != nullptr) {
+	if (!IsIngame() || GameMode == GameMode_Event || miniEventPtr && miniEventPtr->MainSub != nullptr) {
 		return;
 	}
 

@@ -121,9 +121,9 @@ void __cdecl SS_Water_Display(ObjectMaster* obj)
 		njPushMatrix(CURRENT_MATRIX);
 		njTranslateV(0, &playerData->Position);
 
-		njRotateZ_(CURRENT_MATRIX, (unsigned __int16)playerData->Rotation.z);
-		njRotateX_(CURRENT_MATRIX, (unsigned __int16)playerData->Rotation.x);
-		njRotateY_(CURRENT_MATRIX, (unsigned __int16)-(playerData->Rotation.y));
+		njRotateZ_r((unsigned __int16)playerData->Rotation.z);
+		njRotateX_r((unsigned __int16)playerData->Rotation.x);
+		njRotateY_r((unsigned __int16)-(playerData->Rotation.y));
 
 		if (data->Scale.x != 0.0)   // draw water effect
 		{

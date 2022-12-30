@@ -198,3 +198,21 @@ bool isBossLevel()
 		CurrentLevel == LevelIDs_SonicVsShadow1 || CurrentLevel == LevelIDs_TailsVsEggman1
 		|| CurrentLevel == LevelIDs_TailsVsEggman2 || CurrentLevel == LevelIDs_KnucklesVsRouge || CurrentLevel == LevelIDs_SonicVsShadow2;
 }
+
+void njRotateX_r(Angle x) {
+	if (x) {
+		njRotateX(_nj_current_matrix_ptr_, x);
+	}
+}
+
+void njRotateY_r(Angle y) {
+	if (y) {
+		njRotateY(_nj_current_matrix_ptr_, y);
+	}
+}
+
+void njRotateZ_r(Angle z) {
+	if (z) {
+		njRotateZ(_nj_current_matrix_ptr_, z);
+	}
+}

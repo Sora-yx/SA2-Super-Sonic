@@ -67,10 +67,9 @@ void DoSpinDashAura_r(ObjectMaster* obj)
 			njRotateZ((float*)_nj_current_matrix_ptr_, (int)v2);
 		}
 		v3 = (double)rand() * 0.000030517578125 * 65536.0;
-		if ((int)v3)
-		{
-			njRotateX((float*)_nj_current_matrix_ptr_, (int)v3);
-		}
+
+		njRotateX_r((int)v3);
+
 		v5 = (double)rand() * 0.000030517578125 * 65536.0;
 		v4 = (float*)_nj_current_matrix_ptr_;
 		if ((int)v5)
@@ -217,15 +216,10 @@ void DoHomingAura_r(ObjectMaster* obj)
 	}
 
 	EntityData1* pData = MainCharObj1[aura->charID];
-	int rng; // eax
-	double v4; // st7
-	double v5; // st7
-	NJS_MATRIX_PTR* v6; // ebx
-	int charID; // ecx
-	CharObj2Base* co2; // eax
-	char charID2; // cl
-	NJS_VECTOR result; // [esp+Ch] [ebp-Ch] BYREF
-
+	int rng = 0;
+	double v4;
+	double v5; 
+	NJS_VECTOR result = { 0 };
 	aura = (auraStruct*)obj->Data2.Undefined;
 
 	if (pData)
@@ -241,24 +235,19 @@ void DoHomingAura_r(ObjectMaster* obj)
 			njRotateZ((float*)_nj_current_matrix_ptr_, (int)v4);
 		}
 		v5 = (double)rand() * 0.000030517578125 * 65536.0;
-		v6 = &_nj_current_matrix_ptr_;
-		if ((int)v5)
-		{
-			njRotateX((float*)_nj_current_matrix_ptr_, (int)v5);
-		}
-		if (pData->Rotation.y)
-		{
-			njRotateY(*v6, pData->Rotation.y);
-		}
-		njCalcVector_(&result, &aura->pos, (float*)v6); //njCalcVector
+
+		njRotateX_r((int)v5);
+		njRotateY_r(pData->Rotation.y);
+
+		njCalcVector_(&result, &aura->pos, CURRENT_MATRIX); //njCalcVector
 		njPopMatrix(1u);
 	}
 
-	charID = aura->charID;
+	char charID = aura->charID;
 	*(float*)&aura->idk3[1] = 1.2;
 	aura->idk3[0] = 1;
-	co2 = MainCharObj2[charID];
-	charID2 = co2->CharID2;
+	CharObj2Base* co2 = MainCharObj2[charID];
+	char charID2 = co2->CharID2;
 
 	if (CharacterModels[19].Model)
 		aura->Model = CharacterModels[19].Model;
@@ -283,7 +272,7 @@ static void __declspec(naked) DoHomingAuraASM()
 {
 	__asm
 	{
-		push edi 
+		push edi
 		call DoHomingAura_r
 		pop edi
 		retn
@@ -292,18 +281,18 @@ static void __declspec(naked) DoHomingAuraASM()
 
 void __cdecl HomingDashAura_Display_r(ObjectMaster* a1)
 {
-	auraStruct* aura; // esi
-	CharObj2Base* v2; // eax
-	char charID2; // cl
+
+	CharObj2Base* v2;
+	char charID2; 
 	int v4; // edx
 	void** v5; // eax
 	CharObj2Base* co2; // eax
 	char charID2Again; // cl
 	void** v8; // ecx
 	int v10; // eax
-	NJS_OBJECT* auraMdl; // esi
+	NJS_OBJECT* auraMdl;
 
-	aura = (auraStruct*)a1->Data2.Undefined;
+	auraStruct* aura = (auraStruct*)a1->Data2.Undefined;
 	co2 = MainCharObj2[aura->charID];
 
 	if (isNotSuperSonic(co2))
@@ -391,18 +380,13 @@ void SuperAura_r(ObjectMaster* obj) {
 
 	njTranslate(CURRENT_MATRIX, data->Position.x, data->Position.y, data->Position.z);
 	sub_42D340();
-	if (data->Rotation.z)
-	{
-		njRotateZ(CURRENT_MATRIX, data->Rotation.z);
-	}
-	if (data->Rotation.x)
-	{
-		njRotateX(CURRENT_MATRIX, data->Rotation.x);
-	}
-	if (data->Rotation.y != 0x8000)
-	{
-		njRotateY(CURRENT_MATRIX, 0x8000 - data->Rotation.y);
-	}
+
+	njRotateZ_r(data->Rotation.z);
+
+	njRotateX_r(data->Rotation.x);
+
+	njRotateY_r(0x8000 - data->Rotation.y);
+
 	njScale(CURRENT_MATRIX, data->Scale.x, data->Scale.y, data->Scale.z);
 
 
@@ -512,16 +496,16 @@ void SADX_SuperAura(ObjectMaster* obj) {
 	}
 
 	njSetTexture(isShadow ? &SADXShadowSuperAuraTexList[timerSuperAura[pnum] & 7] : &SADXSuperAuraTexList[timerSuperAura[pnum] & 7]);
-	
+
 	SaveControl3D();
 	OnControl3D(NJD_CONTROL_3D_CONSTANT_MATERIAL);
 	SetMaterial(1.0, 1.0, 1.0, 1.0);
 	njPushMatrix(CURRENT_MATRIX);
 	njTranslateV(0, &playerData->Collision->CollisionArray->center);
 
-	njRotateZ_(CURRENT_MATRIX, (unsigned __int16)playerData->Rotation.z);
-	njRotateX_(CURRENT_MATRIX, (unsigned __int16)playerData->Rotation.x);
-	njRotateY_(CURRENT_MATRIX, (unsigned __int16)-(playerData->Rotation.y));
+	njRotateZ_r((unsigned __int16)playerData->Rotation.z);
+	njRotateX_r((unsigned __int16)playerData->Rotation.x);
+	njRotateY_r((unsigned __int16)-(playerData->Rotation.y));
 
 	njScale(0, -1.0, 1.0, 1.0);
 
@@ -537,7 +521,7 @@ void SADX_SuperAura(ObjectMaster* obj) {
 			DrawObject(SADXSuperAuraModel[1]->getmodel());
 		}
 	}
-	else 
+	else
 	{
 		njSetTexture(isShadow ? &SADXShadowSuperAuraTexList2[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7] : &SADXSuperAuraTexList2[((unsigned __int8)timerSuperAura[pnum] >> 1) & 7]);
 		DrawObject(SADXSuperAuraModel[2]->getmodel());

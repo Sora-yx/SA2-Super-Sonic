@@ -13,3 +13,7 @@ bool isSA1Char(uint8_t charID);
 
 NJS_OBJECT* DynCol_AddFromObject(ObjectMaster* obj, NJS_OBJECT* object, NJS_VECTOR* position, Angle rotY, int flags);
 bool isBossLevel();
+
+void njRotateX_r(Angle x);
+void njRotateY_r(Angle y);
+void njRotateZ_r(Angle z);

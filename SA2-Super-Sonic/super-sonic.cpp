@@ -106,7 +106,7 @@ void SubRings(unsigned char player, EntityData1* data) {
 
 	char charID = MainCharObj2[player]->CharID2;
 
-	if (RemoveLimitations || charID == Characters_Sonic && AlwaysSuperSonic 
+	if (RemoveLimitations || charID == Characters_Sonic && AlwaysSuperSonic
 		|| charID == Characters_Shadow && AlwaysSuperShadow || !isSuper[player] || TimerStopped != 0)
 		return;
 
@@ -468,19 +468,11 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 	else
 		Set_SSJiggle(sonicCO2);
 
-	if (data1->Rotation.z)
-	{
-		njRotateZ(CURRENT_MATRIX, data1->Rotation.z);
-	}
-	if (data1->Rotation.x)
-	{
-		njRotateX(CURRENT_MATRIX, data1->Rotation.x);
-	}
 
-	if (data1->Rotation.y != 0x8000)
-	{
-		njRotateY(CURRENT_MATRIX, 0x8000 - data1->Rotation.y);
-	}
+	njRotateZ_r(data1->Rotation.z);
+	njRotateX_r(data1->Rotation.x);
+	njRotateY_r(0x8000 - data1->Rotation.y);
+
 
 	if (curAnim != 11 || (data1->Status & (Status_OnObjectColli | Status_Ground)) == 0)
 	{

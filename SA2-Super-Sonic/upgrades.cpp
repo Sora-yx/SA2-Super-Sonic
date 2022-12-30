@@ -210,18 +210,10 @@ void DisplaySuperSonic_Upgrade(EntityData1* data1, SonicCharObj2* sonicCO2) {
 			NJS_OBJECT* BounceChild = CharacterModels[26].Model->child;
 			njTranslateEx((NJS_VECTOR*)BounceChild->pos);
 
-			if (BounceChild->ang[2])
-			{
-				njRotateZ((float*)_nj_current_matrix_ptr_, BounceChild->ang[2]);
-			}
-			if (BounceChild->ang[1])
-			{
-				njRotateY(CURRENT_MATRIX, BounceChild->ang[1]);
-			}
-			if (BounceChild->ang[0])
-			{
-				njRotateX(CURRENT_MATRIX, BounceChild->ang[0]);
-			}
+			njRotateZ_r(BounceChild->ang[2]);		
+			njRotateY_r(BounceChild->ang[1]);
+			njRotateX_r(BounceChild->ang[0]);
+
 			DrawChunkModel(BounceChild->getchunkmodel());
 			ResetMaterial();
 		}
