@@ -508,7 +508,8 @@ void SuperSonic_RunCustomAction(EntityData1* data1, EntityData2* data2, SonicCha
 {
 	SuperSonicFly_ActionsManagement(data1, data2, SonicCO2, co2);
 
-	if (AllowSuperAttacks && !TwoPlayerMode) {
+	if (AllowSuperAttacks && !TwoPlayerMode)
+	{
 		ChaosControl_Management(co2);
 	}
 }

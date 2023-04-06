@@ -1,7 +1,7 @@
 #include "pch.h"
 
-const int chaosControlCDTimer = 3600; //1:00
-int chaosControlCD[2] = { 0, 0 };
+const int chaosControlCDTimer = 2400; //40 seconds
+int chaosControlCD[2] = { chaosControlCDTimer + 1};
 bool isChaosControlEnabled[2] = { false, false };
 const int chaosControlDuration = 1200;
 int chaosControlTimer = 0;
@@ -17,15 +17,11 @@ TaskHook CE_Truck_t(0x5E5030);
 
 void __cdecl Sonic2PTimeStopMan_Load_r(CharObj2Base* co2)
 {
-	ObjectMaster* obj;
-	CharObj2Base* objData;
-	int v5;
-
 	char pnum = co2->PlayerNum;
 
 	TimeStopped |= 1 << 1;
 
-	obj = AllocateObjectMaster(Sonic2PTimeStopMan, 2, "Sonic2PTimeStopMan");
+	auto obj = AllocateObjectMaster(Sonic2PTimeStopMan, 2, "Sonic2PTimeStopMan");
 	if (obj)
 	{
 		if (!isSuper[pnum])
@@ -34,7 +30,7 @@ void __cdecl Sonic2PTimeStopMan_Load_r(CharObj2Base* co2)
 			return;
 		}
 
-		objData = (CharObj2Base*)AllocateObjUnknownB();
+		auto objData = (CharObj2Base*)AllocateObjUnknownB();
 		if (objData)
 		{
 			obj->Data2.Undefined = objData;
@@ -99,7 +95,8 @@ void Check_ChaosControlCD(CharObj2Base* co2)
 	{
 		chaosControlCD[pnum]++;
 	}
-	else {
+	else 
+	{
 		if (!isChaosControlEnabled[0] && !isChaosControlEnabled[1] && Controllers[pnum].on & Buttons_Y && Controllers[pnum].press & Buttons_X)
 		{
 			MainCharObj1[pnum]->Status &= ~Status_Ball;
@@ -209,13 +206,11 @@ void __cdecl CETruck_r(ObjectMaster* a1)
 
 void __cdecl Sonic2PTimeStopMan_r(ObjectMaster* a1)
 {
-	CharObj2Base* co2;
-	int v2;
 
-	co2 = a1->Data2.Character;
-	v2 = (unsigned __int8)co2->CharID; //this is actually player num in this scenario
+	auto co2 = a1->Data2.Character;
+	int pnum = (unsigned __int8)co2->CharID; //this is actually player num in this scenario
 
-	if (!TwoPlayerMode && (!isSuper[v2] || chaosControlTimer >= chaosControlDuration))
+	if (!TwoPlayerMode && (!isSuper[pnum] || chaosControlTimer >= chaosControlDuration))
 	{
 		a1->MainSub = DeleteObject_;
 		return;
@@ -244,6 +239,26 @@ static void __declspec(naked) RenderNumberASM()
 	}
 }
 
+void PatchChaosSpearTextures(NJS_OBJECT* object, int(__cdecl* callback)(NJS_CNK_MODEL*))
+{
+	NJS_TEXLIST* tex = getShadowTexlist();
+
+	if (tex)
+		njSetTexture(tex);
+
+	ProcessChunkModelsWithCallback(object, callback);
+}
+
+void PatchSonicWindTextures(NJS_OBJECT* object, int(__cdecl* callback)(NJS_CNK_MODEL*))
+{
+	NJS_TEXLIST* tex = getSonicTexlist();
+
+	if (tex)
+		njSetTexture(tex);
+
+	ProcessChunkModelsWithCallback(object, callback);
+}
+
 void initChaosControl_Hack()
 {
 	if (!AllowSuperAttacks)
@@ -266,4 +281,8 @@ void initChaosControl_Hack()
 
 	WriteCall((void*)0x724A2A, RenderNumberASM);
 	Sonic2PTimeStopMan_t.Hook(Sonic2PTimeStopMan_r);
+
+	//patches 2P
+	WriteCall((void*)0x75BCDC, PatchChaosSpearTextures);	
+	WriteCall((void*)0x75AF90, PatchSonicWindTextures);
 }
