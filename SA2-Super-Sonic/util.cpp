@@ -76,7 +76,8 @@ bool __cdecl IsIngame()
 }
 
 //just so I don't have to type "HelperFunctions.X"
-void DisplayDebugStringFormatted(Int loc, const char* Format, ...) {
+void DisplayDebugStringFormatted(Int loc, const char* Format, ...) 
+{
 	return HelperFunctionsGlobal.DisplayDebugStringFormatted(loc, Format);
 }
 

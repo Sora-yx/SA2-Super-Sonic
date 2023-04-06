@@ -327,6 +327,12 @@ void LoadSuperSonicManager(char playNum) {
 	}
 }
 
+void DeleteMiniEventPtr(ObjectMaster* obj)
+{
+	DeleteObject_(obj);
+	miniEventPtr = nullptr;
+}
+
 void __cdecl Sonic_HealdObjectStuff(EntityData1* data1, CharObj2Base* co2) {
 	*(int*)0x25F02D8 &= 0xFFFFDBFF;
 	*(int*)0x25F02D4 = *(int*)0x1DEB6A0;
@@ -539,6 +545,7 @@ void init_SuperSonic() {
 	Sonic_Main_t.Hook(Sonic_Main_r);
 	init_AfterImages();
 	initChaosControl_Hack();
+	WriteCall((void*)0x457539, DeleteMiniEventPtr);
 
 	return;
 }

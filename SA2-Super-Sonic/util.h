@@ -17,3 +17,4 @@ bool isBossLevel();
 void njRotateX_r(Angle x);
 void njRotateY_r(Angle y);
 void njRotateZ_r(Angle z);
+void DisplayDebugStringFormatted(Int loc, const char* Format, ...);
